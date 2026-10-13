@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Java 面试复习知识图谱</title>
+  <link rel="stylesheet" href="css/style.css?v=20261009">
+</head>
+<body>
+  <header class="workspace-header">
+    <a class="brand" href="index.html" aria-label="Java 复习图谱首页">
+      <span class="brand-mark" aria-hidden="true">J<span>·</span></span>
+      <span class="brand-copy"><strong>Java 复习图谱</strong><small>个人知识空间</small></span>
+    </a>
+    <div class="workspace-heading"><span>学习工作台</span><small>每天一点，把知识变成自己的</small></div>
+    <div class="workspace-meta"><span id="workspace-date"></span><button id="cloud-open" class="local-badge" type="button"><i></i><span id="cloud-label">登录后同步</span></button></div>
+  </header>
+  <div id="app">
+    <aside id="sidebar">
+      <header class="site-header">
+        <h2>我的知识库</h2>
+        <span id="library-count" class="count-badge">183</span>
+      </header>
+      <div id="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+        <label class="sr-only" for="search-input">搜索知识点和笔记</label>
+        <input type="search" id="search-input" placeholder="搜索知识点或笔记"
+          role="combobox" aria-autocomplete="list" aria-expanded="false"
+          aria-controls="search-dropdown" autocomplete="off">
+        <div id="search-dropdown" role="listbox" aria-label="搜索结果" hidden></div>
+        <kbd class="search-shortcut">/</kbd>
+      </div>
+      <div class="tree-toolbar"><span>知识目录</span><button id="add-node" class="btn-edit" type="button" aria-label="新增知识点">＋ 新增</button></div>
+      <nav id="tree-container" aria-label="知识点目录"></nav>
+      <div id="progress-panel">
+        <div id="today-count">今日已复习 0 个节点</div>
+        <div class="progress-heading"><h3>学习进度</h3><span id="mastery-ratio">0%</span></div>
+        <progress id="mastery-progress" value="0" max="183" aria-label="已掌握知识点比例"></progress>
+        <div id="mastery-stats"></div>
+        <details class="calendar-details">
+          <summary><span>复习足迹</span><small>最近 12 周</small></summary>
+          <div id="heatmap"></div>
+          <div class="heatmap-legend"><span>少</span><i></i><i></i><i></i><span>多</span></div>
+        </details>
+      </div>
+      <footer class="backup-panel">
+        <div class="backup-actions">
+          <button id="export-data" class="btn-edit" type="button">导出备份</button>
+          <button id="import-data" class="btn-edit" type="button">导入备份</button>
+          <input id="import-file" type="file" accept=".json,application/json" hidden>
+        </div>
+        <p id="backup-description" title="导入时保留已有笔记，合并打卡；名称、归属和掌握程度以备份为准。">保存在当前浏览器 · 登录后开启云同步</p>
+      </footer>
+    </aside>
+    <main id="graph-area" aria-label="知识关系图">
+      <div class="graph-toolbar">
+        <div><span class="section-eyebrow">EXPLORE & CONNECT</span><h1>知识地图</h1><p id="graph-total">183 个知识点，11 个主题。找到你的下一站。</p></div>
+        <button id="graph-reset" class="btn-edit" type="button"><span aria-hidden="true">↺</span> 还原视图</button>
+      </div>
+      <div class="graph-node-tools" role="group" aria-label="地图节点管理">
+        <span id="graph-selected-node" class="graph-selection" aria-live="polite">未选择节点</span>
+        <button id="graph-add-node" class="btn-primary" type="button" title="新增顶层知识节点">＋ 新增节点</button>
+        <button id="graph-delete-node" class="btn-danger" type="button" title="请先选择要删除的节点" disabled>删除节点</button>
+      </div>
+      <div id="graph-container"></div>
+      <div class="graph-legend" aria-label="节点掌握程度图例"><span><i class="legend-unlearned"></i>未学</span><span><i class="legend-learning"></i>学习中</span><span><i class="legend-mastered"></i>已掌握</span></div>
+      <div class="graph-hint">滚轮缩放 · 拖动探索 · 点击阅读</div>
+    </main>
+    <aside id="note-panel" aria-label="复习笔记">
+      <header class="note-panel-heading"><span>学习笔记</span><small>专注理解，而不只是记忆</small></header>
+      <div id="note-empty">
+        <div class="empty-illustration" aria-hidden="true"><span></span><span></span><span></span></div>
+        <span class="section-eyebrow">ONE TOPIC AT A TIME</span>
+        <h2>从一个知识点开始</h2>
+        <p>在地图或目录里选一个主题，<br>阅读笔记，记录每一次进步。</p>
+        <div class="quick-topics"><span>不妨从这里开始</span><button type="button" data-open-node="jmm">Java 内存模型 <span>↗</span></button><button type="button" data-open-node="mysql-index">MySQL 索引 <span>↗</span></button><button type="button" data-open-node="springboot">Spring Boot <span>↗</span></button></div>
+      </div>
+      <div id="note-content" style="display:none"></div>
+    </aside>
+  </div>
+  <div id="app-status" class="app-status" role="status" aria-live="polite" hidden>
+    <span id="status-message"></span>
+    <button id="status-dismiss" type="button" aria-label="关闭提示">×</button>
+  </div>
+  <dialog id="node-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+    <form id="node-form">
+      <h2 id="dialog-title"></h2>
+      <p id="dialog-description"></p>
+      <div id="name-field">
+        <label class="edit-label" for="node-name">节点名称</label>
+        <input id="node-name" class="edit-input" type="text" maxlength="200" required>
+      </div>
+      <div id="parent-field">
+        <label class="edit-label" for="node-parent">所属节点</label>
+        <select id="node-parent" class="edit-input"></select>
+      </div>
+      <div id="new-note-fields">
+        <label class="edit-label" for="new-summary">摘要（可选）</label>
+        <input id="new-summary" class="edit-input" type="text">
+        <label class="edit-label" for="new-points">要点（可选，每行一条）</label>
+        <textarea id="new-points" class="edit-textarea" rows="5"></textarea>
+      </div>
+      <p id="dialog-error" role="alert"></p>
+      <div class="edit-actions">
+        <button id="dialog-cancel" class="btn-edit" type="button">取消</button>
+        <button id="dialog-submit" class="btn-primary" type="submit">保存</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="cloud-dialog" aria-labelledby="cloud-title">
+    <div class="cloud-dialog-heading"><div><span class="section-eyebrow">YOUR LEARNING, EVERYWHERE</span><h2 id="cloud-title">云端学习空间</h2></div><button id="cloud-close" class="btn-edit" type="button" aria-label="关闭云同步面板">×</button></div>
+    <p class="cloud-description">同步笔记、节点修改和复习进度，换一台设备也能继续。</p>
+    <form id="cloud-form">
+      <div id="cloud-login-fields">
+        <label class="edit-label" for="cloud-email">邮箱</label>
+        <input id="cloud-email" class="edit-input" type="email" autocomplete="username" required maxlength="254" placeholder="you@example.com">
+        <label class="edit-label" for="cloud-password">密码</label>
+        <input id="cloud-password" class="edit-input" type="password" autocomplete="current-password" required placeholder="注册时至少 8 个字符">
+        <div class="edit-actions"><button id="cloud-register" class="btn-edit" type="submit">注册账号</button><button id="cloud-login" class="btn-primary" type="submit">登录并同步</button></div>
+        <p class="cloud-help">这是本站学习账号。注册后确认邮件，再回来登录。登录前的记录仍留在本机。</p>
+      </div>
+    </form>
+    <div id="cloud-account" hidden>
+      <p class="cloud-account-label">当前账号 <strong id="cloud-account-email"></strong></p>
+      <div class="cloud-buttons"><button id="cloud-sync" class="btn-primary" type="button" data-cloud-action>立即同步</button><button id="cloud-import-local" class="btn-edit" type="button" data-cloud-action>导入本机记录</button><button id="cloud-recovery" class="btn-edit" type="button" data-cloud-action>导出冲突副本</button><button id="cloud-logout" class="btn-edit" type="button" data-cloud-action>退出登录</button></div>
+      <p class="cloud-help">账号记录自动保存在本机并同步。首次登录可导入登录前的记录；退出后返回本地学习空间。</p>
+    </div>
+    <p id="cloud-message" class="cloud-message" role="status" aria-live="polite"></p>
+    <div id="cloud-conflict" class="cloud-conflict" hidden>
+      <strong>同一条记录在两处修改了</strong><p id="cloud-conflict-reason"></p>
+      <p>选择一个完整工作区版本。另一个版本会保留在本机恢复副本中。</p>
+      <div class="cloud-buttons"><button id="cloud-use-cloud" class="btn-edit" type="button" data-cloud-action>使用云端版本</button><button id="cloud-use-local" class="btn-edit" type="button" data-cloud-action>用本机版本替换云端</button></div>
+    </div>
+  </dialog>
+  <script src="vendor/echarts.min.js?v=20261009"></script>
+  <script src="vendor/supabase.min.js?v=20261009"></script>
+  <script src="js/data.js?v=20261010"></script>
+  <script src="js/storage.js?v=20261009"></script>
+  <script src="js/edit-store.js?v=20261009"></script>
+  <script src="js/notes/notes-core-1.js?v=20261009"></script>
+  <script src="js/notes/notes-core-2.js?v=20261009"></script>
+  <script src="js/notes/notes-core-3.js?v=20261009"></script>
+  <script src="js/notes/notes-secondary.js?v=20261009"></script>
+  <script src="js/notes/notes-expanded.js?v=20261009"></script>
+  <script src="js/notes/notes-os-expanded.js?v=20261009"></script>
+  <script src="js/notes/notes-network-expanded.js?v=20261010"></script>
+  <script src="js/notes/note-sources.js?v=20261010"></script>
+  <script src="js/progress.js?v=20261009"></script>
+  <script src="js/graph.js?v=20261009"></script>
+  <script src="js/tree.js?v=20261009"></script>
+  <script src="js/note-images.js?v=20261009"></script>
+  <script src="js/note-panel.js?v=20261009"></script>
+  <script src="js/search.js?v=20261009"></script>
+  <script src="js/editor.js?v=20261009"></script>
+  <script src="js/supabase-config.js?v=20261009"></script>
+  <script>
+    if (location.protocol === "http:" || location.protocol === "https:") {
+      document.write('<script src="js/supabase-config.local.js?v=20261014" onerror="this.remove()"><\/script>');
+    }
+  </script>
+  <script src="js/cloud-merge.js?v=20261009"></script>
+  <script src="js/cloud-workspace.js?v=20261009"></script>
+  <script src="js/cloud-ui.js?v=20261009"></script>
+  <script>
+    // Bootstrap: merge user edits, then init graph and tree once data and ECharts are loaded.
+    window.EditStore.applyOverrides();
+    window.GraphView.init("graph-container");
+    window.GraphView.setMasteryColors(window.ProgressStore.getAllMastery());
+    window.TreeView.init("tree-container");
+    window.TreeView.setMasteryDots(window.ProgressStore.getAllMastery());
+    window.SearchView.init("search-input", "search-dropdown");
+    window.ProgressPanel.init();
+    window.Editor.init();
+    window.CloudUI.init();
+  </script>
+</body>
+</html>

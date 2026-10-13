@@ -1,0 +1,64 @@
+{
+  "name": "java-interview-desktop",
+  "version": "1.0.0",
+  "description": "Offline Java interview question bank and spaced repetition desktop app",
+  "private": true,
+  "main": "electron/main.cjs",
+  "scripts": {
+    "prestart": "install-electron --no",
+    "predev": "install-electron --no",
+    "start": "electron .",
+    "dev": "electron .",
+    "test": "node --test tests/*.test.cjs",
+    "test:desktop": "node --test tests/question-*.test.cjs",
+    "test:live-storage": "node tests/storage-live.cjs",
+    "prebuild": "install-electron --no",
+    "prebuild:installer": "install-electron --no",
+    "prebuild:portable": "install-electron --no",
+    "build": "electron-builder --win nsis portable",
+    "build:installer": "electron-builder --win nsis",
+    "build:portable": "electron-builder --win portable",
+    "generate:questions": "node scripts/build-question-seed.cjs"
+  },
+  "dependencies": {
+    "sql.js": "^1.14.2"
+  },
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "playwright": "^1.64.0"
+  },
+  "build": {
+    "appId": "com.javareview.questionbank",
+    "productName": "Java 面试题库",
+    "electronDist": "node_modules/electron/dist",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop.html",
+      "css/desktop.css",
+      "js/desktop-renderer.cjs",
+      "data/questions.json",
+      "electron/**/*",
+      "node_modules/sql.js/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.${ext}"
+    }
+  }
+}

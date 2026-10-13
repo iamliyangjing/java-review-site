@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>Java 面试题库</title>
+  <link rel="stylesheet" href="css/desktop.css">
+</head>
+<body>
+  <div class="app-frame">
+    <header class="topbar">
+      <a class="brand" href="#review" aria-label="Java 面试题库首页">
+        <span class="brand-mark">J<span>·</span></span>
+        <span class="brand-copy"><strong>JAVA REVIEW</strong><small>离线面试题库</small></span>
+      </a>
+      <nav class="primary-nav" aria-label="主导航">
+        <button class="nav-item active" type="button" data-view="review"><span class="nav-icon">◷</span>今日复习 <b id="nav-due-count">0</b></button>
+        <button class="nav-item" type="button" data-view="bank"><span class="nav-icon">▤</span>题库管理</button>
+        <button class="nav-item" type="button" data-view="history"><span class="nav-icon">↗</span>复习回顾</button>
+      </nav>
+      <div class="top-actions">
+        <button id="import-backup" class="button subtle" type="button">导入备份</button>
+        <button id="export-backup" class="button subtle" type="button">导出备份</button>
+        <button id="add-question" class="button primary" type="button"><span>＋</span> 新增题目</button>
+        <input id="backup-file" type="file" accept=".json,application/json" hidden>
+      </div>
+    </header>
+
+    <div class="main-layout">
+      <aside class="sidebar">
+        <div class="sidebar-heading"><span class="eyebrow">YOUR LIBRARY</span><h2>知识分类</h2></div>
+        <button class="module-filter active" type="button" data-category="">
+          <span class="module-dot all-dot"></span><span>全部分类</span><b id="all-count">131</b>
+        </button>
+        <div id="module-list" class="module-list" aria-label="知识分类"></div>
+        <div class="sidebar-bottom">
+          <div class="offline-status"><i></i><span>仅保存在这台电脑</span></div>
+          <p>题目与复习记录使用本地数据库保存。建议定期导出备份。</p>
+        </div>
+      </aside>
+
+      <main class="content-area">
+        <section id="review-view" class="view active" data-view-panel="review">
+          <div class="page-heading">
+            <div><span class="eyebrow">SPACED REPETITION</span><h1>今日复习</h1><p>回忆答案，再翻开解析。按掌握程度安排下一次复习。</p></div>
+            <div class="date-chip"><span class="date-dot"></span><span id="today-label"></span></div>
+          </div>
+          <div class="stats-row">
+            <article class="stat-card stat-highlight"><span>今日待复习</span><strong id="stat-due">0</strong><small>道题已到期</small></article>
+            <article class="stat-card"><span>题库总量</span><strong id="stat-total">131</strong><small>覆盖全部知识分类</small></article>
+            <article class="stat-card"><span>今日已完成</span><strong id="stat-reviewed">0</strong><small>次有效回顾</small></article>
+            <article class="stat-card"><span>连续复习</span><strong><span id="stat-streak">0</span><em>天</em></strong><small>保持学习节奏</small></article>
+          </div>
+          <div class="review-controls">
+            <div class="segmented" role="group" aria-label="复习范围">
+              <button type="button" data-review-mode="due" class="selected">到期题</button>
+              <button type="button" data-review-mode="wrong">错题</button>
+              <button type="button" data-review-mode="all">随机练习</button>
+            </div>
+            <label class="select-wrap"><span>分类</span><select id="review-category"></select></label>
+          </div>
+          <div id="review-stage" class="review-stage"></div>
+        </section>
+
+        <section id="bank-view" class="view" data-view-panel="bank" hidden>
+          <div class="page-heading">
+            <div><span class="eyebrow">QUESTION BANK</span><h1>题库管理</h1><p>整理自己的面试题，编辑答案解析与复习标签。</p></div>
+            <button id="open-trash" class="button subtle" type="button">回收站 <span id="trash-count">0</span></button>
+          </div>
+          <div class="bank-toolbar">
+            <label class="search-field"><span aria-hidden="true">⌕</span><input id="bank-search" type="search" placeholder="搜索题目、答案或标签…" autocomplete="off"></label>
+            <label class="select-wrap"><span>分类</span><select id="bank-category"></select></label>
+            <span id="bank-result-count" class="result-count">131 道题</span>
+          </div>
+          <div id="question-list" class="question-list"></div>
+        </section>
+
+        <section id="history-view" class="view" data-view-panel="history" hidden>
+          <div class="page-heading">
+            <div><span class="eyebrow">REVIEW HISTORY</span><h1>复习回顾</h1><p>查看每次自评、错题表现和复习安排。</p></div>
+            <div class="history-stats"><strong id="history-total">0</strong><span>条复习记录</span></div>
+          </div>
+          <div class="history-filters">
+            <label class="select-wrap"><span>分类</span><select id="history-category"></select></label>
+            <label class="date-field"><span>开始日期</span><input id="history-from" type="date"></label>
+            <label class="date-field"><span>结束日期</span><input id="history-to" type="date"></label>
+            <button id="apply-history-filter" class="button subtle" type="button">筛选</button>
+            <button id="clear-history-filter" class="text-button" type="button">清除</button>
+          </div>
+          <div id="history-list" class="history-list"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="question-dialog" class="modal">
+    <form id="question-form" method="dialog">
+      <div class="modal-heading"><div><span class="eyebrow">QUESTION EDITOR</span><h2 id="question-dialog-title">新增面试题</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="关闭">×</button></div>
+      <label class="field-label" for="question-category">知识分类</label>
+      <select id="question-category" required></select>
+      <label class="field-label" for="question-text">面试问题</label>
+      <textarea id="question-text" rows="3" maxlength="5000" required placeholder="写下要复习的问题"></textarea>
+      <label class="field-label" for="question-answer">答案解析</label>
+      <textarea id="question-answer" rows="8" maxlength="50000" required placeholder="记录核心结论、关键原理、实践注意点和回答思路"></textarea>
+      <label class="field-label" for="question-tags">标签 <small>用逗号分隔</small></label>
+      <input id="question-tags" type="text" maxlength="300" placeholder="例如：高频、JDK 21、并发">
+      <div id="question-form-error" class="form-error" role="alert"></div>
+      <div class="modal-actions"><button type="button" class="button subtle" data-close-dialog>取消</button><button id="save-question" type="submit" class="button primary">保存题目</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="modal confirm-modal">
+    <form method="dialog">
+      <div class="modal-heading"><div><span class="eyebrow">PLEASE CONFIRM</span><h2 id="confirm-title">确认操作</h2></div><button type="button" class="icon-button" data-close-dialog aria-label="关闭">×</button></div>
+      <p id="confirm-message"></p>
+      <div class="modal-actions"><button type="button" class="button subtle" data-close-dialog>取消</button><button id="confirm-action" type="button" class="button danger">确认</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="js/desktop-renderer.cjs" defer></script>
+</body>
+</html>

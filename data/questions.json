@@ -1,0 +1,3012 @@
+{
+  "version": 1,
+  "generatedAt": "2026-10-12T16:32:50.919Z",
+  "categories": [
+    {
+      "id": "basic",
+      "name": "Java 基础",
+      "parentId": null,
+      "level": 1,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "basic-syntax",
+      "name": "基础语法与程序设计结构",
+      "parentId": "basic",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "exceptions",
+      "name": "异常与资源关闭",
+      "parentId": "basic-syntax",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "oop",
+      "name": "面向对象编程",
+      "parentId": "basic",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "oop-principles",
+      "name": "封装、继承与多态",
+      "parentId": "oop",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "design-patterns",
+      "name": "设计模式",
+      "parentId": "oop",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "design-principles",
+      "name": "SOLID 设计原则",
+      "parentId": "oop",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "core-lib",
+      "name": "集合与核心类库",
+      "parentId": "basic",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "equals-hashcode",
+      "name": "equals、hashCode 与集合契约",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "java-string",
+      "name": "String 与字符串处理",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "bigdecimal",
+      "name": "BigDecimal 与数值精度",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "arraylist",
+      "name": "ArrayList 与 LinkedList",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "hashmap",
+      "name": "HashMap 原理与扩容",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "concurrenthashmap",
+      "name": "ConcurrentHashMap",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "stream",
+      "name": "Stream 流水线与并行执行",
+      "parentId": "core-lib",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "advanced-features",
+      "name": "高级特性与机制",
+      "parentId": "basic",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "generics",
+      "name": "泛型、类型擦除与 PECS",
+      "parentId": "advanced-features",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "reflection-spi",
+      "name": "反射、注解与 SPI",
+      "parentId": "advanced-features",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "java-io",
+      "name": "BIO、NIO 与 AIO",
+      "parentId": "basic",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "new-features",
+      "name": "版本特性与升级",
+      "parentId": "basic",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "java8",
+      "name": "Java 8",
+      "parentId": "new-features",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "java8-lambda",
+      "name": "Lambda 表达式",
+      "parentId": "java8",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "java8-stream",
+      "name": "Stream 分组与聚合实战",
+      "parentId": "java8",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "java8-datetime",
+      "name": "新的日期时间 API",
+      "parentId": "java8",
+      "level": 4,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "java8-optional",
+      "name": "Optional 类",
+      "parentId": "java8",
+      "level": 4,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "java17",
+      "name": "Java 17",
+      "parentId": "new-features",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "java21",
+      "name": "Java 21",
+      "parentId": "new-features",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "virtual-threads",
+      "name": "虚拟线程与适用边界",
+      "parentId": "java21",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "java25",
+      "name": "Java 25 与升级评估",
+      "parentId": "new-features",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "multithreading",
+      "name": "多线程",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "thread-intro",
+      "name": "线程简介",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "jmm",
+      "name": "Java 内存模型（JMM）",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "volatile",
+      "name": "volatile 与内存可见性",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "synchronized",
+      "name": "synchronized 与对象监视器",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "cas-atomic",
+      "name": "CAS 与原子类",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "aqs-reentrantlock",
+      "name": "AQS、ReentrantLock 与 Condition",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "aqs-shared",
+      "name": "Semaphore 与 CountDownLatch",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "thread-pool",
+      "name": "线程池参数与执行流程",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "thread-pool-tuning",
+      "name": "线程池容量与故障排查",
+      "parentId": "thread-pool",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "threadlocal",
+      "name": "ThreadLocal 与上下文传递",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "futuretask",
+      "name": "Future 与异步编排",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "concurrency-deadlock",
+      "name": "死锁、中断与并发协作",
+      "parentId": "multithreading",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "jvm",
+      "name": "JVM",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "jvm-types",
+      "name": "JVM虚拟机类型",
+      "parentId": "jvm",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "jvm-memory",
+      "name": "JVM内存划分",
+      "parentId": "jvm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "classloader",
+      "name": "类加载子系统",
+      "parentId": "jvm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "classloader-process",
+      "name": "类加载过程",
+      "parentId": "classloader",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "classloader-parents",
+      "name": "双亲委派机制",
+      "parentId": "classloader",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "classloader-context",
+      "name": "线程上下文类加载器",
+      "parentId": "classloader",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "execution-engine",
+      "name": "执行引擎子系统",
+      "parentId": "jvm",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "jit",
+      "name": "JIT即时编译原理",
+      "parentId": "execution-engine",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "dispatch",
+      "name": "分派实现",
+      "parentId": "execution-engine",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "gc",
+      "name": "垃圾回收子系统",
+      "parentId": "jvm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "gc-algorithms",
+      "name": "垃圾回收算法",
+      "parentId": "gc",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "gc-collectors",
+      "name": "垃圾回收器",
+      "parentId": "gc",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "gc-tuning",
+      "name": "GC调优",
+      "parentId": "gc",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "runtime-data-area",
+      "name": "运行时数据区",
+      "parentId": "jvm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "oom",
+      "name": "内存溢出",
+      "parentId": "runtime-data-area",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "memory-leak",
+      "name": "内存泄漏剖析",
+      "parentId": "runtime-data-area",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "object-layout",
+      "name": "对象内存布局",
+      "parentId": "jvm",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "object-allocation",
+      "name": "分配过程",
+      "parentId": "object-layout",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "references",
+      "name": "强弱虚引用",
+      "parentId": "object-layout",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "jvm-troubleshooting",
+      "name": "JFR、线程转储与 JVM 排障",
+      "parentId": "jvm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "database",
+      "name": "数据库",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql",
+      "name": "关系型数据库 MySQL",
+      "parentId": "database",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-basic",
+      "name": "MySQL 基础",
+      "parentId": "mysql",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-select",
+      "name": "SQL 查询执行流程",
+      "parentId": "mysql-basic",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-row-storage",
+      "name": "MySQL一行记录是怎么存储的？",
+      "parentId": "mysql-basic",
+      "level": 4,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-index",
+      "name": "索引",
+      "parentId": "mysql",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-btree",
+      "name": "B+树",
+      "parentId": "mysql-index",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-explain",
+      "name": "EXPLAIN 与慢 SQL 优化",
+      "parentId": "mysql-index",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-transaction",
+      "name": "事务",
+      "parentId": "mysql",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-isolation",
+      "name": "隔离级别（脏读/不可重复读/幻读）",
+      "parentId": "mysql-transaction",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-mvcc",
+      "name": "MVCC 与 ReadView",
+      "parentId": "mysql-transaction",
+      "level": 4,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-lock",
+      "name": "锁",
+      "parentId": "mysql",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-log",
+      "name": "日志（undo/redo/binlog）",
+      "parentId": "mysql",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mysql-bufferpool",
+      "name": "Buffer Pool",
+      "parentId": "mysql",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis",
+      "name": "非关系数据库 Redis",
+      "parentId": "database",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-types",
+      "name": "数据类型和应用场景",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-datastruct",
+      "name": "数据结构",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-arch",
+      "name": "Redis架构（单实例/高可用/集群）",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-persistence",
+      "name": "持久化（RDB/AOF）",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-bigkey",
+      "name": "Redis大Key问题",
+      "parentId": "redis",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-cache",
+      "name": "缓存一致性与缓存故障",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "redis-eviction",
+      "name": "过期、淘汰与热点 Key",
+      "parentId": "redis",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "pg",
+      "name": "PostgreSQL",
+      "parentId": "database",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "framework",
+      "name": "框架",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "spring",
+      "name": "Spring 核心机制",
+      "parentId": "framework",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "spring-bean",
+      "name": "IoC、Bean 生命周期与循环依赖",
+      "parentId": "spring",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "spring-aop",
+      "name": "AOP 与代理机制",
+      "parentId": "spring",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "spring-transaction",
+      "name": "事务传播与失效场景",
+      "parentId": "spring",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "spring-mvc",
+      "name": "Spring MVC 请求处理",
+      "parentId": "spring",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "springboot",
+      "name": "Spring Boot 自动配置",
+      "parentId": "framework",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mybatis",
+      "name": "MyBatis",
+      "parentId": "framework",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mybatis-cache",
+      "name": "MyBatis 缓存与批量查询",
+      "parentId": "mybatis",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "springcloud",
+      "name": "Spring Cloud 服务治理",
+      "parentId": "framework",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "middleware",
+      "name": "中间件",
+      "parentId": null,
+      "level": 1,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "mq-reliability",
+      "name": "消息可靠性与投递语义",
+      "parentId": "middleware",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "mq-idempotency",
+      "name": "消费幂等与消息积压",
+      "parentId": "mq-reliability",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "kafka",
+      "name": "Kafka",
+      "parentId": "middleware",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "rabbitmq",
+      "name": "RabbitMQ",
+      "parentId": "middleware",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "rocketmq",
+      "name": "RocketMQ",
+      "parentId": "middleware",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "microservice",
+      "name": "微服务",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "service-discovery",
+      "name": "服务注册发现",
+      "parentId": "microservice",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "config-center",
+      "name": "配置中心",
+      "parentId": "microservice",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "load-balance",
+      "name": "负载均衡",
+      "parentId": "microservice",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "rate-limit",
+      "name": "限流熔断",
+      "parentId": "microservice",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "distributed-tx",
+      "name": "分布式事务",
+      "parentId": "microservice",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "distributed-lock",
+      "name": "分布式锁",
+      "parentId": "microservice",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "tracing",
+      "name": "链路追踪",
+      "parentId": "microservice",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "logging",
+      "name": "日志管理",
+      "parentId": "microservice",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "api-idempotency",
+      "name": "接口幂等与重复提交",
+      "parentId": "microservice",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "distributed-id",
+      "name": "分布式 ID 与时钟回拨",
+      "parentId": "microservice",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "algorithm",
+      "name": "算法",
+      "parentId": null,
+      "level": 1,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "algorithm-array-hash",
+      "name": "数组、哈希与滑动窗口",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "algorithm-linked-list",
+      "name": "链表与双指针",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "algorithm-tree-graph",
+      "name": "树、图与 BFS / DFS",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "algorithm-dp",
+      "name": "动态规划与状态设计",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "sorting",
+      "name": "排序算法",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "leetcode",
+      "name": "高频题复习路线",
+      "parentId": "algorithm",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network",
+      "name": "计算机网络",
+      "parentId": null,
+      "level": 1,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-basics",
+      "name": "TCP/IP 分层模型",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-request-flow",
+      "name": "从输入网址到页面显示",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-linux-packet",
+      "name": "Linux 收发网络包",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-dns",
+      "name": "DNS 与一次请求的链路",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-http-interview",
+      "name": "HTTP 常见面试题",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-http-optimization",
+      "name": "HTTP/1.1 性能优化",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-https-rsa",
+      "name": "HTTPS RSA 握手",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-https-ecdhe",
+      "name": "HTTPS ECDHE 握手",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-https-optimization",
+      "name": "HTTPS 性能优化",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-http2",
+      "name": "HTTP/2 多路复用",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-http3",
+      "name": "HTTP/3 与 QUIC",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-rpc",
+      "name": "RPC 与 HTTP 的取舍",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-websocket",
+      "name": "WebSocket 双向通信",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp",
+      "name": "TCP 连接与可靠传输",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-handshake",
+      "name": "TCP 三次握手与四次挥手",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-control",
+      "name": "TCP 重传、窗口与拥塞控制",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-capture",
+      "name": "TCP 抓包与分段分析",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-queues",
+      "name": "TCP 半连接与全连接队列",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-tuning",
+      "name": "TCP 参数与性能调优",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-stream",
+      "name": "TCP 字节流与分帧",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-failure",
+      "name": "断电、断网与进程崩溃",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tcp-keepalive",
+      "name": "TCP Keepalive 与 HTTP Keep-Alive",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-udp-reliable",
+      "name": "UDP 可靠传输与 QUIC",
+      "parentId": "network-tcp",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-ip-basics",
+      "name": "IP 地址、路由与分片",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-ping",
+      "name": "ping 与 ICMP",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-loopback",
+      "name": "127.0.0.1 与回环接口",
+      "parentId": "network",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-http",
+      "name": "HTTP 语义、缓存与版本",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "network-tls",
+      "name": "HTTPS 与 TLS 握手",
+      "parentId": "network",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os",
+      "name": "操作系统",
+      "parentId": null,
+      "level": 1,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-hardware",
+      "name": "CPU、缓存与软中断",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-cpu-cache",
+      "name": "CPU 执行与缓存局部性",
+      "parentId": "os-hardware",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-cache-coherence",
+      "name": "CPU 缓存一致性与伪共享",
+      "parentId": "os-hardware",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-system-structure",
+      "name": "Linux 与 Windows 内核",
+      "parentId": "os",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-memory",
+      "name": "虚拟内存与缺页",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-memory-allocation",
+      "name": "malloc 与内存分配",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-memory-pressure",
+      "name": "内存回收与 OOM",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-cache-lru",
+      "name": "预读、缓存与 LRU",
+      "parentId": "os",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-process",
+      "name": "进程、线程与调度",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-process-ipc",
+      "name": "进程间通信",
+      "parentId": "os-process",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-thread-sync",
+      "name": "多线程同步与竞态",
+      "parentId": "os-process",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-deadlock",
+      "name": "死锁与避免策略",
+      "parentId": "os-process",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-locks",
+      "name": "悲观锁与乐观锁",
+      "parentId": "os-process",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-scheduling",
+      "name": "进程、页面与磁盘调度",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-file-system",
+      "name": "文件系统与 inode",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-page-cache",
+      "name": "Page Cache 与数据落盘",
+      "parentId": "os-file-system",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-device",
+      "name": "设备管理与键盘输入",
+      "parentId": "os",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-io",
+      "name": "阻塞、非阻塞与 IO 多路复用",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-zero-copy",
+      "name": "零拷贝",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-reactor",
+      "name": "Reactor 与 Proactor",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "os-consistent-hash",
+      "name": "一致性哈希",
+      "parentId": "os",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "linux-troubleshooting",
+      "name": "Linux CPU、内存与网络排障",
+      "parentId": "os",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "linux-network-metrics",
+      "name": "网络性能指标",
+      "parentId": "linux-troubleshooting",
+      "level": 3,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "linux-log-analysis",
+      "name": "日志 PV、UV 与请求分析",
+      "parentId": "linux-troubleshooting",
+      "level": 3,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai",
+      "name": "AI",
+      "parentId": null,
+      "level": 1,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-basics",
+      "name": "基础认知",
+      "parentId": "ai",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-models",
+      "name": "模型 API 集成与选型",
+      "parentId": "ai",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-mcp",
+      "name": "MCP",
+      "parentId": "ai",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-rag",
+      "name": "RAG",
+      "parentId": "ai",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-finetune",
+      "name": "Fine-tuning 微调",
+      "parentId": "ai",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-frameworks",
+      "name": "框架（LangChain/LlamaIndex）",
+      "parentId": "ai",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-agent",
+      "name": "AI Agent",
+      "parentId": "ai",
+      "level": 2,
+      "core": true,
+      "origin": "builtin"
+    },
+    {
+      "id": "ai-tools",
+      "name": "AI 编程工具与工程实践",
+      "parentId": "ai",
+      "level": 2,
+      "core": false,
+      "origin": "builtin"
+    }
+  ],
+  "questions": [
+    {
+      "id": "seed-basic-1",
+      "categoryId": "basic",
+      "sourceNodeId": "basic",
+      "question": "为什么可变 key 会破坏 HashMap 查询？从 Java 8 升级时先检查哪些依赖？",
+      "answer": "【核心概述】\nJava 基础是后端复习的起点，重点建立语言语义、集合和 IO 的使用边界。版本特性应结合项目实际复习。\n\n【面试要点】\n• 区分 API 契约、OpenJDK 实现细节与目标版本，不把实现参数当成语言保证。",
+      "tags": [
+        "Java 基础"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-exceptions-1",
+      "categoryId": "exceptions",
+      "sourceNodeId": "exceptions",
+      "question": "业务异常与关闭连接异常同时发生时保留哪个？异常转换时如何保留原始 cause？",
+      "answer": "【核心概述】\n异常用于表达失败并传递上下文，资源关闭用于确保文件、连接等按生命周期释放。正确处理比背异常分类更重要。\n\n【面试要点】\n• Throwable 下有 Error 和 Exception；RuntimeException 属于非受检异常，Error 通常代表应用难以恢复的问题。\n• try-with-resources 按声明的逆序关闭资源；关闭异常可以进入 suppressed exceptions，主异常仍需保留。\n• 不要吞掉异常、在 finally 中 return 或只记录错误消息；捕获 InterruptedException 后按取消协议处理，必要时恢复中断标记。\n• 我让异常在合适的业务边界转换，保留 cause 与上下文，并用自动关闭保证资源释放。",
+      "tags": [
+        "异常与资源关闭",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-oop-principles-1",
+      "categoryId": "oop-principles",
+      "sourceNodeId": "oop-principles",
+      "question": "父类引用指向子类时，实例方法、静态方法和同名字段各使用哪一方？",
+      "answer": "【核心概述】\n封装、继承与多态是面向对象的三大特性。多态的关键是运行时根据对象类型选择重写方法。\n\n【面试要点】\n• 父类型引用可指向子类对象，重写的实例方法按运行时类型分派；字段访问和静态方法不采用相同的动态分派语义。\n• 重载在编译期根据参数等信息选择签名；重写要满足返回类型、访问范围及异常约束。\n• 不是所有复用关系都适合继承；当子类破坏父类语义时优先考虑组合与接口。\n• 我先解释三大特性，再用一段父子类调用说明动态分派，最后讨论组合与继承的边界。",
+      "tags": [
+        "封装、继承与多态",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-core-lib-1",
+      "categoryId": "core-lib",
+      "sourceNodeId": "core-lib",
+      "question": "如何选择列表和映射容器？为什么不同集合对同一组 BigDecimal 的去重结果可能不同？",
+      "answer": "【核心概述】\n核心类库复习应将集合、字符串与数值类型分别展开，建立选型与正确性意识。实现细节需要注明 JDK 版本。\n\n【面试要点】\n• 操作复杂度、扩容、碰撞、并发复合操作、相等契约与精度，不只背类名。\n• 线程安全容器不保证一组操作整体原子；集合性能要结合数据量和真实访问模式。",
+      "tags": [
+        "集合与核心类库"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-equals-hashcode-1",
+      "categoryId": "equals-hashcode",
+      "sourceNodeId": "equals-hashcode",
+      "question": "为什么 HashSet 放入两个业务相同对象仍得到两个元素？怎么设计不可变的订单键？",
+      "answer": "【核心概述】\nequals 定义业务相等，hashCode 支持散列容器定位。两者必须遵守契约，否则集合可能查找或去重失败。\n\n【面试要点】\n• equals 相等的对象必须具有相同 hashCode；hashCode 相同不代表 equals 相等，碰撞需要再次比较。\n• equals 应满足自反、对称、传递、一致与非 null；TreeSet/TreeMap 依赖比较器确定键的等价关系。\n• 对象加入 HashSet 后改变参与散列的字段，会破坏定位；继承层次中要防止 equals 对称性失效。\n• 我先解释契约，再用可变 key 的反例说明问题，最后优先采用稳定且不可变的业务键。",
+      "tags": [
+        "equals、hashCode 与集合契约",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java-string-1",
+      "categoryId": "java-string",
+      "sourceNodeId": "java-string",
+      "question": "new String 与字面量有什么区别？如何避免读取 UTF-8 文件出现乱码？",
+      "answer": "【核心概述】\nString 不可变，字符串常量池可复用字面量。大量动态拼接需要关注中间对象、编码及上下文。\n\n【面试要点】\n• == 比较引用，equals 比较内容；intern 返回池中的规范引用，不等于原对象必然被搬入常量池。\n• StringBuilder 适合局部动态拼接；StringBuffer 方法有同步，但一组调用仍需考虑整体原子性。\n• 循环内反复拼接大字符串可能产生大量临时对象；不要把 char 数量直接当成 Unicode 字符数量，也不要靠平台默认字符集处理协议。\n• 我区分引用、内容与编码，并根据是否循环拼接和是否共享来选择 StringBuilder 或其他方案。",
+      "tags": [
+        "String 与字符串处理",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-bigdecimal-1",
+      "categoryId": "bigdecimal",
+      "sourceNodeId": "bigdecimal",
+      "question": "金额为什么不直接用 double？BigDecimal 放入 HashSet 和 TreeSet 时结果可能有什么差异？",
+      "answer": "【核心概述】\nBigDecimal 用十进制值与 scale 表达精确小数。业务需要明确精度、舍入规则和相等语义。\n\n【面试要点】\n• new BigDecimal(double) 会接收二进制浮点值的误差；优先从十进制字符串或 BigDecimal.valueOf 构造。\n• equals 比较数值和 scale，compareTo 比较数值；1.0 与 1.00 的 equals 为 false，compareTo 为 0。\n• 除法结果不能有限表示时需指定精度及 RoundingMode；不要在计算过程中随意多次舍入。\n• 我先定义业务精度和舍入规则，再选择构造与比较方式，避免把数学相等误认为对象相等。",
+      "tags": [
+        "BigDecimal 与数值精度"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-arraylist-1",
+      "categoryId": "arraylist",
+      "sourceNodeId": "arraylist",
+      "question": "为什么多数业务优先选择 ArrayList？已知将写入十万条记录，你如何减少扩容？",
+      "answer": "【核心概述】\nArrayList 依赖连续数组，LinkedList 依赖双向链表。选型应结合访问方式、内存开销与实际测量。\n\n【面试要点】\n• ArrayList 按下标访问为 O(1)，中间插入需要搬移元素；LinkedList 查找位置为 O(n)，已定位节点的链接修改为 O(1)。\n• OpenJDK ArrayList 常见扩容约为原容量 1.5 倍，这是实现细节；复制数组有时间和内存成本。\n• LinkedList 插入快的前提是已经定位节点；普通遍历删除使用 Iterator.remove，fail-fast 不能作为线程安全保障。\n• 我先比较操作复杂度，再解释定位和搬移成本，最后通过预估容量与基准测试选择容器。",
+      "tags": [
+        "ArrayList 与 LinkedList",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-hashmap-1",
+      "categoryId": "hashmap",
+      "sourceNodeId": "hashmap",
+      "question": "容量为什么采用 2 的幂？扩容后一个节点的目标桶如何确定？",
+      "answer": "【核心概述】\nHashMap 按散列值定位桶，碰撞节点使用链表或树组织。它适合单线程或外部同步下的键值查询。\n\n【面试要点】\n• OpenJDK 8+ 的数组长度采用 2 的幂，桶索引为 (n - 1) & hash；扩容时根据新增的高位分成原位置和原位置 + oldCapacity。\n• 默认负载因子 0.75；树化阈值通常为 8，但表容量小于 64 时优先扩容，不能把链表长度达到 8 理解为必定树化。\n• 可变对象作 key 时不能改变影响 equals/hashCode 的字段；HashMap 允许 null，却不保证迭代顺序和并发安全。\n• 沿 put 流程说明定位、碰撞、树化和扩容，再强调实现版本与线程安全边界。",
+      "tags": [
+        "HashMap 原理与扩容",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-concurrenthashmap-1",
+      "categoryId": "concurrenthashmap",
+      "sourceNodeId": "concurrenthashmap",
+      "question": "并发统计每个商品的访问次数如何实现？为什么 get 正常而一组读改写仍丢更新？",
+      "answer": "【核心概述】\nConcurrentHashMap 提供并发键值操作，读取通常无需锁住整张表。单次操作的线程安全不等于一组操作具备事务性。\n\n【面试要点】\n• OpenJDK 8+ 使用 CAS、桶上的同步与转发节点等机制协调写入和扩容；不应套用 JDK 7 的 Segment 结构。\n• 不允许 null key/value；迭代器弱一致，聚合统计不能当作并发中的稳定快照。\n• containsKey 后 put 存在竞态，用 putIfAbsent、compute 或 merge；映射函数要短，避免递归更新及阻塞外部 IO。\n• 我区分单 key 原子操作与跨 key 一致性，结合 compute/merge 说明复合操作的正确写法。",
+      "tags": [
+        "ConcurrentHashMap",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-advanced-features-1",
+      "categoryId": "advanced-features",
+      "sourceNodeId": "advanced-features",
+      "question": "List<Integer> 为什么不能赋给 List<Number>？SPI 如何找到应用层实现？",
+      "answer": "【核心概述】\n泛型、反射、注解与 SPI 支撑类型约束和框架扩展。复习时区分编译期信息、运行时元数据和类加载边界。\n\n【面试要点】\n• 泛型擦除与桥方法、运行时注解、插件发现、类加载器对类型身份的影响。\n• 泛型签名可以保留在类文件中；现代 JDK 的模块约束可能限制反射访问。",
+      "tags": [
+        "高级特性与机制"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-generics-1",
+      "categoryId": "generics",
+      "sourceNodeId": "generics",
+      "question": "为什么 List<? extends Number> 不能直接 add(1)？如何设计把一个列表复制到另一个列表的签名？",
+      "answer": "【核心概述】\n泛型主要提供编译期类型约束，常见实现采用类型擦除。擦除不意味着类文件中完全没有泛型签名信息。\n\n【面试要点】\n• List<Integer> 不是 List<Number> 的子类型；? extends T 适合读取 T，? super T 适合写入 T，即 PECS。\n• 擦除通常替换为上界或 Object；编译器可能插入强制转换与桥方法，反射仍可读取部分声明的泛型信息。\n• 不能直接 new T 或使用基本类型作类型参数；raw type、可变参数与不安全强转可能导致堆污染。\n• 我用生产者和消费者解释通配符，再区分编译期类型安全与运行时擦除。",
+      "tags": [
+        "泛型、类型擦除与 PECS",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-reflection-spi-1",
+      "categoryId": "reflection-spi",
+      "sourceNodeId": "reflection-spi",
+      "question": "JDBC 驱动为何可以被框架发现？升级 JDK 后反射访问失败应先检查什么？",
+      "answer": "【核心概述】\n反射获取类型和成员信息，注解提供元数据，SPI 通过服务接口发现实现。它们是框架扩展能力的基础。\n\n【面试要点】\n• 反射调用仍受到访问控制和模块开放规则约束；RUNTIME 注解可在运行时读取，SPI 根据服务声明装载实现。\n• 类的身份由类名和定义它的类加载器共同确定；上下文类加载器可帮助框架发现应用侧插件。\n• 不要依赖 setAccessible 一定成功，也不要把反射一概描述为很慢；缓存元数据，并评估模块升级的兼容性。\n• 我分别说明元数据读取、服务发现和类加载边界，把机制与实际插件扩展场景联系起来。",
+      "tags": [
+        "反射、注解与 SPI"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java-io-1",
+      "categoryId": "java-io",
+      "sourceNodeId": "java-io",
+      "question": "为什么一次 read 不一定得到完整业务消息？flip 与 clear 有什么区别？",
+      "answer": "【核心概述】\nBIO、NIO、AIO 表达不同的 IO 接口与完成模型。NIO 不代表所有操作都非阻塞，也不代表代码自动异步。\n\n【面试要点】\n• BIO 常用阻塞流；NIO 的可选择通道可配置非阻塞并由 Selector 观察就绪；AIO 通过完成通知处理结果。\n• Buffer 的 capacity、position、limit；flip 切换为读取已写数据，clear 重置游标而不清空内存内容。\n• 读写可能只完成部分字节，协议需要处理分帧；直接内存仍有生命周期和容量上限，零拷贝也依赖具体路径。\n• 我先区分阻塞与异步，再解释 Buffer 状态和分帧，最后讨论选择器与线程模型。",
+      "tags": [
+        "BIO、NIO 与 AIO",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-new-features-1",
+      "categoryId": "new-features",
+      "sourceNodeId": "new-features",
+      "question": "如何解释团队使用 Java 17 而未立即升级？怎样判断一个新特性可以用于生产？",
+      "answer": "【核心概述】\n版本复习以正式交付的特性和项目迁移为主。长期支持、预览状态和发行商支持策略需要分别确认。\n\n【面试要点】\n• records 在 Java 16 正式交付，sealed classes 在 Java 17 正式交付；Java 17 的 switch 模式匹配仍是预览。\n• SecurityManager 在 Java 17 被标记弃用待移除，Java 24 永久禁用，不是 Java 17 已移除。\n• 正式特性与预览特性分开使用；升级同时验证框架、驱动、Agent、GC 参数和回滚能力。",
+      "tags": [
+        "版本特性与升级"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java8-stream-1",
+      "categoryId": "java8-stream",
+      "sourceNodeId": "java8-stream",
+      "question": "按部门统计员工数量和薪资总和；相同订单号出现多条记录时怎样定义 toMap 的合并规则？",
+      "answer": "【核心概述】\n这个节点关注 Stream 在业务中的分组与聚合应用；流水线原理与并行边界见核心类库中的 Stream 节点。\n\n【面试要点】\n• 先把业务数据转换成需要的表示，再选择收集器，避免在中间操作里修改共享状态。\n• toMap 遇到重复键时应定义合并规则；groupingBy 可组合 downstream collector 进行分类统计。\n• parallel 不保证更快；注意空值、装箱、排序成本和结果集合的可变性，不依赖不同收集方法具有相同契约。\n• 我从业务分组和聚合需求选择收集器，明确冲突与空值策略，再验证顺序和性能。",
+      "tags": [
+        "Stream 分组与聚合实战",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java17-1",
+      "categoryId": "java17",
+      "sourceNodeId": "java17",
+      "question": "record 为什么不等于深度不可变对象？旧项目升级后反射访问失败如何排查？",
+      "answer": "【核心概述】\nJava 17 的复习重点是密封类与升级后的强封装边界。它同时包含此前已交付的 records 和文本块等能力。\n\n【面试要点】\n• sealed 限制允许的子类集合；records 表达数据载体，但成员引用的对象不因此自动深度不可变。\n• 文本块在 Java 15、records 在 Java 16 正式交付；switch 模式匹配在 Java 17 是预览，Java 21 才正式交付。\n• SecurityManager 在 Java 17 弃用待移除；不能在面试中说它已经在 Java 17 移除。\n• 强封装可能影响依赖内部 API 的代码，先检查依赖版本与模块开放要求。",
+      "tags": [
+        "Java 17"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java21-1",
+      "categoryId": "java21",
+      "sourceNodeId": "java21",
+      "question": "虚拟线程适合什么工作负载？Java 21 的结构化并发可以不加预览参数使用吗？",
+      "answer": "【核心概述】\nJava 21 的复习重点是虚拟线程、记录模式、switch 模式匹配与顺序集合。需要区分正式特性和预览功能。\n\n【面试要点】\n• 虚拟线程、记录模式和 switch 模式匹配在 Java 21 正式交付；结构化并发与 Scoped Values 在该版本仍是预览。\n• 能说明模式匹配减少类型判断样板代码，以及 SequencedCollection 对首尾访问和反向视图的统一。\n• 预览功能需要对应的编译、运行参数，不能当作跨版本稳定 API；升级前检查驱动、字节码工具和框架兼容性。\n• 我挑选实际使用过的正式特性说明价值，明确预览状态，并给出测试和回滚计划。",
+      "tags": [
+        "Java 21"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-virtual-threads-1",
+      "categoryId": "virtual-threads",
+      "sourceNodeId": "virtual-threads",
+      "question": "把线程池换为虚拟线程后数据库为什么仍可能被打满？如何做并发准入与超时控制？",
+      "answer": "【核心概述】\n虚拟线程由 JVM 调度，适合存在大量等待的阻塞 IO 任务。它提高可扩展性，不会增加 CPU 核心或加速单个计算任务。\n\n【面试要点】\n• 阻塞等待时虚拟线程通常可以卸载，释放载体线程运行其他任务；一般采用每任务一个虚拟线程，而不是池化复用。\n• Java 21 正式提供虚拟线程；JDK 24 的 JEP 491 解决 synchronized 相关的主要 pinning 问题，不能把 Java 21 的限制机械套用到后续版本。\n• 数据库连接池和下游并发仍需要限制；检查 native 调用和上下文对象成本，CPU 密集任务仍需控制并行度。\n• 我将线程数量与下游容量分开，先评估 IO 等待比例，再通过限流、监控和压测验证收益。",
+      "tags": [
+        "虚拟线程与适用边界",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-java25-1",
+      "categoryId": "java25",
+      "sourceNodeId": "java25",
+      "question": "从 Java 17 升级到 Java 25，你会建立哪些兼容性与性能检查项？",
+      "answer": "【核心概述】\nJava 25 可作为长期支持版本的升级评估目标，具体支持周期由发行商决定。升级应关注兼容性和业务收益。\n\n【面试要点】\n• Scoped Values 在 Java 25 成为正式特性；结构化并发在该版本仍是预览，不能混淆两个功能的成熟度。\n• Scoped Values 为有作用域的只读上下文传递提供机制，不是 ThreadLocal 全部使用场景的直接替代。\n• 检查反射访问、移除的选项、构建插件和监控 Agent；保持同等负载对照，不凭单次吞吐变化决定升级。\n• 我从发行商支持、依赖兼容、功能价值和回滚能力四方面评估，而不是仅列举版本特性。",
+      "tags": [
+        "Java 25 与升级评估"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-multithreading-1",
+      "categoryId": "multithreading",
+      "sourceNodeId": "multithreading",
+      "question": "volatile、原子类和锁怎样选择？线程池队列满时应如何保护下游？",
+      "answer": "【核心概述】\nJava 并发编程的核心模块，覆盖线程模型、内存模型、锁机制与并发工具类，是 Java 面试最高频考点。\n\n【面试要点】\n• 先讲并发三大特性，再按\"锁 → 同步器 → 容器 → 线程池\"主线展开，最后结合项目中的线程池和并发容器实践",
+      "tags": [
+        "多线程",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-jmm-1",
+      "categoryId": "jmm",
+      "sourceNodeId": "jmm",
+      "question": "一个线程写普通布尔字段，另一个线程循环 sleep 读取，为什么可能一直看不到更新？",
+      "answer": "【核心概述】\nJava 内存模型规定共享变量访问与同步的可见性规则。它是语言规范中的抽象，不等同于 JVM 的堆栈划分。\n\n【面试要点】\n• happens-before 关系建立时，前面的写入结果对后续相关操作可见；没有同步关系时不能靠时间先后推断可见性。\n• 程序顺序、同一监视器解锁到后续加锁、volatile 写到后续读、线程 start/join 与传递性。\n• 共享字段与局部变量不能混为一谈；sleep 没有同步语义，final 的构造语义也不代表对象全部状态永远线程安全。\n• 我以共享字段和 happens-before 解释可见性，再用安全发布或锁建立明确的同步关系。",
+      "tags": [
+        "Java 内存模型（JMM）",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-volatile-1",
+      "categoryId": "volatile",
+      "sourceNodeId": "volatile",
+      "question": "一个 volatile 引用指向普通 ArrayList，列表操作是否因此线程安全？",
+      "answer": "【核心概述】\nvolatile 建立特定的可见性与顺序约束，但不能把一组读改写变成原子操作。选择它需要分析状态更新的完整过程。\n\n【面试要点】\n• 对 volatile 字段的写与后续相关读建立同步关系，使写之前的操作结果按内存模型规则可见。\n• i++ 涉及读、计算和写，多线程仍可丢失更新；DCL 单例需要 volatile 配合正确构造与发布。\n• 硬件实现因平台而异，不能说所有 volatile 都依靠同一条 lock 指令；也不能概括为仅适用于单写多读。\n• 我先解释发布和可见性，再分析有没有复合更新与对象内部可变状态，决定是否需要原子类或锁。",
+      "tags": [
+        "volatile 与内存可见性",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-synchronized-1",
+      "categoryId": "synchronized",
+      "sourceNodeId": "synchronized",
+      "question": "两个 synchronized 实例方法为何不一定互斥？notify 后等待线程为何不能立刻继续？",
+      "answer": "【核心概述】\nsynchronized 提供可重入互斥与监视器同步语义。对象头、轻量级路径等实现随 HotSpot 版本演进。\n\n【面试要点】\n• 实例方法锁 this，静态方法锁对应 Class 对象，代码块锁指定对象；同一监视器解锁与后续加锁建立同步关系。\n• wait 释放持有的监视器并进入等待，notify 不会立即释放锁，被通知线程仍需重新竞争。\n• JDK 15 起默认禁用偏向锁；旧版的偏向/轻量/重量锁路线不应被当成现代 JDK 必然发生的固定过程。\n• 可重入不会阻止多个锁形成死锁；wait 放入条件循环，避免锁可变引用、公共字符串或范围过大的对象。\n• 我先确定是否锁同一个对象，再说明监视器和条件等待，最后标明实现细节所对应的 JDK 版本。",
+      "tags": [
+        "synchronized 与对象监视器",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-aqs-shared-1",
+      "categoryId": "aqs-shared",
+      "sourceNodeId": "aqs-shared",
+      "question": "Semaphore 与 CountDownLatch 的 state 为什么含义不同？",
+      "answer": "【核心概述】\nAQS 共享模式通过 state 允许多个线程同时获取，Semaphore 与 CountDownLatch 是典型实现。\n\n【面试要点】\n• 释放许可放在成功获取后的 finally 路径，避免误释放或许可泄漏。\n• 讲共享模式 state 语义，分别说明 Semaphore 和 CountDownLatch 的 acquire/release 流程",
+      "tags": [
+        "Semaphore 与 CountDownLatch",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-thread-pool-1",
+      "categoryId": "thread-pool",
+      "sourceNodeId": "thread-pool",
+      "question": "core=2、max=4、队列容量=2 时，持续提交阻塞任务如何分配？任务异常怎样被观察？",
+      "answer": "【核心概述】\nThreadPoolExecutor 通过线程、队列与拒绝策略承接任务。参数必须围绕吞吐、响应时间和资源上限设计。\n\n【面试要点】\n• 通常先创建核心线程，再入队；队列拒绝入队时才尝试扩到 maximumPoolSize，仍无法接收则触发拒绝策略。\n• 七个参数包含 corePoolSize、maximumPoolSize、keepAliveTime、unit、workQueue、threadFactory 和 handler。\n• 无界队列通常使最大线程数难以发挥作用且可能积压内存；CallerRunsPolicy 会把工作转移到提交线程，可能拖慢请求入口。\n• 我按核心线程、队列、最大线程和拒绝四步解释提交，再说明监控、异常处理与优雅关闭。",
+      "tags": [
+        "线程池参数与执行流程",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-thread-pool-tuning-1",
+      "categoryId": "thread-pool-tuning",
+      "sourceNodeId": "thread-pool-tuning",
+      "question": "队列持续增长但 CPU 很低如何排查？线程数调大后吞吐反而下降可能是什么原因？",
+      "answer": "【核心概述】\n线程池容量取决于任务耗时、等待比例和下游能力。经验公式只能提供初始估计，最终需要负载测试。\n\n【面试要点】\n• CPU 密集任务受核心数量约束；IO 密集任务可容纳更多线程，但连接池、限额和延迟预算形成额外上限。\n• 观察活跃线程、队列长度、任务等待与执行耗时、拒绝次数；结合到达率和平均耗时估算在途任务。\n• 同一池中的任务提交子任务后同步等待，可能发生线程饥饿死锁；不同下游和工作负载应考虑隔离。\n• 我先区分 CPU 忙和等待忙，再查队列及下游容量，通过有界队列、隔离和背压控制尾延迟。",
+      "tags": [
+        "线程池容量与故障排查",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-futuretask-1",
+      "categoryId": "futuretask",
+      "sourceNodeId": "futuretask",
+      "question": "使用 submit 后任务异常如何观察？allOf 后某个子任务失败时如何处理？",
+      "answer": "【核心概述】\nFutureTask 包装 Callable/Runnable 实现异步结果获取，CompletableFuture 提供更强大的异步编排能力。\n\n【面试要点】\n• 超时完成或 CompletableFuture.cancel 不代表所有底层业务必然停止；显式传入合适执行器并设计下游超时。\n• 对比 Runnable/Callable/Future，说 FutureTask 状态机，重点讲 CompletableFuture 的 thenApply/thenCombine/exceptionally",
+      "tags": [
+        "Future 与异步编排",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-concurrency-deadlock-1",
+      "categoryId": "concurrency-deadlock",
+      "sourceNodeId": "concurrency-deadlock",
+      "question": "两个转账线程分别先锁 A 再锁 B、先锁 B 再锁 A，如何改造并验证？",
+      "answer": "【核心概述】\n死锁是线程因互相等待资源而无法推进；中断是协作式取消信号。可重入并不能避免所有死锁。\n\n【面试要点】\n• 互斥、占有并等待、不可抢占和循环等待共同构成经典死锁条件；统一获取顺序可以破坏循环等待。\n• synchronized 获取锁不能被中断；ReentrantLock 支持 lockInterruptibly 和带超时的 tryLock。\n• wait/await 放在条件循环中防虚假唤醒；锁在 finally 中释放，捕获中断后遵循任务取消约定。\n• 我先复现等待环，再用线程转储确认，最后通过锁顺序、缩短临界区和超时设计消除风险。",
+      "tags": [
+        "死锁、中断与并发协作",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-jvm-memory-1",
+      "categoryId": "jvm-memory",
+      "sourceNodeId": "jvm-memory",
+      "question": "元空间位于堆外，为什么增加 Xmx 不一定解决 Metaspace OOM？",
+      "answer": "【核心概述】\n运行时数据区分为线程共享的堆与方法区，线程私有的虚拟机栈、本地方法栈与程序计数器。\n\n【面试要点】\n• 画内存分区图，区分线程共享/私有，说明各区域 OOM 场景（栈溢出 StackOverflowError 等）",
+      "tags": [
+        "JVM内存划分",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-classloader-1",
+      "categoryId": "classloader",
+      "sourceNodeId": "classloader",
+      "question": "同名类被两个不同加载器定义，为什么可能出现无法转换类型？",
+      "answer": "【核心概述】\n类加载子系统负责将字节码加载到 JVM，包含加载、连接、初始化等阶段与双亲委派机制。\n\n【面试要点】\n• 按加载→验证→准备→解析→初始化顺序讲，重点区分准备阶段默认值与初始化阶段赋值",
+      "tags": [
+        "类加载子系统",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-classloader-process-1",
+      "categoryId": "classloader-process",
+      "sourceNodeId": "classloader-process",
+      "question": "子类引用父类的静态字段时，到底初始化哪一个类？",
+      "answer": "【核心概述】\n类加载过程是类从字节码到可执行 Class 对象的完整生命周期，初始化时机由主动引用触发。\n\n【面试要点】\n• 先答五阶段，再用 static 变量例子区分准备/初始化，最后答主动 vs 被动引用",
+      "tags": [
+        "类加载过程",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-classloader-parents-1",
+      "categoryId": "classloader-parents",
+      "sourceNodeId": "classloader-parents",
+      "question": "为什么类名相同仍不一定是同一个类型？",
+      "answer": "【核心概述】\n双亲委派机制保证类加载的唯一性与安全性，自底向上委派、自顶向下加载。\n\n【面试要点】\n• JDK 8 常见 Bootstrap/Ext/App；JDK 9+ 引入模块与 PlatformClassLoader，rt.jar 与扩展目录模型不能直接套用。\n• 双亲委派是常见加载器实现策略，应结合具体加载器和模块规则分析，不把它当作全部加载器必须遵守的语言规则。\n• 画委派流程图，讲 3 个加载器职责，重点说 JDBC SPI 为什么破坏双亲委派",
+      "tags": [
+        "双亲委派机制",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-jit-1",
+      "categoryId": "jit",
+      "sourceNodeId": "jit",
+      "question": "为什么不能从源码中一个 new 判断最终是否存在对应堆对象？",
+      "answer": "【核心概述】\nJIT 即时编译将热点代码编译为本地机器码，结合分层编译与逃逸分析提升执行性能。\n\n【面试要点】\n• 先通过 JFR、编译日志或基准测试验证热点，避免以微基准推断全部业务场景。\n• 讲解释器 vs JIT 取舍，热点检测与分层编译，提逃逸分析三种优化",
+      "tags": [
+        "JIT即时编译原理",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-gc-1",
+      "categoryId": "gc",
+      "sourceNodeId": "gc",
+      "question": "服务延迟变高但没有 Full GC，可能与哪些分配、年轻代或并发周期指标有关？",
+      "answer": "【核心概述】\n垃圾回收子系统自动管理堆内存，核心是对象存活判定、回收算法与收集器选择。\n\n【面试要点】\n• CMS/ParNew 主要用于旧版知识对比，CMS 在 JDK 14 移除；现代复习重点是 Parallel、G1 与适用版本的 ZGC。\n• 先答存活判定，再答三种基础算法优缺点，最后按收集器组合讲并提 G1 与 STW",
+      "tags": [
+        "垃圾回收子系统",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-gc-algorithms-1",
+      "categoryId": "gc-algorithms",
+      "sourceNodeId": "gc-algorithms",
+      "question": "为什么一个存在大量长寿命对象的系统，不能仅靠放大新生代解决停顿？",
+      "answer": "【核心概述】\n三种基础回收算法各有优劣，分代收集是 HotSpot 的实践组合，G1/ZGC 引入分区与并发回收。\n\n【面试要点】\n• 讲三种算法优缺点对比表，说明为何新生代用复制老年代用整理，最后提 G1 Region 与停顿模型",
+      "tags": [
+        "垃圾回收算法",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-gc-collectors-1",
+      "categoryId": "gc-collectors",
+      "sourceNodeId": "gc-collectors",
+      "question": "为延迟敏感服务选择 G1 或 ZGC，你需要采集什么数据？",
+      "answer": "【核心概述】\n收集器选型是在吞吐、停顿与内存开销之间权衡。需要先注明目标 JDK 和业务指标。\n\n【面试要点】\n• Parallel 侧重吞吐，G1 使用 Region 与回收收益选择，ZGC 通过并发机制降低停顿；各自仍有资源与暂停成本。\n• CMS 在 JDK 14 移除；不同版本的 ZGC 分代实现和可用开关需要查目标版本文档。\n• G1 的停顿目标是目标值而非硬性实时保证；混合回收与 Full GC 的触发和成本应区分。\n• 不能只凭堆大小或一句低延迟决定收集器；在相同负载下比较尾延迟、CPU、占用与分配表现。\n• 我先明确服务目标和 JDK 版本，再比较吞吐、停顿与内存代价，用压测验证选择。",
+      "tags": [
+        "垃圾回收器",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-oom-1",
+      "categoryId": "oom",
+      "sourceNodeId": "oom",
+      "question": "堆占用低而容器被杀，如何排查？内存泄漏与业务缓存增长怎样区别？",
+      "answer": "【核心概述】\nOOM 需要按实际报错区域和进程资源约束定位。StackOverflowError、Java 内存不足与容器 OOM kill 不能混为一谈。\n\n【面试要点】\n• heap space、Metaspace、Direct buffer memory 等错误指向不同容量与生命周期；无法创建 native thread 还可能涉及系统限制。\n• 区分正常业务容量增长与泄漏；分析存活对象、保留大小及 GC Roots，而不是只看对象数量。\n• 优先使用目标 JDK 支持的 jcmd 子命令和监控；增大 Xmx 可能挤压本地内存，转储还需评估暂停与磁盘成本。\n• 我先定位报错及资源边界，再用指标与转储寻找保留路径，验证容量或生命周期修复。",
+      "tags": [
+        "内存溢出",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-references-1",
+      "categoryId": "references",
+      "sourceNodeId": "references",
+      "question": "ThreadLocal 的 key 是弱引用，为什么 value 仍可能造成内存泄漏？",
+      "answer": "【核心概述】\n强、软、弱、虚引用影响对象可达性与引用处理。回收和通知发生时机不能当作业务确定性保证。\n\n【面试要点】\n• 对象只有仍被强引用链从 GC Roots 可达时才不会因不可达而回收；拥有过强引用不意味着永远不回收。\n• 软引用可在内存压力下清除，弱引用在对象仅弱可达时可被清除；虚引用的 get 返回 null，需配合队列处理。\n• GC 不一定扫描或处理你关心的对象，不能保证下一次任意 GC 就清除弱引用；队列通知不是外部资源已释放的证明。\n• 我以可达性层次解释引用处理，再强调资源应显式关闭，不能靠 GC 时机保证业务逻辑。",
+      "tags": [
+        "强弱虚引用",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-jvm-troubleshooting-1",
+      "categoryId": "jvm-troubleshooting",
+      "sourceNodeId": "jvm-troubleshooting",
+      "question": "接口变慢、CPU 低、线程大量 WAITING，你如何建立排查顺序？",
+      "answer": "【核心概述】\nJVM 排障需要把症状、线程、内存与运行事件联系起来。先采集证据，再调整参数或代码。\n\n【面试要点】\n• jcmd 可查询 VM 信息、采集线程转储及启动 JFR；GC 日志、分配热点和对象保留路径对应不同问题。\n• 高 CPU 先定位热点线程和调用栈；长停顿查看 GC 与锁；内存持续增长分析存活对象和 GC Roots 路径。\n• 命令能力随 JDK 版本不同，应使用 jcmd <pid> help；堆转储可能暂停服务并占用大量磁盘，生产采集需评估影响。\n• 我以指标确定问题类型，再采样线程和事件，利用可复现证据验证根因与修复效果。",
+      "tags": [
+        "JFR、线程转储与 JVM 排障",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mysql-explain-1",
+      "categoryId": "mysql-explain",
+      "sourceNodeId": "mysql-explain",
+      "question": "给定 WHERE user_id=? AND status=? ORDER BY created_at DESC LIMIT 20，你如何设计并验证索引？",
+      "answer": "【核心概述】\nSQL 优化应先找到实际瓶颈，再调整索引和查询结构。执行计划的估算需要与运行结果对照。\n\n【面试要点】\n• 关注访问类型、候选/选用索引、估算行数与过滤率；EXPLAIN ANALYZE 会执行查询并给出实际执行信息。\n• 联合索引的左前缀、覆盖索引、排序与分页；范围条件后的列可能无法继续缩小扫描范围，但仍可能被用于过滤。\n• 不要只看是否使用索引；函数、隐式转换、低选择性和返回大量行都可能使成本偏高，计划随数据分布变化。\n• 我对照扫描行数、回表、排序和实际耗时，一次改变一个因素，再验证写入成本与收益。",
+      "tags": [
+        "EXPLAIN 与慢 SQL 优化",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mysql-isolation-1",
+      "categoryId": "mysql-isolation",
+      "sourceNodeId": "mysql-isolation",
+      "question": "分别用两个事务执行普通 SELECT 和 SELECT FOR UPDATE，另一个事务插入范围内记录时会发生什么？",
+      "answer": "【核心概述】\nInnoDB 默认 REPEATABLE READ，需要结合一致性读和锁定读解释隔离。不能把 SQL 标准的隔离表直接当作所有实现的行为。\n\n【面试要点】\n• RC 的一致性读可使用新快照，RR 通常复用首次一致性读的快照；事务读取自己的修改另有可见性规则。\n• RR 下范围锁定通常使用 next-key locking；唯一索引精确查找等情况可能仅锁记录，需看语句和索引。\n• 混合快照读、锁定读与写操作会得到不同时间点的视图，不能笼统宣称 RR 的当前读总有幻读或全部读法完全相同。\n• 我先说明读类型和快照创建时机，再给出索引及锁范围，用具体时间线回答并发结果。",
+      "tags": [
+        "隔离级别（脏读/不可重复读/幻读）",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mysql-mvcc-1",
+      "categoryId": "mysql-mvcc",
+      "sourceNodeId": "mysql-mvcc",
+      "question": "两个事务在 RC 与 RR 下重复读取同一行会看到什么？为什么长事务让 undo 空间增长？",
+      "answer": "【核心概述】\nInnoDB MVCC 通过版本信息与 undo 链为一致性读选择可见记录。ReadView 的创建时机受隔离级别影响。\n\n【面试要点】\n• ReadView 记录创建时的活跃事务及可见边界；不可见的最新版本沿 undo 链寻找可见历史版本。\n• READ COMMITTED 的一致性读使用新快照，REPEATABLE READ 通常复用事务内首次一致性读建立的快照；读自己的修改另有规则。\n• SELECT FOR UPDATE 和写操作走锁定/当前读语义，不能按旧快照理解；长事务可能阻碍历史版本清理。\n• 我用两条事务时间线说明快照创建与版本可见性，再区分一致性读和锁定读。",
+      "tags": [
+        "MVCC 与 ReadView",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mysql-lock-1",
+      "categoryId": "mysql-lock",
+      "sourceNodeId": "mysql-lock",
+      "question": "没有索引的 UPDATE 为什么影响大量并发请求？死锁重试时要重试哪一段业务？",
+      "answer": "【核心概述】\nInnoDB 锁分全局锁、表级锁、行级锁三类，行锁基于索引实现，是并发控制的关键。\n\n【面试要点】\n• 按全局→表级→行级分类讲，强调行锁基于索引，最后答死锁成因与 innodb_lock_wait_timeout",
+      "tags": [
+        "锁",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mysql-log-1",
+      "categoryId": "mysql-log",
+      "sourceNodeId": "mysql-log",
+      "question": "数据库确认提交后数据是否绝不丢失，依赖哪些刷盘和复制配置？",
+      "answer": "【核心概述】\nMySQL 三大日志各司其职：undo log 保原子性、redo log 保持久性、binlog 做复制与恢复。\n\n【面试要点】\n• 结合 innodb_flush_log_at_trx_commit、sync_binlog 与故障模型解释持久性，区分本地恢复与异步副本故障转移。\n• 三日志各一句定位（回滚/崩溃恢复/复制），重点讲 WAL 与两阶段提交，最后说刷盘参数",
+      "tags": [
+        "日志（undo/redo/binlog）",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-1",
+      "categoryId": "redis",
+      "sourceNodeId": "redis",
+      "question": "Redis 命令仍主要由主线程执行，为什么 IO 线程可能改善吞吐？",
+      "answer": "【核心概述】\nRedis 是内存键值数据库，单线程 + IO 多路复用 + 高效数据结构造就高性能，面试聚焦数据类型与可靠性。\n\n【面试要点】\n• 慢命令、大 Key、fork 和事件循环阻塞都需观察；不要把内存数据库误认为任何操作都很快。\n• 先答高性能三原因，再答数据类型应用场景，最后讲持久化与高可用架构",
+      "tags": [
+        "非关系数据库 Redis",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-types-1",
+      "categoryId": "redis-types",
+      "sourceNodeId": "redis-types",
+      "question": "业务任务超过锁租约时，仅依赖 Redis 锁为什么可能出现并发执行？",
+      "answer": "【核心概述】\nRedis 数据类型各有典型场景，String 缓存计数、Zset 排行榜、HyperLogLog 去重统计等是高频应用题。\n\n【面试要点】\n• 按类型讲结构特点 + 经典场景 + 复杂度（如 Zset 跳表 O(logN)），尽量举业务例子",
+      "tags": [
+        "数据类型和应用场景",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-datastruct-1",
+      "categoryId": "redis-datastruct",
+      "sourceNodeId": "redis-datastruct",
+      "question": "相同 Redis 数据类型为什么可能采用不同编码？",
+      "answer": "【核心概述】\nRedis 底层数据结构决定性能：SDS、压缩列表、跳表、quicklist、listpack 等适配不同数据规模。\n\n【面试要点】\n• 逻辑数据类型、内存编码与命令复杂度是三个层次，阈值可能随版本或配置变化。\n• 按数据类型逐一对应底层结构，讲清\"小数据用紧凑编码，大数据转高级结构\"的转换阈值",
+      "tags": [
+        "数据结构",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-arch-1",
+      "categoryId": "redis-arch",
+      "sourceNodeId": "redis-arch",
+      "question": "为什么故障切换后分布式锁可能消失？Cluster 的多个 key 操作如何落入同一槽？",
+      "answer": "【核心概述】\nRedis 主从、Sentinel 与 Cluster 分别侧重复制、故障转移和分片。高可用不能被解释为所有故障下都零数据丢失。\n\n【面试要点】\n• 复制通常异步；Sentinel 协调监控与主从切换，Cluster 使用槽进行分片并维护节点故障转移。\n• 全量与增量同步、复制 backlog、客户端重定向；跨槽多 key 操作需要了解命令与 hash tag 约束。\n• 已确认写可能在副本尚未接收时丢失；WAIT 等机制改善确认范围，也不能直接将 Redis 变为完整强一致事务系统。\n• 我把持久化、复制确认与故障转移分别说明，按业务容忍的丢失窗口选择架构。",
+      "tags": [
+        "Redis架构（单实例/高可用/集群）",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-persistence-1",
+      "categoryId": "redis-persistence",
+      "sourceNodeId": "redis-persistence",
+      "question": "开启 AOF everysec 后，断电和主从切换分别还可能丢失什么数据？",
+      "answer": "【核心概述】\nRedis 持久化两大机制 RDB（快照）与 AOF（追加日志），各有取舍，生产常二者结合。\n\n【面试要点】\n• 持久化保护本地恢复，异步复制保护的范围不同；压测时关注 fork 时长、COW 内存与磁盘延迟。\n• 对比两者机制与取舍，答触发时机和 COW，重点说 4.0 混合持久化与大 Key 影响",
+      "tags": [
+        "持久化（RDB/AOF）",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-cache-1",
+      "categoryId": "redis-cache",
+      "sourceNodeId": "redis-cache",
+      "question": "数据库更新成功但缓存删除失败怎么办？热点 Key 过期时如何避免请求全部打到数据库？",
+      "answer": "【核心概述】\n缓存用于降低读取成本，但数据库与缓存不属于同一本地事务。方案需要说明允许的不一致窗口和补偿措施。\n\n【面试要点】\n• Cache Aside 常用先提交数据库再删除缓存；删除失败、并发读写与复制延迟仍可能造成短期不一致。\n• 穿透可用空值缓存或布隆过滤器；击穿可用互斥重建或逻辑过期；雪崩需分散过期、限流和故障兜底。\n• 延迟双删不是严格一致性的证明；失效通知需可靠重试或变更订阅，强一致读取应评估绕过缓存。\n• 我先明确一致性目标，再讲更新顺序和故障窗口，配合重试、TTL、监控与降级保障可恢复。",
+      "tags": [
+        "缓存一致性与缓存故障",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-redis-eviction-1",
+      "categoryId": "redis-eviction",
+      "sourceNodeId": "redis-eviction",
+      "question": "缓存所有键都有 TTL，仍为什么会写入失败？如何定位一个 Key 集中的高流量？",
+      "answer": "【核心概述】\n过期策略处理 TTL 到期的数据，内存淘汰处理达到 maxmemory 的压力。两者解决的问题不同。\n\n【面试要点】\n• 过期通过访问检查与主动采样共同清理；淘汰策略包括面向全部键或带 TTL 键的 LRU/LFU，以及 noeviction。\n• Redis 的 LRU/LFU 通常采用近似策略；noeviction 不代表系统没有失败，而是可能拒绝需要新增内存的写入。\n• 热点 Key 主要造成访问集中，大 Key 主要涉及体积和操作成本，不能混为一谈；本地副本需考虑失效与版本。\n• 我区分时间回收、容量淘汰和访问热点，再根据监控与业务容忍度选择策略。",
+      "tags": [
+        "过期、淘汰与热点 Key",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-spring-1",
+      "categoryId": "spring",
+      "sourceNodeId": "spring",
+      "question": "为什么手动 new 的 Service 上 @Transactional 可能不起作用？单例 Bean 如何安全处理请求状态？",
+      "answer": "【核心概述】\nSpring 核心是对象容器、依赖注入和基础设施抽象。复习应先理解 Bean 与代理，再理解事务和 Web 请求。\n\n【面试要点】\n• 容器根据 Bean 定义创建对象、解析依赖并运行扩展回调；代理可以在方法调用边界织入基础设施行为。\n• 容器管理对象与手动 new 的区别；singleton 表示容器内单例，并不自动保证对象线程安全。\n• 不要把 Spring Boot 自动配置、Spring IoC 和 Spring Cloud 治理混为一体；构造器注入更便于表达必需依赖。\n• 我先建立容器和代理两个边界，再把生命周期、事务和 MVC 放回各自的职责。",
+      "tags": [
+        "Spring 核心机制",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-spring-bean-1",
+      "categoryId": "spring-bean",
+      "sourceNodeId": "spring-bean",
+      "question": "A 与 B 构造器相互依赖为何失败？早期引用与最终代理不一致会造成什么问题？",
+      "answer": "【核心概述】\nBean 生命周期包含实例化、依赖填充、初始化扩展与销毁。循环依赖的处理取决于注入形式、作用域和配置。\n\n【面试要点】\n• BeanPostProcessor 可在初始化前后扩展对象；Aware、初始化回调与销毁回调各有适用时机。\n• 常说的三级缓存针对特定单例的早期引用场景，不能解决构造器循环依赖、全部代理问题或 prototype 循环依赖。\n• 不要以允许循环依赖代替设计改进；优先拆职责或引入事件，确认目标 Boot 版本的相关默认配置。\n• 我按生命周期定位扩展点，并说明循环依赖解决机制的前提和边界。",
+      "tags": [
+        "IoC、Bean 生命周期与循环依赖",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-spring-aop-1",
+      "categoryId": "spring-aop",
+      "sourceNodeId": "spring-aop",
+      "question": "同一个类的方法内部调用另一个带切面的方法，为什么日志没有出现？如何调整职责边界？",
+      "answer": "【核心概述】\nSpring AOP 通常基于代理拦截方法调用。它适合事务、监控等横切逻辑，但代理存在明确的调用边界。\n\n【面试要点】\n• JDK 动态代理基于接口，CGLIB 基于子类；Around 通知通过调用链决定是否及何时继续执行。\n• 目标对象内部通过 this 调用另一个方法，通常绕过代理；final/private 方法和类对代理能力有约束。\n• 不要仅按是否有接口推断整个 Spring Boot 应用的最终代理类型，需要结合配置；不要吞掉通知中的异常。\n• 我用调用方、代理和目标对象三者说明拦截路径，再解释自调用与方法可代理性。",
+      "tags": [
+        "AOP 与代理机制",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-spring-transaction-1",
+      "categoryId": "spring-transaction",
+      "sourceNodeId": "spring-transaction",
+      "question": "捕获异常后不抛出为什么没有回滚？内层 REQUIRED 标记 rollback-only 后外层提交会怎样？",
+      "answer": "【核心概述】\n声明式事务由事务拦截器和事务管理器协调资源。注解能否生效取决于调用路径与配置。\n\n【面试要点】\n• REQUIRED 通常加入现有事务，REQUIRES_NEW 使用独立事务，NESTED 依赖事务管理器对保存点等机制的支持。\n• 默认通常对 RuntimeException 和 Error 回滚，受检异常需明确规则，实际配置也可改变默认；只读属性不是通用的禁止写入机制。\n• 自调用、吞掉异常、切换线程和错误的事务管理器都可能使行为不符预期；REQUIRES_NEW 还要考虑连接池容量。\n• 我沿代理调用和资源绑定定位事务，再分别验证传播、异常类型和线程边界。",
+      "tags": [
+        "事务传播与失效场景",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-spring-mvc-1",
+      "categoryId": "spring-mvc",
+      "sourceNodeId": "spring-mvc",
+      "question": "一个 JSON 请求如何变为 DTO 再变成响应？过滤器、拦截器和切面分别适合什么任务？",
+      "answer": "【核心概述】\nSpring MVC 通过 DispatcherServlet 协调请求分发、参数绑定和结果处理。异常与验证应在统一边界转换为响应。\n\n【面试要点】\n• DispatcherServlet 找到处理器并通过适配器调用；返回值由视图解析或 HttpMessageConverter 等机制处理。\n• Filter 位于 Servlet 层，Interceptor 围绕处理器执行，AOP 作用于代理方法；@RequestBody 与参数绑定的用途不同。\n• 统一异常处理不能替代身份与资源授权；校验输入、限制上传大小，避免日志记录密码和敏感请求体。\n• 我从请求进入到响应序列化讲完整链路，再说明验证、异常和安全边界所在的位置。",
+      "tags": [
+        "Spring MVC 请求处理",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-springboot-1",
+      "categoryId": "springboot",
+      "sourceNodeId": "springboot",
+      "question": "同一个自动配置为什么在两个项目中一个生效一个不生效？",
+      "answer": "【核心概述】\nSpringBoot 通过自动配置、起步依赖与内嵌容器简化 Spring 开发，启动原理是核心面试题。\n\n【面试要点】\n• Boot 2.7 引入 AutoConfiguration.imports，Boot 3+ 自动配置类注册使用 META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports；spring.factories 仍可能用于其他扩展。\n• 检查条件评估报告、依赖和已有 Bean，区分组件扫描、自动配置导入与配置绑定。\n• 讲启动流程六步 + 自动配置条件装配，举例说明如何自定义 starter 或覆盖自动配置",
+      "tags": [
+        "Spring Boot 自动配置",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mybatis-cache-1",
+      "categoryId": "mybatis-cache",
+      "sourceNodeId": "mybatis-cache",
+      "question": "两个接口使用相同 Mapper 为什么没有命中一级缓存？关联查询为何可能在更新后返回旧值？",
+      "answer": "【核心概述】\nMyBatis 缓存用于避免重复查询，但一致性依赖会话与映射配置。它不能直接代替业务缓存设计。\n\n【面试要点】\n• 默认本地缓存与 SqlSession 相关，STATEMENT 作用域可缩小范围；二级缓存需按映射启用并关注事务提交和失效配置。\n• MyBatis-Spring 管理的 SqlSession 生命周期与事务关联，不能简单认为同一个 Mapper 永远复用同一缓存。\n• 跨 namespace 更新、外部写入及关联查询可能导致缓存陈旧；嵌套查询的 N+1 问题可用批量查询或 join 改造。\n• 我先确认会话和事务范围，再检查缓存配置与失效路径，最后评估查询批量化。",
+      "tags": [
+        "MyBatis 缓存与批量查询"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-springcloud-1",
+      "categoryId": "springcloud",
+      "sourceNodeId": "springcloud",
+      "question": "如何根据 Boot 版本选择匹配的 Cloud release train？",
+      "answer": "【核心概述】\nSpringCloud 是微服务全家桶，注册发现、网关、熔断、配置、链路追踪组成完整微服务生态。\n\n【面试要点】\n• 旧项目常见 Sleuth；现代 Boot 3+ 路径关注 Micrometer Observation/Tracing 及具体桥接实现，不机械照搬旧组件列表。\n• 核对版本兼容矩阵，并按注册、调用、网关、容错和观测分别定位故障。\n• 画微服务架构图（网关→服务→注册中心→配置中心→监控），讲透 1-2 个核心组件的原理",
+      "tags": [
+        "Spring Cloud 服务治理",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-middleware-1",
+      "categoryId": "middleware",
+      "sourceNodeId": "middleware",
+      "question": "订单事件要求按订单有序和可重试处理，你会比较哪些能力与故障窗口？",
+      "answer": "【核心概述】\n消息系统选型应根据吞吐、延迟、顺序、路由和可靠性需求判断。产品能力还需要注明版本及配置。\n\n【面试要点】\n• 先比较分区/队列模型、消费模式与故障恢复，再结合真实工作负载验证吞吐。\n• 不以万亿级等口号代替容量指标；可靠性来自确认、持久化、复制及消费幂等的整体设计。",
+      "tags": [
+        "中间件"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mq-reliability-1",
+      "categoryId": "mq-reliability",
+      "sourceNodeId": "mq-reliability",
+      "question": "数据库提交成功但发送失败怎么办？消费更新数据库后、确认之前宕机会发生什么？",
+      "answer": "【核心概述】\n消息可靠性需要覆盖生产、Broker 持久化与消费确认三个阶段。至少一次投递通常意味着消费者必须幂等。\n\n【面试要点】\n• 生产确认不等于消费完成；消费前确认可能丢业务处理，处理后确认则可能因崩溃而重复处理。\n• 至多一次、至少一次与恰好一次的作用范围；消息系统事务不会自动让外部数据库或第三方接口获得恰好一次效果。\n• 本地数据库更新与发送消息需要可靠衔接，可评估 Outbox 或事务消息；设置重试上限、死信与人工修复入口。\n• 我沿消息生命周期逐段列出失败窗口，再用确认、幂等和补偿闭合可靠性。",
+      "tags": [
+        "消息可靠性与投递语义",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-mq-idempotency-1",
+      "categoryId": "mq-idempotency",
+      "sourceNodeId": "mq-idempotency",
+      "question": "先标记已消费再写数据库，写库失败会怎样？Kafka 消费者数量超过分区数有什么影响？",
+      "answer": "【核心概述】\n消费幂等使相同业务消息重复到达时不产生额外副作用。积压治理需要同时关注生产速率、消费耗时和分区约束。\n\n【面试要点】\n• 利用唯一约束和本地事务把处理记录与业务变更一起提交，或者以受条件约束的状态转换实现幂等。\n• Redis 去重标记与数据库提交之间存在失败窗口；去重 TTL 必须覆盖实际重投递和补偿时间范围。\n• 增加消费者不必然提升吞吐，分区数、顺序要求和下游容量可能成为上限；不得简单跳过积压消息。\n• 我以业务唯一键和原子状态变更保障幂等，再根据 lag、处理耗时和下游容量治理积压。",
+      "tags": [
+        "消费幂等与消息积压",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-kafka-1",
+      "categoryId": "kafka",
+      "sourceNodeId": "kafka",
+      "question": "消费写库成功、提交 offset 前崩溃，怎样避免重复业务副作用？",
+      "answer": "【核心概述】\nKafka 是分布式消息队列，基于分区 + 顺序写 + 页缓存实现高吞吐，消费组模型是核心设计。\n\n【面试要点】\n• 按目标版本确认 KRaft 架构和消费协议；扩大分区或消费者要评估顺序、重平衡与下游容量。\n• 答高吞吐四原因 + 分区有序性 + ISR 机制，重点讲 acks 参数与消息不丢不重",
+      "tags": [
+        "Kafka",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-rocketmq-1",
+      "categoryId": "rocketmq",
+      "sourceNodeId": "rocketmq",
+      "question": "事务回查重复发生时，如何稳定判断本地事务结果？",
+      "answer": "【核心概述】\nRocketMQ 的业务消息能力包括顺序、事务和延迟投递。架构和延迟机制要结合 4.x/5.x 等具体版本。\n\n【面试要点】\n• 事务消息通过半消息与事务状态检查衔接本地事务结果，不会自动让消费者业务获得强一致事务。\n• 旧版常见固定延迟级别；5.x 的定时/延迟消息采用新的投递时间机制，不能一概说只有 18 个级别。\n• 顺序保证需明确队列/消息组范围；仍需消费幂等、失败重试和积压治理。",
+      "tags": [
+        "RocketMQ"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-load-balance-1",
+      "categoryId": "load-balance",
+      "sourceNodeId": "load-balance",
+      "question": "有负载均衡为什么仍可能把故障请求重复打到不可用实例？",
+      "answer": "【核心概述】\n负载均衡分为网关层（Nginx）与服务调用层（Ribbon/LoadBalancer）。\n\n【面试要点】\n• Ribbon 是旧技术栈中的客户端负载均衡方案；现代 Spring Cloud 项目通常评估 Spring Cloud LoadBalancer，并核对实际兼容版本。\n• 结合健康检查、缓存更新、连接复用与重试策略分析，避免把重试当作所有请求都安全的补救。",
+      "tags": [
+        "负载均衡"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-distributed-tx-1",
+      "categoryId": "distributed-tx",
+      "sourceNodeId": "distributed-tx",
+      "question": "TCC 的空回滚、重复确认和悬挂如何通过状态设计处理？",
+      "answer": "【核心概述】\n分布式事务解决跨库/跨服务一致性问题，Seata 的 AT/TCC/SAGA 模式与可靠消息是主流方案。\n\n【面试要点】\n• 最终一致性方案必须有可重试、幂等、可观测的补偿流程，不把有补偿代码当作天然保证成功。\n• 按\"2PC/3PC → TCC/SAGA → Seata AT → 消息最终一致\"层级讲，说明各自适用场景",
+      "tags": [
+        "分布式事务",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-distributed-lock-1",
+      "categoryId": "distributed-lock",
+      "sourceNodeId": "distributed-lock",
+      "question": "线程暂停超过锁租约、另一实例已获得锁后，如何阻止旧持有者继续覆盖数据？",
+      "answer": "【核心概述】\n分布式锁协调多个实例访问资源，可靠性取决于租约、故障模型和下游写入约束。任何方案都需要说明过期后的持有者行为。\n\n【面试要点】\n• Redis 可用 SET key uniqueToken NX PX 原子申请，释放时比较 token；唯一 token 用于避免误删他人的锁。\n• 主从异步切换可能丢失锁；持有者长暂停超过租约后仍可能继续操作，续期不等于彻底消除此窗口。\n• 严格资源保护可评估单调 fencing token 并让下游拒绝旧 token；随机持有者标识不等同于 fencing token。\n• 我先定义可容忍的重复窗口，再解释申请、释放、续期与下游保护，不宣称某种锁在所有故障下最可靠。",
+      "tags": [
+        "分布式锁",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-api-idempotency-1",
+      "categoryId": "api-idempotency",
+      "sourceNodeId": "api-idempotency",
+      "question": "创建订单响应丢失后用户重试，怎样返回原订单而不是创建新订单？",
+      "answer": "【核心概述】\n接口幂等让同一业务操作在重试后保持可解释的结果。前端防抖或短期互斥不能独立保证数据正确性。\n\n【面试要点】\n• 为业务操作建立唯一标识，用唯一约束或条件更新阻止重复副作用，并记录处理状态与结果。\n• 区分首次处理、处理中、完成、可重试失败；同一个幂等键对应不同请求参数时应拒绝或明确处理策略。\n• 客户端超时不等于服务端未完成；重试必须保留原操作标识，外部调用也要考虑其幂等支持。\n• 我围绕业务标识、原子状态转换和结果复用设计幂等，并把超时和重试纳入流程。",
+      "tags": [
+        "接口幂等与重复提交",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-distributed-id-1",
+      "categoryId": "distributed-id",
+      "sourceNodeId": "distributed-id",
+      "question": "容器扩容时怎样确保机器标识不重复？时钟向后跳一分钟如何处理？",
+      "answer": "【核心概述】\n分布式 ID 的选型需要权衡唯一性、排序性、生成吞吐和中心化依赖。随机 UUID 与 Snowflake 风格方案各有适用范围。\n\n【面试要点】\n• Snowflake 风格方案组合时间、节点标识与序列号；唯一性依赖节点分配、时间处理与序列边界。\n• 时间有序通常只是趋势有序，跨节点不能自动保证严格业务顺序；UUID 类型与数据库索引开销需要结合实现评估。\n• 机器 ID 冲突和时钟回拨可破坏假设；应定义等待、拒绝、逻辑时间或切换号段等策略。\n• 我先明确 ID 的唯一性和排序需求，再说明部署约束与时钟异常处理。",
+      "tags": [
+        "分布式 ID 与时钟回拨"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-algorithm-array-hash-1",
+      "categoryId": "algorithm-array-hash",
+      "sourceNodeId": "algorithm-array-hash",
+      "question": "实现无重复字符的最长子串，说明左边界为何不能后退；含负数数组求和为 K 的区间如何做？",
+      "answer": "【核心概述】\n数组和哈希题常通过改变访问方式降低重复计算。滑动窗口维护的是明确的不变量，而不是固定模板。\n\n【面试要点】\n• 哈希记录已见元素或频次；前缀和把区间求和变为差值；窗口在扩张和收缩时维持合法条件。\n• 两数之和、和为 K 的子数组、无重复字符最长子串；说明为什么存在负数时某些窗口方法不再成立。\n• 整数求和可能溢出；明确空输入、重复元素、下标与元素返回要求，并区分字符与码点。\n• 我先定义状态与不变量，再逐步证明每个元素的访问次数，最后给出时间空间复杂度。",
+      "tags": [
+        "数组、哈希与滑动窗口",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-algorithm-linked-list-1",
+      "categoryId": "algorithm-linked-list",
+      "sourceNodeId": "algorithm-linked-list",
+      "question": "原地反转链表并说明每轮三个指针的作用；检测到环后如何找到入口？",
+      "answer": "【核心概述】\n链表题核心是引用关系与边界控制。哨兵节点和双指针能够减少头节点特判。\n\n【面试要点】\n• 修改 next 前保存后继引用；快慢指针可定位中点或检测环，双指针间距可定位倒数第 K 个节点。\n• 反转链表、环入口、合并有序链表、删除倒数第 N 个节点；解释指针移动的循环不变量。\n• 区分空链表、单节点和非法 N；错误的 next 赋值可能丢失后续节点或形成环。\n• 我用小链表画出引用变化，先保证不丢节点，再证明终止条件和边界正确性。",
+      "tags": [
+        "链表与双指针",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-algorithm-tree-graph-1",
+      "categoryId": "algorithm-tree-graph",
+      "sourceNodeId": "algorithm-tree-graph",
+      "question": "用队列输出二叉树每一层；如何判断课程依赖图中存在环？",
+      "answer": "【核心概述】\n树和图的遍历依赖访问顺序、状态与去重。递归简洁，但深度和重复访问需要明确控制。\n\n【面试要点】\n• DFS 适合深度探索与回溯，BFS 可计算无权图最短路径；图中的环通常需要 visited 或路径状态。\n• 二叉树层序遍历、岛屿数量、课程依赖与拓扑排序；说明入队即标记如何避免重复入队。\n• 极深递归可能导致栈溢出；区分有向/无向、带权/无权图，不把普通 BFS 用作任意带权最短路。\n• 我先确定图模型和边的含义，再选择遍历与状态，最后分析访问节点和边的总次数。",
+      "tags": [
+        "树、图与 BFS / DFS",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-algorithm-dp-1",
+      "categoryId": "algorithm-dp",
+      "sourceNodeId": "algorithm-dp",
+      "question": "推导最少硬币凑金额的状态和初值；为什么 0/1 背包容量通常倒序遍历？",
+      "answer": "【核心概述】\n动态规划复用重叠子问题的结果，关键是定义状态和合法的转移。记住答案模板不能替代推导。\n\n【面试要点】\n• 状态必须包含决定后续选择的必要信息；由较小子问题构造答案，必要时使用记忆化或滚动数组。\n• 爬楼梯、零钱兑换、最长公共子序列与背包；区分计数、最值和可行性三类目标。\n• 0/1 背包与完全背包的一维遍历方向不同；不可达状态不能随意初始化为 0。\n• 我先写清 dp 的含义，再列举决策推导转移，并用边界样例校验初始化。",
+      "tags": [
+        "动态规划与状态设计",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-1",
+      "categoryId": "network",
+      "sourceNodeId": "network",
+      "question": "接口 P99 升高时，如何沿 DNS、TCP、TLS、HTTP 和应用线程逐段定位？",
+      "answer": "【核心概述】\n计算机网络部分从分层和一次请求链路开始，再深入 HTTP、HTTPS、TCP、UDP、IP 与排障。重点是把协议机制和 Java 服务行为连起来。\n\n【面试要点】\n• 每层提供清晰的封装和服务边界；一次请求的延迟由解析、连接、握手、传输和应用处理共同组成。\n• 网址输入、HTTP 版本、HTTPS 握手、TCP 可靠性、TIME_WAIT、队列、QUIC 和 IP 路由是后端高频题。\n• 协议保证的可靠性不等于业务成功；连接池、代理、重试、超时和服务端限流会改变实际表现。\n• 我先按分层画出请求路径，再分别说明每层的状态、超时和可观测指标。",
+      "tags": [
+        "计算机网络",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-basics-1",
+      "categoryId": "network-basics",
+      "sourceNodeId": "network-basics",
+      "question": "浏览器请求一个 HTTPS 地址，数据经过哪些层？每层增加了什么信息？",
+      "answer": "【核心概述】\nTCP/IP 模型把网络通信拆成应用、传输、网络和链路等职责，分层让协议可以独立演进并通过封装协作。\n\n【面试要点】\n• 应用数据逐层加上协议头形成报文，接收端再逐层解封装；OSI 七层是概念模型，工程中常用 TCP/IP 分层。\n• TCP/UDP、IP、HTTP、DNS、ARP 分别处在哪一层及解决什么问题；端口和 IP 的作用不同。\n• 不要把 HTTP 当成 TCP 的替代品；跨层排查时要明确是丢包、连接失败还是应用返回错误。\n• 我先讲每层职责，再用一次 HTTPS 请求串起端口、IP、MAC、TCP 和应用数据。",
+      "tags": [
+        "TCP/IP 分层模型",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-request-flow-1",
+      "categoryId": "network-request-flow",
+      "sourceNodeId": "network-request-flow",
+      "question": "页面首屏变慢，你如何拆解 DNS、连接、TLS、TTFB 和资源加载时间？",
+      "answer": "【核心概述】\n输入网址到页面显示会经历 URL 解析、DNS、连接建立、TLS、HTTP 请求、服务处理、响应解析和资源加载。\n\n【面试要点】\n• 缓存可能跳过 DNS 或连接步骤；HTTP/2 复用连接，浏览器还会并行请求 CSS、JS 和图片。\n• DNS 缓存、三次握手、TLS 密钥协商、HTTP 状态码、连接复用和首屏渲染。\n• 不要背固定耗时顺序；代理、连接池、HTTP/3 和缓存会改变真实链路。\n• 我按时间线划分网络与渲染阶段，用浏览器和服务端指标验证每段耗时。",
+      "tags": [
+        "从输入网址到页面显示",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-linux-packet-1",
+      "categoryId": "network-linux-packet",
+      "sourceNodeId": "network-linux-packet",
+      "question": "网络带宽正常但应用收不到数据，如何定位网卡、内核队列和 Socket 哪一层丢包？",
+      "answer": "【核心概述】\nLinux 收包大致经过网卡 DMA、硬中断/NAPI、软中断、协议栈、Socket 接收队列再到应用读取；发包则沿相反方向处理。\n\n【面试要点】\n• 网卡把数据放入内存，内核协议栈解析并按四元组分发到 Socket；应用是否及时读取会影响队列和背压。\n• 中断与软中断、网卡 ring buffer、Socket 缓冲、backlog、epoll 就绪和零拷贝。\n• CPU softirq 高不一定是业务线程高；丢包可能发生在网卡、内核队列、Socket 或应用处理阶段。\n• 我沿收包路径逐层检查计数器、队列和线程读取速度，最后关联请求延迟。",
+      "tags": [
+        "Linux 收发网络包"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-dns-1",
+      "categoryId": "network-dns",
+      "sourceNodeId": "network-dns",
+      "question": "修改 DNS 后部分实例仍访问旧地址，如何区分 DNS 缓存和连接复用的影响？",
+      "answer": "【核心概述】\nDNS 将域名解析为记录，一次请求还涉及连接、TLS、代理与服务处理。链路排查应区分每一段耗时。\n\n【面试要点】\n• 解析器和多层缓存按记录类型与 TTL 工作；浏览器、系统和 JVM 的缓存行为不必完全相同。\n• A、AAAA、CNAME 的含义；连接复用会使部分请求跳过重新解析和握手，不能只背固定步骤。\n• 域名切换受缓存影响；连接池保留旧连接也会影响流量迁移，排查要观察解析结果及实际目标地址。\n• 我按解析、连接、握手和业务处理拆解延迟，并用实际地址与时间指标逐段验证。",
+      "tags": [
+        "DNS 与一次请求的链路"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-http-interview-1",
+      "categoryId": "network-http-interview",
+      "sourceNodeId": "network-http-interview",
+      "question": "为什么 302 可能改变请求方法，而 307 要求保持方法？如何设计支付接口重试？",
+      "answer": "【核心概述】\nHTTP 是应用层请求/响应协议，方法、状态码、首部和缓存语义共同表达客户端与服务端的意图。\n\n【面试要点】\n• GET/PUT/DELETE 的幂等语义是协议约定，不能自动保证业务重复提交安全；状态码表达处理结果类别。\n• GET/POST、301/302/307、401/403、404/409/429、Cookie/Session、ETag 和条件请求。\n• HTTP 401/403 的含义不要混淆；重试 POST 前必须设计业务幂等键和超时边界。\n• 我先按语义而不是背状态码，再补充缓存、鉴权和业务幂等边界。",
+      "tags": [
+        "HTTP 常见面试题",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-http-optimization-1",
+      "categoryId": "network-http-optimization",
+      "sourceNodeId": "network-http-optimization",
+      "question": "HTTP/1.1 如何减少一次请求的 RTT？为什么多域名和连接池不能无限增大？",
+      "answer": "【核心概述】\nHTTP/1.1 优化围绕减少连接与请求成本展开，包括持久连接、管线化的限制、压缩、缓存、域名拆分和连接复用。\n\n【面试要点】\n• 持久连接减少握手，Content-Length/分块编码确定消息边界；HTTP/1.1 的队头阻塞限制并行效率。\n• Connection/Keep-Alive、chunked、gzip/br、强缓存/协商缓存、连接池上限和超时。\n• 连接池过大可能压垮服务端；压缩要权衡 CPU、响应大小与客户端支持，缓存必须处理版本和失效。\n• 我按连接、消息体、缓存和并发四个成本点说明优化，最后用 P99 与资源指标验证。",
+      "tags": [
+        "HTTP/1.1 性能优化",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-https-rsa-1",
+      "categoryId": "network-https-rsa",
+      "sourceNodeId": "network-https-rsa",
+      "question": "中间人为什么不能伪造可信证书？RSA 握手泄露私钥后会发生什么？",
+      "answer": "【核心概述】\nRSA 握手用服务端证书公钥保护客户端生成的预主密钥，双方再派生对称密钥保护应用数据。\n\n【面试要点】\n• 服务端私钥解密预主密钥，客户端验证证书链和主机名；RSA 密钥传输无法提供前向保密。\n• CA 信任链、证书校验、RSA 与对称加密分工、握手阶段和前向保密。\n• 公钥加密只保护密钥交换，不直接高效加密大文件；证书可信不等于应用接口有权限控制。\n• 我按身份认证、密钥交换和数据加密三段解释，再指出 RSA 握手的前向保密缺陷。",
+      "tags": [
+        "HTTPS RSA 握手"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-https-ecdhe-1",
+      "categoryId": "network-https-ecdhe",
+      "sourceNodeId": "network-https-ecdhe",
+      "question": "ECDHE 为什么能提供前向保密？服务端证书私钥在握手中承担什么职责？",
+      "answer": "【核心概述】\nECDHE 通过双方临时椭圆曲线密钥协商共享密钥，服务端证书私钥用于签名认证而非直接解密会话数据。\n\n【面试要点】\n• 每次连接使用新的临时密钥，即使长期证书私钥泄露，历史会话通常仍无法被解密。\n• 签名与密钥协商区别、前向保密、ServerHello、Finished 校验和 TLS 1.3 简化握手。\n• ECDHE 不替代证书验证；曲线、密码套件、证书链和时钟错误都会导致握手失败。\n• 我把证书签名和临时密钥交换分开讲，再解释为什么历史流量不会因长期私钥泄露而全部暴露。",
+      "tags": [
+        "HTTPS ECDHE 握手",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-https-optimization-1",
+      "categoryId": "network-https-optimization",
+      "sourceNodeId": "network-https-optimization",
+      "question": "如何降低 HTTPS 首次访问延迟？为什么 0-RTT 需要业务幂等配合？",
+      "answer": "【核心概述】\nHTTPS 优化主要减少握手往返和证书处理成本，同时保持正确的验证与加密边界。\n\n【面试要点】\n• TLS 1.3 减少握手往返，会话恢复复用既有凭据；HTTP/2 和 HTTP/3 通过多路复用提高连接利用率。\n• TLS 1.2/1.3、session resumption、0-RTT 重放风险、证书链大小、SNI 和 ALPN。\n• 0-RTT 不适合有副作用请求；不能通过关闭证书校验解决线上握手问题。\n• 我从握手往返、连接复用和证书链三方面优化，并明确 0-RTT 的安全边界。",
+      "tags": [
+        "HTTPS 性能优化"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-http2-1",
+      "categoryId": "network-http2",
+      "sourceNodeId": "network-http2",
+      "question": "HTTP/2 如何解决 HTTP/1.1 的队头阻塞？为什么仍会受 TCP 丢包影响？",
+      "answer": "【核心概述】\nHTTP/2 使用二进制帧、流和多路复用在单连接承载多个请求，配合头部压缩减少重复首部开销。\n\n【面试要点】\n• 多个 stream 交错传输，流级别不再互相等待；但 TCP 丢包会阻塞同一连接上的数据交付。\n• 帧/流/连接、HPACK、服务器推送现状、并发流、TCP 队头阻塞与连接复用。\n• HTTP/2 不是所有场景都比 HTTP/1.1 快；错误设置并发流或代理兼容性会降低收益。\n• 我区分应用层多路复用和 TCP 传输顺序，再说明 HPACK 与实际部署限制。",
+      "tags": [
+        "HTTP/2 多路复用",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-http3-1",
+      "categoryId": "network-http3",
+      "sourceNodeId": "network-http3",
+      "question": "HTTP/3 如何缓解 TCP 队头阻塞？手机从 Wi-Fi 切到蜂窝网络时为什么可以继续连接？",
+      "answer": "【核心概述】\nHTTP/3 基于 QUIC/UDP，把连接管理、可靠传输和 TLS 1.3 融合在用户态协议中，减少 TCP 队头阻塞并支持连接迁移。\n\n【面试要点】\n• 丢失一个 stream 的包不会阻塞其他 stream；连接 ID 允许网络地址变化时维持逻辑连接。\n• QUIC 握手、0-RTT、独立流、拥塞控制、连接迁移和 HTTP/2 对比。\n• UDP 不等于不可靠；部署要检查防火墙、负载均衡、MTU、丢包和回退到 TCP 的策略。\n• 我先说明 QUIC 在 UDP 之上补回可靠性，再比较 stream、握手与迁移能力。",
+      "tags": [
+        "HTTP/3 与 QUIC",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-rpc-1",
+      "categoryId": "network-rpc",
+      "sourceNodeId": "network-rpc",
+      "question": "既然 HTTP/2 性能很好，为什么微服务仍使用 RPC 框架？",
+      "answer": "【核心概述】\nRPC 是让调用方像调用本地方法一样调用远端服务的调用方式，通常包含序列化、传输、服务发现、超时和重试。\n\n【面试要点】\n• HTTP 是协议，RPC 是调用抽象；gRPC 可基于 HTTP/2，RPC 也可以基于其他传输协议。\n• HTTP 与 RPC 的边界、Protobuf、连接复用、负载均衡、幂等重试和错误传播。\n• 远程调用不能隐藏网络失败；重试要有预算、退避和幂等，序列化升级要兼容旧客户端。\n• 我先澄清协议和调用方式的区别，再从契约、代码生成、治理和兼容性比较方案。",
+      "tags": [
+        "RPC 与 HTTP 的取舍",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-websocket-1",
+      "categoryId": "network-websocket",
+      "sourceNodeId": "network-websocket",
+      "question": "在线聊天为什么选择 WebSocket？如何保证断线重连后消息不乱序、不重复？",
+      "answer": "【核心概述】\nWebSocket 在 HTTP 升级后建立长连接，提供客户端与服务端双向主动发送消息的通道。\n\n【面试要点】\n• 连接建立后消息不再遵循普通 HTTP 请求/响应轮询；帧包含文本/二进制、长度和掩码等信息。\n• 与短轮询、长轮询、SSE 的区别、心跳、重连、连接状态和负载均衡粘性。\n• 长连接仍会断开；要设计心跳、重连退避、消息序号、重复消费和网关超时。\n• 我先说明服务端主动推送需求，再补充连接管理、心跳和消息确认协议。",
+      "tags": [
+        "WebSocket 双向通信"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-1",
+      "categoryId": "network-tcp",
+      "sourceNodeId": "network-tcp",
+      "question": "连接建立成功但请求一直超时，如何区分应用未读取、丢包重传和服务端处理慢？",
+      "answer": "【核心概述】\nTCP 提供面向连接、可靠、有序的字节流，可靠性来自序列号、确认、重传、窗口和连接状态机。\n\n【面试要点】\n• 接收窗口保护接收方，拥塞窗口反映网络承载能力；TCP 不保留应用消息边界。\n• TIME_WAIT、CLOSE_WAIT、SYN 队列、半包粘包、快速重传、RTO、慢启动和拥塞避免。\n• TCP 可靠不代表业务请求一定成功；连接关闭、重试和应用 ACK 仍要由业务设计。\n• 我先讲状态机和窗口，再从抓包、Socket 状态和应用日志定位问题。",
+      "tags": [
+        "TCP 连接与可靠传输",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-handshake-1",
+      "categoryId": "network-tcp-handshake",
+      "sourceNodeId": "network-tcp-handshake",
+      "question": "客户端收到 SYN/ACK 后发送 ACK，服务端没有 accept，连接能否建立？",
+      "answer": "【核心概述】\n三次握手同步双方初始序列号并确认双向收发能力；四次挥手分别关闭两个方向，TIME_WAIT 负责等待旧报文消散和重发最终 ACK。\n\n【面试要点】\n• 服务端收到 SYN 进入 SYN-RECV，收到最终 ACK 后进入 ESTABLISHED；关闭方和被动关闭方状态不同。\n• 为什么三次而不是两次、挥手为什么常见四次、TIME_WAIT、同时关闭和半关闭。\n• 服务端 listen 端口与 accept 线程是不同层次；连接可能已经建立但应用尚未 accept。\n• 我按状态迁移逐个报文解释，再区分内核连接队列和应用 accept。",
+      "tags": [
+        "TCP 三次握手与四次挥手",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-control-1",
+      "categoryId": "network-tcp-control",
+      "sourceNodeId": "network-tcp-control",
+      "question": "为什么高延迟链路吞吐上不去？如何用带宽时延积解释窗口配置？",
+      "answer": "【核心概述】\nTCP 用确认与重传处理丢包，用滑动窗口提高在途数据量，用流量控制保护接收方，用拥塞控制保护网络。\n\n【面试要点】\n• 发送窗口受 min(rwnd,cwnd) 限制；重复 ACK 和超时会触发不同的重传与拥塞窗口调整。\n• 累计确认、SACK、RTO、快速重传/快速恢复、接收窗口、慢启动和拥塞避免。\n• 网络带宽大不代表发送窗口足够；重传、RTT 和 BDP 要结合采样窗口分析。\n• 我把丢包恢复、接收方限制和网络拥塞分成三个控制回路说明。",
+      "tags": [
+        "TCP 重传、窗口与拥塞控制",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-capture-1",
+      "categoryId": "network-tcp-capture",
+      "sourceNodeId": "network-tcp-capture",
+      "question": "抓包中出现大量重复 ACK 和 Retransmission，如何判断是链路丢包还是接收处理慢？",
+      "answer": "【核心概述】\n抓包把连接问题还原为报文时间线，常用 tcpdump/Wireshark 观察握手、序列号、确认号、重传、窗口和 FIN。\n\n【面试要点】\n• 同一连接由四元组和协议确定；序列号以字节计数，确认号表示下一个期望字节。\n• SYN/ACK/FIN/RST、重复 ACK、零窗口、乱序、TLS 加密后可见与不可见信息。\n• 抓包点可能在客户端、容器、代理或服务端，时间戳和网卡卸载会影响解读。\n• 我先按五元组锁定连接，再按 flags、seq/ack、窗口和时间间隔还原状态。",
+      "tags": [
+        "TCP 抓包与分段分析"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-queues-1",
+      "categoryId": "network-tcp-queues",
+      "sourceNodeId": "network-tcp-queues",
+      "question": "三次握手完成但 accept 队列满了，客户端和服务端可能分别看到什么？",
+      "answer": "【核心概述】\n服务端监听 TCP 端口时，半连接队列保存收到 SYN 后等待最终 ACK 的连接，全连接队列保存已完成握手等待 accept 的连接。\n\n【面试要点】\n• listen backlog、somaxconn、tcp_max_syn_backlog 和 syncookie 共同影响队列容量与 SYN 洪泛防护。\n• SYN flood、半连接/全连接溢出、listen 与 accept、ss -lnt 观察队列。\n• 只调大 backlog 不能解决应用 accept 慢；队列、文件描述符、线程池和下游连接池要一起看。\n• 我按握手阶段映射两个队列，再说明 backlog、内核参数和应用消费速度的关系。",
+      "tags": [
+        "TCP 半连接与全连接队列",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-tuning-1",
+      "categoryId": "network-tcp-tuning",
+      "sourceNodeId": "network-tcp-tuning",
+      "question": "高延迟大带宽链路吞吐低，你会调整哪些参数，如何验证没有放大丢包？",
+      "answer": "【核心概述】\nTCP 调优要针对握手、挥手和数据传输阶段设置参数，目标是匹配带宽时延积并保护内核资源。\n\n【面试要点】\n• 发送/接收缓冲决定窗口上限，BDP 决定链路上合理的在途数据量；参数过大可能耗尽内存。\n• somaxconn、tcp_syn_retries、tcp_synack_retries、tcp_fastopen、tcp_rmem/tcp_wmem。\n• 不要照搬内核参数；先用 ss、netstat、sar、抓包确认瓶颈，再小步调参并观察回滚。\n• 我按握手、队列和数据窗口分阶段调优，用 BDP 与资源上限约束参数。",
+      "tags": [
+        "TCP 参数与性能调优"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-stream-1",
+      "categoryId": "network-tcp-stream",
+      "sourceNodeId": "network-tcp-stream",
+      "question": "如何设计一个长度字段协议？读取到半个消息时连接线程应该做什么？",
+      "answer": "【核心概述】\nTCP 是字节流协议，只保证字节按序到达，不保存应用层消息边界；一次 read 可能读到半条或多条消息。\n\n【面试要点】\n• Nagle、MSS、MTU 和接收缓冲会影响分段，但应用不能依赖一次 send 对应一次 recv。\n• 粘包/半包、长度字段、分隔符、定长协议、拆包器和 write 完成语义。\n• 不要用 sleep 等待完整消息；协议要限制长度、处理恶意分帧并支持超时。\n• 我先强调字节流边界，再用长度/分隔符/定长三种方案说明分帧。",
+      "tags": [
+        "TCP 字节流与分帧",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-failure-1",
+      "categoryId": "network-tcp-failure",
+      "sourceNodeId": "network-tcp-failure",
+      "question": "客户端拔掉网线后服务端何时知道连接失效？怎样让在线服务更快感知？",
+      "answer": "【核心概述】\n断电、进程崩溃和拔网线都会让 TCP 连接进入异常路径，但对端是否立即收到 FIN/RST 取决于故障位置和存活探测。\n\n【面试要点】\n• 进程正常关闭可发送 FIN；主机断电或链路断开可能没有报文，对端只能通过重传、Keepalive 或业务心跳发现。\n• 半开连接、RST、TCP Keepalive、应用心跳、拔网线和移动网络切换。\n• 只配置 TCP Keepalive 可能检测很慢；请求超时、连接空闲超时和业务心跳应分层设计。\n• 我先区分有无 FIN/RST，再说明内核重传、Keepalive 与应用心跳的检测时延。",
+      "tags": [
+        "断电、断网与进程崩溃",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tcp-keepalive-1",
+      "categoryId": "network-tcp-keepalive",
+      "sourceNodeId": "network-tcp-keepalive",
+      "question": "连接池复用一个已经被负载均衡关闭的连接，如何避免请求失败？",
+      "answer": "【核心概述】\nTCP Keepalive 是内核探测空闲连接存活性的机制，HTTP Keep-Alive 是复用连接的应用层语义，两者名称相似但职责不同。\n\n【面试要点】\n• HTTP Keep-Alive 减少握手，TCP Keepalive 发现对端不可达；它们可以同时启用。\n• keepalive 时间、探测次数、HTTP/1.1 默认持久连接、连接池 idle timeout。\n• 探测周期过长会占用失效连接，过短会增加网络与服务端负担；代理可能有更短的空闲超时。\n• 我先区分传输层存活探测和应用层连接复用，再补充连接池校验与重试策略。",
+      "tags": [
+        "TCP Keepalive 与 HTTP Keep-Alive"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-udp-reliable-1",
+      "categoryId": "network-udp-reliable",
+      "sourceNodeId": "network-udp-reliable",
+      "question": "实时音视频为什么可能使用 UDP？什么时候需要 QUIC 而不是裸 UDP？",
+      "answer": "【核心概述】\nUDP 不提供连接、顺序和重传，但应用可以自行加入序列号、确认、重传、拥塞控制和加密，QUIC 就是成熟的可靠 UDP 方案。\n\n【面试要点】\n• 可靠性是协议设计的组合，不由传输层名称决定；QUIC 在用户态实现连接、TLS 和独立流。\n• TCP 与 UDP 取舍、QUIC、丢包重传、连接迁移、消息边界和拥塞控制。\n• 自己实现可靠 UDP 容易忽略乱序、重复、拥塞和安全；优先使用成熟协议。\n• 我先列出 TCP 的可靠性成本，再按实时性、顺序要求和网络迁移选择方案。",
+      "tags": [
+        "UDP 可靠传输与 QUIC",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-ip-basics-1",
+      "categoryId": "network-ip-basics",
+      "sourceNodeId": "network-ip-basics",
+      "question": "客户端能解析域名但连接超时，如何区分路由、NAT、端口和服务监听问题？",
+      "answer": "【核心概述】\nIP 负责跨网络寻址和路由转发，数据包按目的地址逐跳经过路由器；TCP/UDP 端口则定位主机上的进程。\n\n【面试要点】\n• 最长前缀匹配选择路由，TTL 防止环路；MTU 不足时可能分片或由发送端通过 PMTUD 调整。\n• CIDR、默认网关、ARP、NAT、TTL、MTU、IPv4/IPv6 和 ICMP。\n• 端口开放不代表路由可达；安全组、NAT、路由表和 MTU 问题要分层排查。\n• 我先确认地址与路由，再检查下一跳、MTU、端口监听和策略控制。",
+      "tags": [
+        "IP 地址、路由与分片",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-ping-1",
+      "categoryId": "network-ping",
+      "sourceNodeId": "network-ping",
+      "question": "服务器 ping 通但 HTTP 请求失败，至少有哪些可能原因？",
+      "answer": "【核心概述】\nping 使用 ICMP Echo 请求/响应测试 IP 层可达性和 RTT，但 ping 通不能证明 TCP 端口或应用服务正常。\n\n【面试要点】\n• ICMP 与 TCP/UDP 是不同协议；防火墙可能丢弃 ICMP，网络设备也可能限速响应。\n• ICMP、RTT、丢包、TTL、traceroute 与 TCP connect 的区别。\n• 不要用 ping 代替健康检查；服务不可用时要同时检查端口、TLS 和应用状态。\n• 我把 ping 定位为 IP 层证据，再用端口连接、TLS 和应用探针补齐结论。",
+      "tags": [
+        "ping 与 ICMP"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-loopback-1",
+      "categoryId": "network-loopback",
+      "sourceNodeId": "network-loopback",
+      "question": "应用在容器内监听 127.0.0.1，宿主机端口映射后为什么仍然访问不到？",
+      "answer": "【核心概述】\n127.0.0.1 属于回环地址，数据在本机协议栈内部返回，不经过物理网卡，因此只能验证本机回环路径。\n\n【面试要点】\n• 服务绑定 127.0.0.1 只接受本机回环访问，绑定 0.0.0.0 才监听所有接口；容器有独立网络命名空间。\n• 127.0.0.1/localhost、0.0.0.0、容器 localhost、端口监听和网络 namespace。\n• 容器内访问 127.0.0.1 指向容器自身，不是宿主机；服务监听地址常导致“本机通、远程不通”。\n• 我先确定请求所在的 network namespace，再检查监听地址、端口映射和安全策略。",
+      "tags": [
+        "127.0.0.1 与回环接口"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-http-1",
+      "categoryId": "network-http",
+      "sourceNodeId": "network-http",
+      "question": "ETag 与 Last-Modified 如何配合条件请求？为什么 HTTP/2 仍可能在丢包时延迟多个流？",
+      "answer": "【核心概述】\nHTTP 定义请求与响应的语义，缓存和传输版本影响效率。协议方法幂等不等于业务实现自动幂等。\n\n【面试要点】\n• Cache-Control 指导缓存，ETag/If-None-Match 可支持条件验证；缓存命中与 304 验证需要区分。\n• 401、403、409、429 与 5xx；HTTP/2 多路复用仍受 TCP 丢包影响，HTTP/3 使用 QUIC。\n• no-cache 表示重用前需要验证，不等于禁止存储；no-store 才要求不要存储，用户数据还要考虑私有缓存与鉴权。\n• 我先讲语义与缓存，再解释连接层差异，避免把版本升级等同于所有延迟问题的解决。",
+      "tags": [
+        "HTTP 语义、缓存与版本",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-network-tls-1",
+      "categoryId": "network-tls",
+      "sourceNodeId": "network-tls",
+      "question": "服务端证书是可信 CA 签发的，为什么客户端仍可能报错？HTTPS 能阻止应用层越权吗？",
+      "answer": "【核心概述】\nHTTPS 将 HTTP 放在 TLS 保护的传输通道上。证书验证、密钥协商和数据加密共同建立安全连接。\n\n【面试要点】\n• 以 TLS 1.3 为例，使用密钥协商和握手认证建立共享密钥，再以认证加密保护应用数据。\n• 验证信任链、有效期及主机名；TLS 1.3 不使用旧式 RSA 密钥传输，应注明比较的是哪个协议版本。\n• 不能通过关闭证书验证解决生产证书问题；0-RTT 存在重放风险，不宜承载未经设计的有副作用操作。\n• 我把通信保护与业务授权分开，逐步解释验证、协商和加密，并说明版本及重放边界。",
+      "tags": [
+        "HTTPS 与 TLS 握手",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-1",
+      "categoryId": "os",
+      "sourceNodeId": "os",
+      "question": "一个 Java 服务接口变慢，你如何从应用线程、内存、磁盘和网络四层逐步定位？",
+      "answer": "【核心概述】\n操作系统部分按硬件基础、内存、进程与线程、调度、文件系统、设备、网络 IO 和 Linux 排障组织，帮助把 Java 服务问题落到系统行为。\n\n【面试要点】\n• 应用通过系统调用进入内核，内核负责资源隔离、调度和设备抽象；面试回答要区分语言层、运行时和操作系统层。\n• 进程线程、虚拟内存、缺页、死锁、Page Cache、select/poll/epoll、零拷贝和排障命令是后端高频交叉题。\n• 不要只看 Java 堆或 CPU 百分比；要把 RSS、缺页、上下文切换、磁盘等待、网络队列和请求延迟放到同一条时间线上。\n• 我按硬件、内核资源和应用调用链分层排查，先采集证据，再验证假设，最后用同等负载复测。",
+      "tags": [
+        "操作系统"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-hardware-1",
+      "categoryId": "os-hardware",
+      "sourceNodeId": "os-hardware",
+      "question": "网络流量不高但 CPU softirq 很高，你会检查哪些指标和内核路径？",
+      "answer": "【核心概述】\n硬件结构决定程序的执行成本。CPU 缓存、内存层次和软中断会直接影响 Java 服务的吞吐、尾延迟与网络处理。\n\n【面试要点】\n• CPU 以缓存行搬运数据；空间局部性和时间局部性决定命中率，设备事件通常通过中断或软中断进入内核处理路径。\n• 缓存行、上下文切换、用户态/内核态、硬中断与软中断，以及 CPU 密集任务和 IO 密集任务的区别。\n• 提高线程数不能抵消缓存未命中和锁竞争；不要把软中断占用误判为普通业务线程 CPU。\n• 我先从缓存和中断解释硬件成本，再联系线程调度和网络收包路径说明性能影响。",
+      "tags": [
+        "CPU、缓存与软中断",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-cpu-cache-1",
+      "categoryId": "os-cpu-cache",
+      "sourceNodeId": "os-cpu-cache",
+      "question": "为什么遍历二维数组时按行访问通常更快？如何设计一个可复现的基准？",
+      "answer": "【核心概述】\nCPU 执行程序会经历取指、译码、执行和访存，缓存层次用更小更快的存储减少访问主存的等待。\n\n【面试要点】\n• 缓存以 cache line 为基本单位；连续访问和复用近期数据有利于命中，随机指针追逐会放大内存延迟。\n• 时间/空间局部性、缓存命中率、上下文切换保存寄存器、分支预测和 false sharing 的关系。\n• 数组顺序遍历通常比同等数量的链式节点更友好；不要把一次基准测试结果当成所有 CPU 和数据规模的结论。\n• 我从缓存行和访问局部性解释差异，再说明需要控制数据规模、预热和测量噪声。",
+      "tags": [
+        "CPU 执行与缓存局部性",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-cache-coherence-1",
+      "categoryId": "os-cache-coherence",
+      "sourceNodeId": "os-cache-coherence",
+      "question": "两个计数器没有共享逻辑，为什么并发写入仍会互相影响？",
+      "answer": "【核心概述】\n多核 CPU 各自拥有缓存副本，需要缓存一致性协议维护同一内存位置的可见性；伪共享则会让无关变量互相驱逐缓存行。\n\n【面试要点】\n• 线程修改同一缓存行会触发失效或独占转移，即使修改的是不同字段；Java 内存模型的可见性语义还要由语言同步规则解释。\n• volatile 的可见性与有序性、缓存行粒度、@Contended 或填充字段的适用边界。\n• 填充会增加内存占用且依赖实现；先用性能剖析确认伪共享，再决定是否调整数据布局。\n• 我区分语言层 happens-before 和硬件缓存一致性，再用缓存行解释伪共享。",
+      "tags": [
+        "CPU 缓存一致性与伪共享",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-system-structure-1",
+      "categoryId": "os-system-structure",
+      "sourceNodeId": "os-system-structure",
+      "question": "一次 read 系统调用发生了哪些用户态到内核态的切换？",
+      "answer": "【核心概述】\nLinux 与 Windows 都通过内核向应用提供进程、内存、文件和设备抽象，但内核组织、驱动模型和工具生态不同。\n\n【面试要点】\n• 系统调用是受控的权限边界；内核负责管理共享硬件资源，应用通过文件描述符、句柄等抽象访问资源。\n• 单体内核与微内核取舍、系统调用、用户态/内核态切换和 Linux 文件描述符。\n• 不要把 Linux 命令和 Windows 工具名称机械类比；排障时先确认部署环境和容器运行时。\n• 我先讲共同的资源抽象，再说明 Linux 与 Windows 在内核、驱动和诊断工具上的差异。",
+      "tags": [
+        "Linux 与 Windows 内核"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-memory-1",
+      "categoryId": "os-memory",
+      "sourceNodeId": "os-memory",
+      "question": "4GB 物理内存的机器申请 8GB 虚拟内存会怎样？什么时候真正触发 OOM？",
+      "answer": "【核心概述】\n虚拟内存通过页表把进程虚拟地址映射到物理页，提供隔离、按需分配和比物理内存更大的地址空间。\n\n【面试要点】\n• 访问未驻留页会触发缺页处理；minor fault 不需要磁盘读入，major fault 通常需要 IO，TLB 缓存地址转换结果。\n• 页和页表、多级页表、TLB、匿名页与文件页、RSS/VSZ、fork 的写时复制。\n• 虚拟地址空间不等于实际占用；容器限制还包括线程栈、直接内存、JIT 和共享库。\n• 我把地址预留、物理驻留和磁盘换入分开解释，再联系容器和 Java Native Memory。",
+      "tags": [
+        "虚拟内存与缺页",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-memory-allocation-1",
+      "categoryId": "os-memory-allocation",
+      "sourceNodeId": "os-memory-allocation",
+      "question": "业务对象已经释放，为什么进程 RSS 仍然很高？你如何证明是分配器缓存而不是泄漏？",
+      "answer": "【核心概述】\nmalloc 负责从用户态堆获取可用区域，底层可能通过 brk 或 mmap 向内核申请地址空间，释放后未必立即归还操作系统。\n\n【面试要点】\n• 分配器会缓存和合并空闲块以降低系统调用成本；大块分配与小块分配可能走不同路径。\n• 内部/外部碎片、对齐、mmap 映射、虚拟内存预留与实际提交的差异。\n• 进程 RSS 不下降不一定是泄漏，可能是分配器保留内存；Java 应用还要区分堆、直接内存和本地库分配。\n• 我先按分配路径和内存指标拆解，再用堆转储、Native Memory Tracking 和 RSS 变化交叉验证。",
+      "tags": [
+        "malloc 与内存分配",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-memory-pressure-1",
+      "categoryId": "os-memory-pressure",
+      "sourceNodeId": "os-memory-pressure",
+      "question": "堆使用率正常但容器被杀，哪些 Native 内存和内核指标需要检查？",
+      "answer": "【核心概述】\n内存压力出现时，内核会回收文件页、换出匿名页或触发 OOM 选择进程终止；回收策略会影响延迟和吞吐。\n\n【面试要点】\n• Page Cache 可丢弃后从文件重读，匿名页需要 swap 或保留；容器 cgroup 的 OOM 与 JVM 自己抛 OutOfMemoryError 不是同一事件。\n• swap、回收水位、major fault、OOM score、cgroup memory limit 和背压。\n• 盲目关闭 swap 或只调大 Xmx 可能放大事故；先看内核日志、容器限制和进程总内存。\n• 我先区分 JVM OOM、cgroup OOM 和宿主机 OOM，再按 RSS、page fault、swap 和日志定位。",
+      "tags": [
+        "内存回收与 OOM",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-cache-lru-1",
+      "categoryId": "os-cache-lru",
+      "sourceNodeId": "os-cache-lru",
+      "question": "大文件全表扫描后热点数据命中率下降，如何减少缓存污染？",
+      "answer": "【核心概述】\n操作系统会利用空闲内存缓存文件数据，但顺序扫描可能污染缓存，重复访问的热点数据反而被挤出。\n\n【面试要点】\n• 预读通过提前加载连续页减少顺序 IO 等待；缓存淘汰策略要平衡热点访问与一次性扫描。\n• 缓存命中、预读失效、缓存污染、LRU 与 2Q/冷热分层等改进思路。\n• 缓存命中率要结合工作集和访问模式；不要仅通过加大内存解决顺序扫描拖慢在线请求。\n• 我先判断访问模式，再选择隔离扫描、调整预读或采用分层缓存，并用命中率与延迟验证。",
+      "tags": [
+        "预读、缓存与 LRU"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-process-1",
+      "categoryId": "os-process",
+      "sourceNodeId": "os-process",
+      "question": "一个线程发生未捕获异常时，什么情况下会影响整个进程？",
+      "answer": "【核心概述】\n进程提供资源隔离，线程是进程内的执行流和常见调度实体。线程共享地址空间降低通信成本，也扩大竞态和崩溃影响范围。\n\n【面试要点】\n• 线程拥有独立栈、寄存器和调度状态，共享代码、堆和打开文件；用户态线程与内核调度实体不一定一一对应。\n• 进程/线程区别、上下文切换、用户态/内核态、fork/exec、僵尸进程和线程崩溃边界。\n• 线程数受栈空间、地址空间、PID/cgroup 和调度能力共同限制；虚拟线程也不能绕过下游连接上限。\n• 我从资源所有权、调度实体和故障边界三层比较进程与线程，再联系 Java 线程模型。",
+      "tags": [
+        "进程、线程与调度",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-process-ipc-1",
+      "categoryId": "os-process-ipc",
+      "sourceNodeId": "os-process-ipc",
+      "question": "两个本机服务频繁传递大块数据，为什么可能选择 Unix Domain Socket 或共享内存？",
+      "answer": "【核心概述】\n进程间通信在隔离的地址空间之间传递数据或同步状态，常见方式包括管道、消息队列、共享内存、信号量和 Socket。\n\n【面试要点】\n• 管道和消息队列由内核搬运或管理消息；共享内存减少复制但必须配合同步协议。\n• 匿名/命名管道、共享内存、信号、Unix Domain Socket 与 TCP Socket 的取舍。\n• 共享内存不是天然线程安全；跨进程协议要定义版本、超时、背压和异常恢复。\n• 我按数据量、消息边界、复制次数、可靠性和部署范围选择 IPC 方式。",
+      "tags": [
+        "进程间通信",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-thread-sync-1",
+      "categoryId": "os-thread-sync",
+      "sourceNodeId": "os-thread-sync",
+      "question": "为什么 i++ 不是线程安全的？如何分别用锁、原子类和消息传递修复？",
+      "answer": "【核心概述】\n多线程冲突来自共享状态的非原子读改写、可见性不足和顺序不确定。同步机制既要保护正确性，也要控制等待和唤醒成本。\n\n【面试要点】\n• 互斥保证同一时刻单线程进入临界区，条件变量用于等待状态变化；Java 的 synchronized/Lock 还提供 happens-before 语义。\n• 竞态条件、原子性/可见性/有序性、CAS、自旋与阻塞、锁粒度和公平性。\n• 锁住外部 IO 会放大尾延迟；双重检查、复合操作和多个共享字段要审查完整的发布与原子边界。\n• 我先定位共享不变量，再选择最小临界区和合适同步方式，最后评估竞争与可观测性。",
+      "tags": [
+        "多线程同步与竞态",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-deadlock-1",
+      "categoryId": "os-deadlock",
+      "sourceNodeId": "os-deadlock",
+      "question": "两个线程分别持有 A/B 等待对方，如何证明是死锁并给出三种修复方法？",
+      "answer": "【核心概述】\n死锁要求互斥、占有且等待、不可剥夺和循环等待同时成立。排查要从线程等待图和锁顺序入手。\n\n【面试要点】\n• 统一加锁顺序、一次申请全部资源、可抢占或超时都能破坏必要条件；检测到死锁后仍需设计恢复动作。\n• 死锁、活锁、饥饿的区别；jstack 线程转储、数据库死锁日志和 Lock tryLock 超时。\n• 只增加超时不等于修复根因；锁顺序要写入约定，跨服务锁还要考虑租约、续期和 fencing。\n• 我画等待图确认四条件，再优先统一锁顺序，必要时使用超时检测和可恢复流程。",
+      "tags": [
+        "死锁与避免策略",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-locks-1",
+      "categoryId": "os-locks",
+      "sourceNodeId": "os-locks",
+      "question": "库存扣减为什么不能只依赖应用层乐观锁？如何让重试不会重复扣库存？",
+      "answer": "【核心概述】\n悲观锁先假设冲突会发生，先互斥再执行；乐观锁先执行并在提交时校验版本，适合冲突较少或读多写少场景。\n\n【面试要点】\n• 悲观锁把等待放在操作之前，乐观锁把失败成本放在提交阶段；CAS、数据库版本号和条件更新都是常见实现。\n• 锁竞争、CAS ABA、版本号、重试上限、数据库行锁与应用锁的边界。\n• 乐观锁重试不是无限循环；悲观锁也不能替代幂等、超时和事务边界设计。\n• 我先按冲突率和临界区成本选策略，再补充版本校验、幂等和失败重试边界。",
+      "tags": [
+        "悲观锁与乐观锁",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-scheduling-1",
+      "categoryId": "os-scheduling",
+      "sourceNodeId": "os-scheduling",
+      "question": "给出一组页面访问序列，比较 FIFO 与 LRU 缺页次数，并解释 Belady 异常。",
+      "answer": "【核心概述】\n调度算法在响应时间、吞吐、公平性和周转时间之间取舍；页面置换和磁盘调度也体现相同的资源分配思想。\n\n【面试要点】\n• 抢占式调度可在时间片或优先级变化时切换任务；页面置换利用局部性，磁盘调度减少寻道或队列等待。\n• FCFS、SJF、RR、优先级、多级反馈队列，FIFO/LRU/Clock 页面置换，SCAN 磁盘调度。\n• 理论最优不一定适合真实负载；要说明抢占开销、饥饿、优先级反转和硬件设备差异。\n• 我先说明优化目标，再用小例子推导调度顺序，最后讨论公平性和切换成本。",
+      "tags": [
+        "进程、页面与磁盘调度",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-file-system-1",
+      "categoryId": "os-file-system",
+      "sourceNodeId": "os-file-system",
+      "question": "删除一个仍被进程打开的日志文件，为什么磁盘空间可能没有马上释放？",
+      "answer": "【核心概述】\n文件系统把块设备组织成文件、目录、inode 和数据块，并通过缓存、日志或写时复制提升可靠性与性能。\n\n【面试要点】\n• 文件名映射到 inode，inode 保存元数据和数据块索引；打开文件后进程通过文件描述符引用内核对象。\n• 硬链接/软链接、inode、文件描述符、Page Cache、日志文件系统和 fsync 的持久化边界。\n• write 返回成功不等于数据已落盘；磁盘空间充足但 inode 耗尽也会导致创建文件失败。\n• 我按路径解析、inode、文件描述符和缓存落盘解释文件生命周期，再说明故障恢复边界。",
+      "tags": [
+        "文件系统与 inode",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-page-cache-1",
+      "categoryId": "os-page-cache",
+      "sourceNodeId": "os-page-cache",
+      "question": "进程写文件后立刻崩溃，哪些数据可能丢失？怎样设计可靠的追加日志？",
+      "answer": "【核心概述】\nPage Cache 把文件内容缓存在内存，write 通常先写入缓存页再由内核异步回写；崩溃时数据是否存在取决于回写和持久化时点。\n\n【面试要点】\n• 应用写成功只表示内核接收了数据；fsync 负责请求数据及必要元数据持久化，但设备缓存和文件系统语义仍需确认。\n• 脏页、回写、fsync、fdatasync、顺序写与随机写、日志文件系统。\n• 频繁 fsync 会放大 IO 延迟；只看应用返回值无法证明断电后数据一定存在。\n• 我区分用户态写入、Page Cache 接收、内核回写和设备持久化四个时点。",
+      "tags": [
+        "Page Cache 与数据落盘",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-device-1",
+      "categoryId": "os-device",
+      "sourceNodeId": "os-device",
+      "question": "键盘敲下一个字符到应用收到事件，中间经过哪些层？",
+      "answer": "【核心概述】\n设备管理把键盘、磁盘和网卡等硬件抽象成驱动与事件，输入通常经过中断、内核缓冲和设备文件到达应用。\n\n【面试要点】\n• 硬件中断通知 CPU，软中断或工作队列完成后续处理；设备文件和 ioctl 提供统一访问入口。\n• 中断上下文、DMA、缓冲区、字符设备/块设备、阻塞读和事件通知。\n• 中断处理不能执行长时间工作；设备吞吐、队列深度和驱动限制可能成为瓶颈。\n• 我按硬件中断、驱动缓冲、内核事件和用户态读取逐层描述数据路径。",
+      "tags": [
+        "设备管理与键盘输入"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-io-1",
+      "categoryId": "os-io",
+      "sourceNodeId": "os-io",
+      "question": "为什么 IO 多路复用仍属于同步 IO？epoll ET 模式为什么必须读空缓冲区？",
+      "answer": "【核心概述】\n阻塞描述调用是否等待，非阻塞描述调用是否立即返回；IO 多路复用一次等待多个文件描述符的就绪事件。\n\n【面试要点】\n• select/poll 每次处理描述符集合，epoll 维护内核事件表；就绪通知不等于应用数据已经完成解析。\n• select/poll/epoll 差异、LT/ET、EAGAIN、惊群、fd 上限和 Java Selector 映射。\n• 事件线程不能执行长时间业务或阻塞 IO；ET 模式要循环读取直到 EAGAIN，并正确处理半包。\n• 我分别定义等待、就绪和完成，再解释事件循环、线程模型与背压。",
+      "tags": [
+        "阻塞、非阻塞与 IO 多路复用",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-zero-copy-1",
+      "categoryId": "os-zero-copy",
+      "sourceNodeId": "os-zero-copy",
+      "question": "文件下载为什么可以用 sendfile 提升性能？什么时候它的收益会消失？",
+      "answer": "【核心概述】\n零拷贝减少用户态与内核态之间的数据复制或上下文切换，常用于文件发送和高吞吐网络服务。\n\n【面试要点】\n• sendfile 等路径可让内核直接把文件缓存交给网络栈，具体复制次数取决于内核、网卡和协议路径。\n• 传统四次拷贝/四次切换、sendfile、mmap、Direct Buffer、DMA 和 Java FileChannel.transferTo。\n• 零拷贝不等于完全没有复制；加密、压缩、协议转换和 TLS 可能引入额外处理。\n• 我先画传统路径，再比较 sendfile/mmap 减少的复制与切换，最后说明硬件和业务处理边界。",
+      "tags": [
+        "零拷贝",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-reactor-1",
+      "categoryId": "os-reactor",
+      "sourceNodeId": "os-reactor",
+      "question": "Netty 为什么采用 Reactor 模型？如何避免一个慢请求阻塞事件循环？",
+      "answer": "【核心概述】\nReactor 由事件循环监听就绪事件并分发任务，Proactor 关注 IO 完成通知；两者的核心差异是应用收到就绪还是完成。\n\n【面试要点】\n• Linux epoll 常用于 Reactor；Proactor 需要内核或运行时真正完成异步 IO 并回调应用。\n• 单 Reactor 单线程、主从 Reactor、多线程 worker、Proactor 与异步 IO 的适用条件。\n• Reactor 线程只负责轻量分发；业务线程池、连接池和队列必须有容量和拒绝策略。\n• 我从通知时机解释两种模型，再按 accept、读写、业务处理和背压拆解高性能服务。",
+      "tags": [
+        "Reactor 与 Proactor",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-os-consistent-hash-1",
+      "categoryId": "os-consistent-hash",
+      "sourceNodeId": "os-consistent-hash",
+      "question": "缓存集群增加一个节点时，为什么一致性哈希比取模少迁移？虚拟节点解决了什么问题？",
+      "answer": "【核心概述】\n一致性哈希把节点和请求映射到环上，节点增删只影响相邻的一小段 key，适合分布式缓存和分片路由。\n\n【面试要点】\n• key 顺时针找到第一个节点；虚拟节点改善分布不均，但不能自动解决热点 key 和副本一致性。\n• 普通哈希迁移量、虚拟节点、权重、复制、故障摘除和一致性哈希与取模的比较。\n• 节点变更仍会产生迁移和冷缓存；必须配合超时、重试、热点保护和数据副本策略。\n• 我先量化取模迁移范围，再用哈希环和虚拟节点解释稳定性，最后讨论热点与故障。",
+      "tags": [
+        "一致性哈希"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-linux-troubleshooting-1",
+      "categoryId": "linux-troubleshooting",
+      "sourceNodeId": "linux-troubleshooting",
+      "question": "接口超时且 load 很高，如何用最少命令判断 CPU、磁盘、网络还是锁等待？",
+      "answer": "【核心概述】\nLinux 排障要从故障时间线和资源指标开始，把 CPU、内存、磁盘、网络、进程线程与请求日志串起来。\n\n【面试要点】\n• load 包含可运行和不可中断等待任务；CPU 高、IO wait 高、锁等待和下游延迟需要不同证据。\n• top/pidstat、vmstat、iostat、free、ss、sar、jstack 和日志时间窗口的组合使用。\n• 先采集再操作，避免直接 kill、删日志或生成巨大转储；工具输出要结合容器 namespace 和权限解释。\n• 我先确认影响范围和时间线，再定位进程/线程与系统等待，修复后进行同负载对照。",
+      "tags": [
+        "Linux CPU、内存与网络排障",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-linux-network-metrics-1",
+      "categoryId": "linux-network-metrics",
+      "sourceNodeId": "linux-network-metrics",
+      "question": "服务 QPS 没变但 P99 上升，如何用网络指标区分丢包、拥塞和应用处理变慢？",
+      "answer": "【核心概述】\n网络排障要同时看吞吐、包速率、丢包、重传、连接状态、队列和 RTT，单看带宽不能判断网络健康。\n\n【面试要点】\n• sar、ss、ip -s、nstat 等工具从不同层面展示接口、协议栈和连接指标；重传上升会放大应用延迟。\n• RTT、吞吐、丢包、TCP 重传、SYN backlog、TIME_WAIT、接收/发送队列和连接建立失败。\n• 接口带宽充足仍可能因为 PPS、内核队列、MTU 或下游限流变慢；命令采样窗口要覆盖故障时段。\n• 我按接口、协议栈、连接和请求四层比对吞吐、重传、队列与 RTT。",
+      "tags": [
+        "网络性能指标",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-linux-log-analysis-1",
+      "categoryId": "linux-log-analysis",
+      "sourceNodeId": "linux-log-analysis",
+      "question": "如何从 Nginx 日志统计某接口 PV、UV 和 5xx 比例，并避免重试造成误判？",
+      "answer": "【核心概述】\n日志分析要先定义 PV、UV 和时间窗口，再处理重复请求、代理头、采样和时区，避免把日志行数直接当业务指标。\n\n【面试要点】\n• PV 是请求次数，UV 需要稳定的用户标识和去重；反向代理、多实例和重试会改变原始日志含义。\n• 按时间/状态码/接口聚合、awk/sort/uniq 组合、采样误差、日志轮转和脱敏。\n• 不要把 IP 直接当用户；日志可能缺字段、跨时区或被压缩轮转，线上分析先确认格式和权限。\n• 我先明确指标定义和字段，再按时间窗口聚合，最后与监控和链路追踪交叉验证。",
+      "tags": [
+        "日志 PV、UV 与请求分析"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-ai-basics-1",
+      "categoryId": "ai-basics",
+      "sourceNodeId": "ai-basics",
+      "question": "知识库内容频繁变化时，怎样选择 RAG、微调和评测方案？",
+      "answer": "【核心概述】\nLLM 基础知识是 AI 岗位面试门槛：Transformer 架构、token 与 embedding、Prompt 与参数调节。\n\n【面试要点】\n• 讲 Transformer 注意力 + 预测下一个 token 原理，分清 token/embedding/context，对比微调与 RAG",
+      "tags": [
+        "基础认知",
+        "核心考点"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-ai-models-1",
+      "categoryId": "ai-models",
+      "sourceNodeId": "ai-models",
+      "question": "同一业务更换模型供应方，你会验证哪些行为兼容性和回归指标？",
+      "answer": "【核心概述】\n模型 API 选型要围绕任务质量、延迟、成本与数据边界验证。具体型号和配额变化较快，应查各服务的当前文档。\n\n【面试要点】\n• 输出格式、流式响应、超时、限额与工具调用；用代表性样本比较质量和尾延迟。\n• 一个统一网关不能消除厂商 API 语义差异；处理重试、限流、响应校验和敏感数据最小化。",
+      "tags": [
+        "模型 API 集成与选型"
+      ],
+      "origin": "builtin"
+    },
+    {
+      "id": "seed-ai-tools-1",
+      "categoryId": "ai-tools",
+      "sourceNodeId": "ai-tools",
+      "question": "AI 生成了看似能运行的修复，你会用什么证据判断是否可以合入？",
+      "answer": "【核心概述】\nAI 编程工具的复习重点是工程流程和验证能力，实际完成的任务比工具名称列表更有说服力。\n\n【面试要点】\n• 描述如何复现问题、提供约束、审查差异并验证结果；评估效率时也计入返工和审查成本。\n• 代码、日志或网页中的指令可能是不可信输入；限制权限，不把未验证输出直接作为发布依据。",
+      "tags": [
+        "AI 编程工具与工程实践"
+      ],
+      "origin": "builtin"
+    }
+  ]
+}

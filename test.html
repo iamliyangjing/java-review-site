@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Tests</title>
+  <style>body{font-family:monospace;padding:20px}.pass{color:green}.fail{color:red;font-weight:bold}</style>
+</head>
+<body>
+  <h1>Data Integrity Tests</h1>
+  <div id="results"></div>
+  <script src="js/data.js?v=20261010"></script>
+  <script src="js/storage.js?v=20261009"></script>
+  <script src="js/edit-store.js?v=20261009"></script>
+  <script src="js/progress.js?v=20261009"></script>
+  <script src="js/notes/notes-core-1.js?v=20261009"></script>
+  <script src="js/notes/notes-core-2.js?v=20261009"></script>
+  <script src="js/notes/notes-core-3.js?v=20261009"></script>
+  <script src="js/notes/notes-secondary.js?v=20261009"></script>
+  <script src="js/notes/notes-expanded.js?v=20261009"></script>
+  <script src="js/notes/notes-os-expanded.js?v=20261009"></script>
+  <script src="js/notes/notes-network-expanded.js?v=20261010"></script>
+  <script>
+    const results = [];
+    function assert(name, cond) { results.push({ name, pass: !!cond }); }
+
+    assert("NODES is array with >= 90 entries", Array.isArray(window.NODES) && window.NODES.length >= 90);
+    assert("No duplicate ids", new Set(window.NODES.map(n => n.id)).size === window.NODES.length);
+    assert("Every node has id/name/level/parent/core fields",
+      window.NODES.every(n => typeof n.id === "string" && typeof n.name === "string" &&
+        typeof n.level === "number" && ("parent" in n) && typeof n.core === "boolean"));
+    assert("Every parent reference exists",
+      window.NODES.every(n => n.parent === null || window.NODE_MAP[n.parent] !== undefined));
+    assert("EDGES count matches parent links",
+      window.EDGES.length === window.NODES.filter(n => n.parent).length);
+    assert("Every edge endpoints exist",
+      window.EDGES.every(e => window.NODE_MAP[e.source] && window.NODE_MAP[e.target]));
+    assert("Level 1 nodes have null parent",
+      window.NODES.filter(n => n.level === 1).every(n => n.parent === null));
+    assert("Child level = parent level + 1",
+      window.NODES.filter(n => n.parent).every(n => n.level === window.NODE_MAP[n.parent].level + 1));
+
+    // Progress logic tests (run after data tests, isolated localStorage)
+    (function () {
+      const savedMastery = localStorage.getItem("jrs_mastery");
+      const savedCheckins = localStorage.getItem("jrs_checkins");
+      localStorage.removeItem("jrs_mastery");
+      localStorage.removeItem("jrs_checkins");
+
+      const firstNode = window.NODES[0].id;
+      assert("getMastery defaults to unlearned", window.ProgressStore.getMastery(firstNode) === "unlearned");
+      window.ProgressStore.setMastery(firstNode, "mastered");
+      assert("setMastery persists", window.ProgressStore.getMastery(firstNode) === "mastered");
+      window.ProgressStore.checkIn(firstNode);
+      assert("checkIn records today", window.ProgressStore.isCheckedInToday(firstNode) === true);
+      assert("getTodayCount is 1", window.ProgressStore.getTodayCount() === 1);
+      const stats = window.ProgressStore.getMasteryStats();
+      assert("mastery stats sum to NODES length",
+        stats.unlearned + stats.learning + stats.mastered === window.NODES.length);
+
+      if (savedMastery === null) localStorage.removeItem("jrs_mastery"); else localStorage.setItem("jrs_mastery", savedMastery);
+      if (savedCheckins === null) localStorage.removeItem("jrs_checkins"); else localStorage.setItem("jrs_checkins", savedCheckins);
+    })();
+
+    // Notes coverage tests
+    assert("Every node has a notes entry",
+      window.NODES.every(n => window.NOTES[n.id] !== undefined));
+    assert("Every core node has ready notes",
+      window.NODES.filter(n => n.core).every(n => window.NOTES[n.id] && window.NOTES[n.id].status === "ready"));
+    assert("Ready notes have summary + 2+ points",
+      Object.values(window.NOTES).filter(n => n.status === "ready")
+        .every(n => n.summary && n.points && n.points.length >= 2));
+    assert("Core node notes end with interview script",
+      window.NODES.filter(n => n.core).every(n => {
+        const note = window.NOTES[n.id];
+        return note.status !== "ready" || /面试话术/.test(note.points[note.points.length - 1]);
+      }));
+
+    // EditStore tests (isolated localStorage, restored after)
+    (function () {
+      const savedEdits = localStorage.getItem("jrs_edits");
+      const savedM = localStorage.getItem("jrs_mastery");
+      const savedC = localStorage.getItem("jrs_checkins");
+      localStorage.removeItem("jrs_edits");
+      localStorage.removeItem("jrs_mastery");
+      localStorage.removeItem("jrs_checkins");
+      window.EditStore.applyOverrides();
+
+      const baseCount = window.NODES.length;
+      const newId = window.EditStore.addNode("测试新增节点", "jvm");
+      window.EditStore.applyOverrides();
+      assert("addNode adds a node with custom- prefix",
+        /^custom-\d+$/.test(newId) && window.NODE_MAP[newId] !== undefined);
+      assert("added node has correct parent and level",
+        window.NODE_MAP[newId].parent === "jvm" && window.NODE_MAP[newId].level === window.NODE_MAP["jvm"].level + 1);
+      assert("added node appears in NODES", window.NODES.length === baseCount + 1);
+      window.EditStore.applyOverrides();
+      assert("applyOverrides idempotent (no dupes)",
+        window.NODES.length === baseCount + 1 && window.NODES.filter(n => n.id === newId).length === 1);
+
+      window.EditStore.renameNode("jmm", "JMM 改名测试");
+      window.EditStore.applyOverrides();
+      assert("renameNode updates node name", window.NODE_MAP["jmm"].name === "JMM 改名测试");
+
+      window.EditStore.moveNode("volatile", "jvm");
+      window.EditStore.applyOverrides();
+      assert("moveNode changes parent", window.NODE_MAP["volatile"].parent === "jvm");
+
+      const moveBack = window.EditStore.moveNode("jvm", "volatile");
+      assert("moveNode rejects cycle", moveBack === false);
+
+      window.EditStore.saveNote("jmm", { summary: "测试摘要", points: ["点1", "点2"] });
+      window.EditStore.applyOverrides();
+      assert("saveNote overrides NOTES", window.NOTES["jmm"].summary === "测试摘要" && window.NOTES["jmm"].points.length === 2);
+
+      window.EditStore.resetNode("jmm");
+      window.EditStore.applyOverrides();
+      assert("resetNode restores base note", window.NOTES["jmm"].summary.indexOf("Java 内存模型") === 0);
+
+      const deletedCount = window.EditStore.deleteNode("multithreading");
+      window.EditStore.applyOverrides();
+      assert("deleteNode cascades descendants", deletedCount > 1 && !window.NODE_MAP["multithreading"] && !window.NODE_MAP["jmm"]);
+
+      const exp = window.EditStore.exportData();
+      assert("exportData has version 1 and edits", exp.version === 1 && exp.edits && exp.progress);
+      const imp = window.EditStore.importData(exp);
+      assert("importData returns ok", imp.ok === true);
+
+      if (savedEdits === null) localStorage.removeItem("jrs_edits"); else localStorage.setItem("jrs_edits", savedEdits);
+      if (savedM === null) localStorage.removeItem("jrs_mastery"); else localStorage.setItem("jrs_mastery", savedM);
+      if (savedC === null) localStorage.removeItem("jrs_checkins"); else localStorage.setItem("jrs_checkins", savedC);
+      window.EditStore.applyOverrides();
+    })();
+
+    const el = document.getElementById("results");
+    let passCount = 0;
+    for (const r of results) {
+      if (r.pass) passCount++;
+      const div = document.createElement("div");
+      div.className = r.pass ? "pass" : "fail";
+      div.textContent = (r.pass ? "PASS " : "FAIL ") + r.name;
+      el.appendChild(div);
+    }
+    const summary = document.createElement("h2");
+    summary.textContent = passCount + "/" + results.length + " passed";
+    summary.className = passCount === results.length ? "pass" : "fail";
+    el.prepend(summary);
+  </script>
+</body>
+</html>
