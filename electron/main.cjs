@@ -1,12 +1,15 @@
 const path = require("node:path");
-const { app, BrowserWindow, dialog, ipcMain, session } = require("electron");
+const fs = require("node:fs");
+const { app, BrowserWindow, dialog, ipcMain, safeStorage, session } = require("electron");
 const { createQuestionStore } = require("./question-store.cjs");
+const { createCloudService } = require("./cloud-service.cjs");
 
 const APP_ROOT = path.resolve(__dirname, "..");
 const DESKTOP_PAGE = path.join(APP_ROOT, "desktop.html");
 const SEED_PATH = path.join(APP_ROOT, "data", "questions.json");
 const MAX_IMPORT_BYTES = 20 * 1024 * 1024;
 let store;
+let cloudService;
 let mainWindow;
 
 function assertLocalFrame(event) {
@@ -58,6 +61,21 @@ function registerIpcHandlers() {
     try { data = JSON.parse(payload.json); } catch { throw new Error("备份文件不是有效的 JSON"); }
     return store.importData(data);
   });
+  handle("cloud:status", () => cloudService.getStatus());
+  handle("cloud:save-config", payload => cloudService.saveConfig(payload));
+  handle("cloud:sign-up", payload => cloudService.signUp(payload));
+  handle("cloud:sign-in", payload => cloudService.signIn(payload));
+  handle("cloud:sign-out", () => cloudService.signOut());
+  handle("cloud:upload", () => cloudService.uploadBackup(store.exportData()));
+  handle("cloud:restore", async () => {
+    const remote = await cloudService.downloadBackup();
+    const localBackup = store.exportData();
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+    const backupPath = path.join(app.getPath("userData"), "pre-cloud-restore-" + timestamp + ".json");
+    fs.writeFileSync(backupPath, JSON.stringify(localBackup, null, 2), "utf8");
+    const result = store.importData(remote.backup);
+    return { ...result, backupPath, revision: remote.revision, updatedAt: remote.updatedAt };
+  });
 }
 
 function createWindow() {
@@ -97,6 +115,11 @@ app.whenReady().then(async () => {
   });
   try {
     store = await createQuestionStore({ dataDir: app.getPath("userData"), seedPath: SEED_PATH });
+    cloudService = createCloudService({
+      dataDir: app.getPath("userData"),
+      safeStorage,
+      developmentConfigPath: app.isPackaged ? null : path.join(APP_ROOT, "js", "supabase-config.local.js")
+    });
     registerIpcHandlers();
     createWindow();
   } catch (error) {

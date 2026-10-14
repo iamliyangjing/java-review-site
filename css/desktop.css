@@ -161,6 +161,16 @@ button { cursor: pointer; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
 .confirm-modal { width: min(430px, calc(100vw - 32px)); }
 .confirm-modal p { margin: 0; color: #68776f; font-size: 12px; line-height: 1.75; }
+.cloud-modal { width: min(560px, calc(100vw - 32px)); overflow-y: auto; }
+.cloud-status { margin: -5px 0 16px; padding: 10px 12px; border: 1px solid #dcebe4; border-radius: 9px; background: #f5faf7; color: #4b7866; font-size: 11px; line-height: 1.6; }
+.cloud-status[data-state="error"] { border-color: #f0d9d5; background: #fff8f6; color: #a4514b; }
+.cloud-section + .cloud-section { margin-top: 17px; padding-top: 16px; border-top: 1px solid var(--line); }
+.cloud-section h3 { margin: 0 0 9px; color: #40534a; font-size: 12px; }
+.cloud-help { margin: 8px 0 11px; color: #87948d; font-size: 10px; line-height: 1.7; }
+.cloud-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cloud-actions [hidden] { display: none; }
+.cloud-section input { margin-bottom: 3px; }
+.cloud-backup-actions { padding-bottom: 2px; }
 .toast { position: fixed; z-index: 10; right: 26px; bottom: 24px; max-width: 420px; padding: 12px 16px; transform: translateY(12px); border: 1px solid #dce7e1; border-radius: 10px; background: #233b32; color: white; box-shadow: 0 10px 28px #20302c2e; opacity: 0; pointer-events: none; font-size: 11px; transition: .22s ease; }
 .toast.show { transform: translateY(0); opacity: 1; }
 .toast.error { background: #7a3935; }

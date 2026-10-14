@@ -13,5 +13,12 @@ contextBridge.exposeInMainWorld("questionBank", Object.freeze({
   getReviewStats: () => ipcRenderer.invoke("question-bank:stats"),
   getLegacySummary: () => ipcRenderer.invoke("question-bank:legacy-summary"),
   exportData: () => ipcRenderer.invoke("question-bank:export"),
-  importData: json => ipcRenderer.invoke("question-bank:import", { json })
+  importData: json => ipcRenderer.invoke("question-bank:import", { json }),
+  getCloudStatus: () => ipcRenderer.invoke("cloud:status"),
+  saveCloudConfig: config => ipcRenderer.invoke("cloud:save-config", config),
+  cloudSignUp: credentials => ipcRenderer.invoke("cloud:sign-up", credentials),
+  cloudSignIn: credentials => ipcRenderer.invoke("cloud:sign-in", credentials),
+  cloudSignOut: () => ipcRenderer.invoke("cloud:sign-out"),
+  uploadCloudBackup: () => ipcRenderer.invoke("cloud:upload"),
+  restoreCloudBackup: () => ipcRenderer.invoke("cloud:restore")
 }));

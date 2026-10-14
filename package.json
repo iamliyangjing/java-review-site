@@ -21,6 +21,7 @@
     "generate:questions": "node scripts/build-question-seed.cjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "sql.js": "^1.14.2"
   },
   "devDependencies": {
@@ -42,7 +43,10 @@
       "js/desktop-renderer.cjs",
       "data/questions.json",
       "electron/**/*",
+      "node_modules/@supabase/**/*",
+      "node_modules/iceberg-js/**/*",
       "node_modules/sql.js/**/*",
+      "node_modules/tslib/**/*",
       "package.json"
     ],
     "win": {

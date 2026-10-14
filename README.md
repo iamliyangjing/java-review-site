@@ -4,7 +4,7 @@
 ![Platform: Windows](https://img.shields.io/badge/platform-Windows-0078D4?logo=windows)
 ![License: MIT for original code only](https://img.shields.io/badge/license-MIT%20%28code%20only%29-blue)
 
-一款面向 Java 面试复习的 Windows 桌面题库。按分类整理问题，用间隔复习安排巩固节奏，并在本机维护题目、复习计划和历史记录。桌面应用离线运行，数据保存在本机，不需要账号或云服务。
+一款面向 Java 面试复习的 Windows 桌面题库。按分类整理问题，用间隔复习安排巩固节奏，并在本机维护题目、复习计划和历史记录。应用默认离线运行；如需跨设备保存，可选登录自己的 Supabase 账号，手动上传或恢复云端备份。
 
 > 当前内置 131 道题目，覆盖 183 个知识分类。题库和学习资料不属于项目的 MIT 代码许可，详情见[许可与内容说明](#许可与内容说明)。
 
@@ -15,6 +15,7 @@
 - 按日期和分类筛选复习历史，查看掌握情况
 - 将题库、复习排期和历史记录导出为 JSON，也可从 JSON 或旧版网站 v1 备份导入
 - 通过本机 SQLite 持久化数据；应用更新不会覆盖个人题目和复习记录
+- 可选连接自己的 Supabase 项目，手动上传或恢复完整题库快照；不会在后台自动发送数据
 - 提供 Windows 安装版和便携版构建方式
 
 ## 下载与安装
@@ -57,7 +58,7 @@ GitHub Actions 会在推送、Pull Request 和手动触发时安装依赖、执�
 ## 项目结构
 
 ```text
-electron/                 Electron 主进程、预加载接口和本地题库存储
+electron/                 Electron 主进程、预加载接口、本地题库和云端备份服务
 js/desktop-renderer.cjs   桌面端界面逻辑
 desktop.html              桌面应用页面
 data/questions.json       首次启动导入的内置题库
@@ -65,11 +66,22 @@ tests/                    自动化测试
 scripts/                  题库生成等维护脚本
 index.html                旧版浏览器知识图谱入口
 js/notes/                 旧版浏览器端学习笔记
-supabase/migrations/      旧版浏览器云功能的数据库迁移
+supabase/migrations/      浏览器版和桌面云备份的数据库迁移
 vendor/                   旧版浏览器端使用的第三方发行文件及许可说明
 ```
 
-桌面版与仓库保留的旧版浏览器知识图谱是两套独立入口。桌面版使用本机 SQLite，不连接 Supabase。旧版页面可通过本地 HTTP 服务访问；登录、云同步和图片存储是可选的 Supabase 功能。
+桌面版与仓库保留的旧版浏览器知识图谱是两套独立入口。桌面版以本机 SQLite 为主数据，云端备份可选且手动触发。旧版页面可通过本地 HTTP 服务访问；登录、云同步和图片存储是可选的 Supabase 功能。
+
+### 桌面版 Supabase 云端备份
+
+桌面版始终以本机 SQLite 为主数据源。Supabase 功能是手动触发的云端快照备份，不会自动上传；断网时题库、复习和历史记录照常可用。
+
+1. 在自己的 Supabase 项目 SQL Editor 中执行 [`supabase/migrations/20261014120000_desktop_cloud_backups.sql`](supabase/migrations/20261014120000_desktop_cloud_backups.sql)。该迁移为每个已登录用户创建独立备份行，并启用 RLS。
+2. 在桌面应用顶部打开“云端”，填写项目 URL 和 publishable/anon key。不要使用 secret 或 service-role key。
+3. 使用 Supabase Auth 邮箱登录，或创建一个账号；如果项目启用了邮箱验证，先完成邮件确认。
+4. “上传本机题库”会替换该账号现有的云端快照；“恢复云端题库”会替换本机题库，并先自动保存恢复前的本机副本。
+
+应用不会在启动时连接 Supabase。项目配置保存在本机应用数据目录；登录会话在 Windows 支持时通过系统加密保存。更换 Supabase 项目或设备前，仍建议另行导出 JSON 备份。
 
 如需启用旧版页面的云功能，请复制配置模板并填写自己的项目 URL 和 publishable/anon key：
 

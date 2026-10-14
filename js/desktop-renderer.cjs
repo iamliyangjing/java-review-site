@@ -12,6 +12,7 @@
     trashOpen: false,
     editingId: null,
     confirmCallback: null,
+    cloudStatus: { configured: false, signedIn: false },
     toastTimer: null
   };
 
@@ -310,6 +311,111 @@
     } finally { event.target.value = ""; }
   }
 
+  function setCloudMessage(message, isError = false) {
+    const status = $("#cloud-status");
+    status.textContent = message;
+    status.dataset.state = isError ? "error" : "ready";
+  }
+
+  function updateCloudControls() {
+    const status = state.cloudStatus;
+    $("#cloud-sign-in").disabled = !status.configured || status.signedIn;
+    $("#cloud-sign-up").disabled = !status.configured || status.signedIn;
+    $("#cloud-sign-out").hidden = !status.signedIn;
+    $("#upload-cloud-backup").disabled = !status.signedIn;
+    $("#restore-cloud-backup").disabled = !status.signedIn;
+  }
+
+  async function refreshCloudStatus(fillConfig = false) {
+    state.cloudStatus = await api.getCloudStatus();
+    if (fillConfig) {
+      $("#cloud-url").value = state.cloudStatus.url || "";
+      $("#cloud-key").value = "";
+      $("#cloud-key").placeholder = state.cloudStatus.configured
+        ? "已保存，留空以保留当前 key"
+        : "粘贴 publishable 或 anon key";
+    }
+    setCloudMessage(state.cloudStatus.signedIn
+      ? "已登录 " + state.cloudStatus.email + "。云端操作为手动触发，本地题库仍可离线使用。"
+      : state.cloudStatus.configured
+        ? "项目配置已保存，登录后即可上传或恢复云端备份。"
+        : "尚未配置 Supabase。填写项目 URL 和 publishable/anon key 后保存即可。");
+    updateCloudControls();
+  }
+
+  async function openCloudDialog() {
+    try {
+      $("#cloud-error").textContent = "";
+      await refreshCloudStatus(true);
+      $("#cloud-dialog").showModal();
+    } catch (error) { showToast(error.message, true); }
+  }
+
+  async function saveCloudConfig() {
+    try {
+      const result = await api.saveCloudConfig({
+        url: $("#cloud-url").value,
+        publishableKey: $("#cloud-key").value
+      });
+      $("#cloud-key").value = "";
+      await refreshCloudStatus(true);
+      showToast("Supabase 配置已保存在本机");
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
+  async function signUpForCloud() {
+    try {
+      const result = await api.cloudSignUp({ email: $("#cloud-email").value, password: $("#cloud-password").value });
+      $("#cloud-password").value = "";
+      await refreshCloudStatus();
+      if (result.needsEmailConfirmation) {
+        setCloudMessage("注册请求已发送。请先完成 Supabase 邮箱确认，再回到这里登录。");
+      } else {
+        setCloudMessage("账号已创建并登录：" + result.email);
+      }
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
+  async function signInToCloud() {
+    try {
+      const result = await api.cloudSignIn({ email: $("#cloud-email").value, password: $("#cloud-password").value });
+      $("#cloud-password").value = "";
+      await refreshCloudStatus();
+      setCloudMessage("已登录 " + result.email + "。云端操作为手动触发，本地题库仍可离线使用。");
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
+  async function signOutFromCloud() {
+    try {
+      await api.cloudSignOut();
+      await refreshCloudStatus();
+      setCloudMessage("已退出 Supabase 账号；本机题库不受影响。");
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
+  function uploadCloudBackup() {
+    openConfirm("覆盖云端备份？", "将上传当前本机题库，并替换该账号已有的云端快照。本机数据不会改变。", "上传并覆盖", async () => {
+      try {
+        setCloudMessage("正在上传本机题库…");
+        const result = await api.uploadCloudBackup();
+        setCloudMessage("上传完成。云端版本 " + result.revision + "，时间 " + formatDate(result.uploadedAt, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) + "。");
+        showToast("本机题库已备份到 Supabase");
+      } catch (error) { setCloudMessage(error.message, true); }
+    }, false);
+  }
+
+  function restoreCloudBackup() {
+    openConfirm("用云端备份替换本机题库？", "恢复会完整替换本机题目、复习计划和历史记录。应用会先在本机自动保存一份恢复前备份。", "恢复云端备份", async () => {
+      try {
+        setCloudMessage("正在下载并恢复云端题库…");
+        const result = await api.restoreCloudBackup();
+        await refreshData();
+        setCloudMessage("恢复完成。云端版本 " + result.revision + "；恢复前本机副本已保存到应用数据目录。");
+        showToast("云端题库已恢复，本机原数据已备份");
+      } catch (error) { setCloudMessage(error.message, true); }
+    });
+  }
+
   function wireEvents() {
     document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
     $("#add-question").addEventListener("click", () => openQuestionEditor());
@@ -378,6 +484,13 @@
     $("#export-backup").addEventListener("click", exportBackup);
     $("#import-backup").addEventListener("click", () => $("#backup-file").click());
     $("#backup-file").addEventListener("change", importBackup);
+    $("#cloud-sync").addEventListener("click", openCloudDialog);
+    $("#save-cloud-config").addEventListener("click", saveCloudConfig);
+    $("#cloud-sign-up").addEventListener("click", signUpForCloud);
+    $("#cloud-sign-in").addEventListener("click", signInToCloud);
+    $("#cloud-sign-out").addEventListener("click", signOutFromCloud);
+    $("#upload-cloud-backup").addEventListener("click", uploadCloudBackup);
+    $("#restore-cloud-backup").addEventListener("click", restoreCloudBackup);
   }
 
   async function main() {
