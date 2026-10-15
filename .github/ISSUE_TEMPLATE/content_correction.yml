@@ -1,0 +1,22 @@
+name: Content correction
+description: Suggest a correction to an original question or reference
+title: "[Content]: "
+body:
+  - type: input
+    id: question-id
+    attributes:
+      label: Question/category ID
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: What should be corrected?
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Primary reference URL
+    validations:
+      required: true

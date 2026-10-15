@@ -9,6 +9,53 @@ permissions:
   contents: read
 
 jobs:
+  supabase-policy-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: java_review
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d java_review"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/java_review
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v6
+
+      - name: Install PostgreSQL client
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+
+      - name: Prepare isolated Supabase Auth-compatible test schema
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE anon NOLOGIN;
+          CREATE ROLE authenticated NOLOGIN;
+          CREATE SCHEMA auth;
+          CREATE TABLE auth.users (id uuid PRIMARY KEY);
+          CREATE FUNCTION auth.uid() RETURNS uuid
+            LANGUAGE sql STABLE
+            AS $$ SELECT nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
+          GRANT USAGE ON SCHEMA public TO authenticated;
+          GRANT USAGE ON SCHEMA auth TO authenticated;
+          GRANT SELECT ON auth.users TO authenticated;
+          SQL
+
+      - name: Apply desktop Supabase migrations
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261014120000_desktop_cloud_backups.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/migrations/20261015120000_desktop_backup_history.sql
+
+      - name: Verify RLS, conflict detection, and snapshot retention
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f tests/supabase-desktop-verify.sql
+
   test-and-build:
     runs-on: windows-latest
     steps:
@@ -35,6 +82,9 @@ jobs:
 
       - name: Build Windows apps
         run: npm run build
+
+      - name: Launch packaged app and test SQLite persistence
+        run: npm run smoke:packaged
 
       - name: Save installer and portable app
         uses: actions/upload-artifact@v7

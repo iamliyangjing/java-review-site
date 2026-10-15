@@ -1,0 +1,40 @@
+name: Bug report
+description: Report a reproducible problem in the desktop app
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not attach question databases, backup files, passwords, access tokens, or Supabase secret/service-role keys."
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: 1.0.0-beta.1
+    validations:
+      required: true
+  - type: input
+    id: windows
+    attributes:
+      label: Windows version and architecture
+      placeholder: Windows 11 24H2 x64
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Optional reviewed diagnostic
+      description: Diagnostics are local-only. Inspect the file and remove private details before attaching.
+    validations:
+      required: false

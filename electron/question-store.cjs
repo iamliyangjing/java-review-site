@@ -4,6 +4,8 @@ const crypto = require("node:crypto");
 
 const GRADE_QUALITY = Object.freeze({ again: 1, hard: 2, good: 4, easy: 5 });
 const MAX_QUESTIONS = 100000;
+const SCHEMA_VERSION = 2;
+const BACKUP_RETENTION = 10;
 
 async function createQuestionStore({ dataDir, seedPath, clock = () => new Date() }) {
   const initSqlJs = require("sql.js");
@@ -11,11 +13,58 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   const SQL = await initSqlJs({ locateFile: () => wasmPath });
   fs.mkdirSync(dataDir, { recursive: true });
   const databasePath = path.join(dataDir, "question-bank.sqlite");
-  let db = fs.existsSync(databasePath)
-    ? new SQL.Database(fs.readFileSync(databasePath))
-    : new SQL.Database();
+  const localBackupDir = path.join(dataDir, "backups");
+  fs.mkdirSync(localBackupDir, { recursive: true });
+  const interruptedReplacePath = databasePath + ".previous";
+  if (!fs.existsSync(databasePath) && fs.existsSync(interruptedReplacePath)) fs.renameSync(interruptedReplacePath, databasePath);
+  if (fs.existsSync(databasePath) && fs.statSync(databasePath).size) {
+    const datedBackup = path.join(localBackupDir, new Date(clock()).toISOString().slice(0, 10) + "-question-bank.sqlite");
+    if (!fs.existsSync(datedBackup)) fs.copyFileSync(databasePath, datedBackup);
+    for (const name of fs.readdirSync(localBackupDir).filter(name => name.endsWith(".sqlite")).sort().reverse().slice(BACKUP_RETENTION)) {
+      fs.unlinkSync(path.join(localBackupDir, name));
+    }
+  }
+  let db;
+  if (fs.existsSync(databasePath)) {
+    try {
+      db = new SQL.Database(fs.readFileSync(databasePath));
+      if (db.exec("PRAGMA quick_check")[0]?.values?.[0]?.[0] !== "ok") throw new Error("完整性检查失败");
+    } catch (error) {
+      try { db?.close(); } catch {}
+      const backups = fs.readdirSync(localBackupDir).filter(name => name.endsWith(".sqlite")).sort().reverse();
+      const recoveryCandidates = [
+        ...(fs.existsSync(interruptedReplacePath) ? [interruptedReplacePath] : []),
+        ...backups.map(name => path.join(localBackupDir, name))
+      ];
+      let recoveredPath = null;
+      for (const candidate of recoveryCandidates) {
+        try {
+          const probe = new SQL.Database(fs.readFileSync(candidate));
+          const valid = probe.exec("PRAGMA quick_check")[0]?.values?.[0]?.[0] === "ok";
+          probe.close();
+          if (valid) { recoveredPath = candidate; break; }
+        } catch {}
+      }
+      if (!recoveredPath) throw new Error("本地题库损坏且没有可用备份，损坏文件已保留；请勿删除应用数据目录。", { cause: error });
+      fs.copyFileSync(databasePath, databasePath + ".corrupt-" + Date.now());
+      fs.copyFileSync(recoveredPath, databasePath);
+      db = new SQL.Database(fs.readFileSync(databasePath));
+    }
+  } else db = new SQL.Database();
   db.run("PRAGMA foreign_keys = ON");
+  const dbVersion = Number(db.exec("PRAGMA user_version")[0]?.values?.[0]?.[0] || 0);
+  if (dbVersion > SCHEMA_VERSION) {
+    db.close();
+    throw new Error("题库由较新版本创建，请升级应用后再打开");
+  }
+  if (dbVersion < SCHEMA_VERSION && fs.existsSync(databasePath) && fs.statSync(databasePath).size) {
+    const migrationSnapshot = new Date(clock()).toISOString().replace(/[:.]/g, "-") + "-pre-migration.sqlite";
+    fs.copyFileSync(databasePath, path.join(localBackupDir, migrationSnapshot));
+    const snapshots = fs.readdirSync(localBackupDir).filter(name => name.endsWith(".sqlite")).sort().reverse();
+    for (const name of snapshots.slice(BACKUP_RETENTION)) fs.unlinkSync(path.join(localBackupDir, name));
+  }
   initializeSchema();
+  migrateSchema();
   seedBundledContent();
   persist();
 
@@ -37,6 +86,7 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
         question TEXT NOT NULL,
         answer TEXT NOT NULL,
         tags_json TEXT NOT NULL DEFAULT '[]',
+        sources_json TEXT NOT NULL DEFAULT '[]',
         origin TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
@@ -82,6 +132,14 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
     `);
   }
 
+  function migrateSchema() {
+    const columns = new Set(rows("PRAGMA table_info(questions)").map(column => column.name));
+    if (!columns.has("sources_json")) run("ALTER TABLE questions ADD COLUMN sources_json TEXT NOT NULL DEFAULT '[]'");
+    const version = Number(row("PRAGMA user_version")?.user_version || 0);
+    if (version > SCHEMA_VERSION) throw new Error("题库由较新版本创建，请升级应用后再打开");
+    run("PRAGMA user_version = " + SCHEMA_VERSION);
+  }
+
   function rows(sql, params = []) {
     const statement = db.prepare(sql);
     statement.bind(params);
@@ -102,19 +160,40 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   function persist() {
     const bytes = Buffer.from(db.export());
     const tempPath = databasePath + ".tmp";
-    fs.writeFileSync(tempPath, bytes);
-    fs.renameSync(tempPath, databasePath);
+    const file = fs.openSync(tempPath, "w", 0o600);
+    try { fs.writeFileSync(file, bytes); fs.fsyncSync(file); } finally { fs.closeSync(file); }
+    if (fs.existsSync(databasePath)) {
+      const previousPath = databasePath + ".previous";
+      try {
+        try { fs.unlinkSync(previousPath); } catch (error) { if (error.code !== "ENOENT") throw error; }
+        fs.renameSync(databasePath, previousPath);
+        fs.renameSync(tempPath, databasePath);
+      } catch (error) {
+        if (!fs.existsSync(databasePath) && fs.existsSync(previousPath)) fs.renameSync(previousPath, databasePath);
+        try { fs.unlinkSync(tempPath); } catch {}
+        throw error;
+      }
+      try { fs.unlinkSync(previousPath); } catch {}
+    } else fs.renameSync(tempPath, databasePath);
   }
 
   function transaction(callback) {
     db.run("BEGIN IMMEDIATE");
+    let committed = false;
     try {
       const result = callback();
       db.run("COMMIT");
+      committed = true;
       persist();
       return result;
     } catch (error) {
-      try { db.run("ROLLBACK"); } catch {}
+      if (!committed) {
+        try { db.run("ROLLBACK"); } catch {}
+      } else {
+        try { db.close(); } catch {}
+        db = new SQL.Database(fs.readFileSync(databasePath));
+        db.run("PRAGMA foreign_keys = ON");
+      }
       throw error;
     }
   }
@@ -135,10 +214,10 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
     }
     for (const question of seed.questions) {
       run(`INSERT OR IGNORE INTO questions
-        (id, category_id, source_node_id, question, answer, tags_json, origin, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, 'builtin', ?, ?)`, [
+        (id, category_id, source_node_id, question, answer, tags_json, sources_json, origin, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'builtin', ?, ?)`, [
         question.id, question.categoryId, question.sourceNodeId, question.question,
-        question.answer, JSON.stringify(question.tags), timestamp, timestamp
+        question.answer, JSON.stringify(question.tags), JSON.stringify(question.sources || []), timestamp, timestamp
       ]);
       run(`INSERT OR IGNORE INTO schedules (question_id, due_at) VALUES (?, ?)`, [question.id, timestamp]);
     }
@@ -162,10 +241,22 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       question,
       answer,
       tags: [...new Set(tags.map(tag => tag.trim()).filter(Boolean))],
+      sources: normalizeSources(input.sources ?? (existing ? JSON.parse(existing.sources_json || "[]") : [])),
       origin: existing?.origin || "custom",
       createdAt: existing?.created_at || timestamp,
       updatedAt: timestamp
     };
+  }
+
+  function normalizeSources(sources) {
+    if (!Array.isArray(sources) || sources.length > 10) throw new Error("参考来源最多 10 条");
+    return sources.map(source => {
+      if (!source || typeof source.title !== "string" || !source.title.trim() || source.title.length > 200 || typeof source.url !== "string") throw new Error("参考来源格式无效");
+      let url;
+      try { url = new URL(source.url); } catch { throw new Error("参考来源链接无效"); }
+      if (!["https:", "http:"].includes(url.protocol) || url.username || url.password) throw new Error("参考来源只允许 HTTP(S) 链接");
+      return { title: source.title.trim(), url: url.href };
+    });
   }
 
   function toQuestion(record) {
@@ -177,6 +268,7 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       question: record.question,
       answer: record.answer,
       tags: JSON.parse(record.tags_json),
+      sources: JSON.parse(record.sources_json || "[]"),
       origin: record.origin,
       createdAt: record.created_at,
       updatedAt: record.updated_at,
@@ -228,15 +320,15 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       if (input.id && !existing) throw new Error("题目不存在或已删除");
       const question = normalizeQuestion(input, existing);
       if (existing) {
-        run(`UPDATE questions SET category_id = ?, source_node_id = ?, question = ?, answer = ?, tags_json = ?, updated_at = ? WHERE id = ?`, [
-          question.categoryId, question.sourceNodeId, question.question, question.answer, JSON.stringify(question.tags), question.updatedAt, question.id
+        run(`UPDATE questions SET category_id = ?, source_node_id = ?, question = ?, answer = ?, tags_json = ?, sources_json = ?, updated_at = ? WHERE id = ?`, [
+          question.categoryId, question.sourceNodeId, question.question, question.answer, JSON.stringify(question.tags), JSON.stringify(question.sources), question.updatedAt, question.id
         ]);
       } else {
         run(`INSERT INTO questions
-          (id, category_id, source_node_id, question, answer, tags_json, origin, created_at, updated_at)
-          VALUES (?, ?, ?, ?, ?, ?, 'custom', ?, ?)`, [
+          (id, category_id, source_node_id, question, answer, tags_json, sources_json, origin, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, 'custom', ?, ?)`, [
           question.id, question.categoryId, question.sourceNodeId, question.question, question.answer,
-          JSON.stringify(question.tags), question.createdAt, question.updatedAt
+          JSON.stringify(question.tags), JSON.stringify(question.sources), question.createdAt, question.updatedAt
         ]);
         run("INSERT INTO schedules (question_id, due_at) VALUES (?, ?)", [question.id, nowIso()]);
       }
@@ -370,6 +462,8 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       if (ids.has(question.id)) throw new Error("备份中存在重复题目");
       ids.add(question.id);
       if (!Array.isArray(JSON.parse(question.tags_json || "[]"))) throw new Error("备份中的标签格式无效");
+      try { normalizeSources(JSON.parse(question.sources_json || "[]")); }
+      catch { throw new Error("备份中的参考来源格式无效"); }
     }
     for (const schedule of data.schedules) {
       if (!ids.has(schedule.question_id) || !Number.isInteger(schedule.repetitions) || schedule.repetitions < 0 || !Number.isFinite(schedule.ease_factor) || !Number.isInteger(schedule.interval_days) || schedule.interval_days < 0 || Number.isNaN(new Date(schedule.due_at).getTime())) throw new Error("备份中的复习计划格式无效");
@@ -387,8 +481,8 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
         run("INSERT INTO categories (id, name, parent_id, level, core, origin, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?)", [category.id, category.name, category.parent_id, category.level, category.core || 0, category.origin || "custom", category.deleted_at || null]);
       }
       for (const question of data.questions) {
-        run(`INSERT INTO questions (id, category_id, source_node_id, question, answer, tags_json, origin, created_at, updated_at, deleted_at)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [question.id, question.category_id, question.source_node_id || null, question.question, question.answer, question.tags_json || "[]", question.origin || "custom", question.created_at, question.updated_at, question.deleted_at || null]);
+        run(`INSERT INTO questions (id, category_id, source_node_id, question, answer, tags_json, sources_json, origin, created_at, updated_at, deleted_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, [question.id, question.category_id, question.source_node_id || null, question.question, question.answer, question.tags_json || "[]", question.sources_json || "[]", question.origin || "custom", question.created_at, question.updated_at, question.deleted_at || null]);
       }
       const schedulesById = new Map(data.schedules.map(item => [item.question_id, item]));
       for (const question of data.questions) {

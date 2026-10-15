@@ -45,8 +45,19 @@ test("desktop cloud controls configure, sign in, upload, and restore without tou
         cloudStatus = { configured: true, signedIn: true, email: credentials.email, url: cloudStatus.url };
         return { authenticated: true, email: credentials.email };
       },
+      cloudSignInWithToken: async tokens => {
+        calls.push({ method: "signInWithToken", tokens });
+        cloudStatus = { configured: true, signedIn: true, email: "reviewer@example.com", url: cloudStatus.url };
+        return { authenticated: true, email: "reviewer@example.com" };
+      },
+      cloudSignInAnonymously: async () => {
+        calls.push({ method: "signInAnonymously" });
+        cloudStatus = { configured: true, signedIn: true, anonymous: true, email: "本机匿名身份", url: cloudStatus.url };
+        return { authenticated: true, anonymous: true };
+      },
       cloudSignUp: async () => ({ authenticated: false, needsEmailConfirmation: true }),
       cloudSignOut: async () => {
+        calls.push({ method: "signOut" });
         cloudStatus = { ...cloudStatus, signedIn: false, email: "" };
         return { signedIn: false };
       },
@@ -54,8 +65,9 @@ test("desktop cloud controls configure, sign in, upload, and restore without tou
         calls.push({ method: "upload" });
         return { revision: 1, uploadedAt: new Date().toISOString() };
       },
-      restoreCloudBackup: async () => {
-        calls.push({ method: "restore" });
+      listCloudBackups: async () => [2, 1].map(revision => ({ revision, createdAt: new Date().toISOString() })),
+      restoreCloudBackup: async revision => {
+        calls.push({ method: "restore", revision });
         return { revision: 1, updatedAt: new Date().toISOString() };
       }
     };
@@ -66,20 +78,28 @@ test("desktop cloud controls configure, sign in, upload, and restore without tou
     await page.locator("#cloud-url").fill(cloudUrl);
     await page.locator("#cloud-key").fill("sb_publishable_ui_test_key_1234567890");
     await page.locator("#save-cloud-config").click();
-    await page.locator("#cloud-email").fill("reviewer@example.com");
-    await page.locator("#cloud-password").fill("safe-test-password");
-    await page.locator("#cloud-sign-in").click();
-    await page.locator("#cloud-status").getByText("已登录").waitFor();
+    await page.locator("#cloud-anonymous-sign-in").click();
+    await page.locator("#cloud-status").getByText("已创建并登录").waitFor();
 
     await page.locator("#upload-cloud-backup").click();
     await page.locator("#confirm-action").click();
     await page.locator("#cloud-status").getByText("上传完成").waitFor();
+    assert.equal(await page.locator("#cloud-backup-version option").count(), 3);
+    await page.locator("#cloud-backup-version").selectOption("1");
     await page.locator("#restore-cloud-backup").click();
     await page.locator("#confirm-action").click();
     await page.locator("#cloud-status").getByText("恢复完成").waitFor();
 
+    await page.locator("#cloud-sign-out").click();
+    await page.locator("summary").getByText("使用自己的 Supabase 用户 Token 登录").click();
+    await page.locator("#cloud-access-token").fill("user-access-token");
+    await page.locator("#cloud-refresh-token").fill("user-refresh-token");
+    await page.locator("#cloud-token-sign-in").click();
+    await page.locator("#cloud-status").getByText("Token 已验证并登录").waitFor();
+
     const methods = await page.evaluate(() => window.__cloudCalls.map(call => call.method));
-    assert.deepEqual(methods, ["saveConfig", "signIn", "upload", "restore"]);
+    assert.deepEqual(methods, ["saveConfig", "signInAnonymously", "upload", "restore", "signOut", "signInWithToken"]);
+    assert.equal(await page.evaluate(() => window.__cloudCalls.find(call => call.method === "restore").revision), 1);
     const sentConfig = await page.evaluate(() => window.__cloudCalls.find(call => call.method === "saveConfig").config);
     assert.equal(sentConfig.url, cloudUrl);
   } finally {

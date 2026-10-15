@@ -22,6 +22,16 @@ function createFakeClientFactory(state) {
       auth: {
         async getSession() { return { data: { session: state.session }, error: null }; },
         async refreshSession() { return { data: { session: state.session, user: state.session?.user }, error: null }; },
+        async setSession(tokens) {
+          state.providedTokens = tokens;
+          state.session = { user: { id: "user-1", email: "reviewer@example.com" } };
+          return { data: { user: state.session.user, session: state.session }, error: null };
+        },
+        async signInAnonymously() {
+          if (state.anonymousErrorCode) return { data: { user: null, session: null }, error: { code: state.anonymousErrorCode, message: "disabled" } };
+          state.session = { user: { id: "anonymous-user-1", is_anonymous: true } };
+          return { data: { user: state.session.user, session: state.session }, error: null };
+        },
         async signUp({ email }) {
           state.session = { user: { id: "user-1", email } };
           return { data: { user: state.session.user, session: state.session }, error: null };
@@ -33,19 +43,37 @@ function createFakeClientFactory(state) {
         async signOut() { state.session = null; return { error: null }; }
       },
       from(table) {
-        assert.equal(table, "jrs_desktop_backups");
+        assert.equal(table, "jrs_desktop_backup_snapshots");
+        let selectedRevision = null;
         const query = {
           select() { return query; },
-          eq(column, value) { state.queriedUser = { column, value }; return query; },
-          async maybeSingle() { return { data: state.remote, error: null }; }
+          eq(column, value) {
+            if (column === "user_id") state.queriedUser = { column, value };
+            if (column === "revision") selectedRevision = Number(value);
+            return query;
+          },
+          order() { return query; },
+          limit() { return query; },
+          then(resolve, reject) { return Promise.resolve({
+            data: state.snapshots.slice(-10).reverse().map(item => ({ revision: item.revision, created_at: item.created_at })),
+            error: null
+          }).then(resolve, reject); },
+          async maybeSingle() {
+            const item = selectedRevision
+              ? state.snapshots.find(snapshot => snapshot.revision === selectedRevision)
+              : state.snapshots.at(-1);
+            return { data: item || null, error: null };
+          }
         };
         return query;
       },
       async rpc(name, args) {
         state.rpcCall = { name, args };
-        const revision = (state.remote?.revision || 0) + 1;
-        state.remote = { payload: args.p_payload, revision, updated_at: "2026-10-14T12:00:00.000Z" };
-        return { data: { revision, updatedAt: state.remote.updated_at }, error: null };
+        const revision = (state.snapshots.at(-1)?.revision || 0) + 1;
+        const snapshot = { payload: args.p_payload, revision, created_at: "2026-10-14T12:00:00.000Z" };
+        state.snapshots.push(snapshot);
+        state.remote = snapshot;
+        return { data: { revision, createdAt: snapshot.created_at }, error: null };
       }
     };
   };
@@ -80,7 +108,7 @@ test("encrypted auth storage persists only encrypted session data", async () => 
 
 test("uploads and downloads a versioned backup only for the signed-in Supabase user", async () => {
   await withTempDir(async dataDir => {
-    const state = { session: null, remote: null };
+    const state = { session: null, remote: null, snapshots: [] };
     const service = createCloudService({
       dataDir,
       configPath: path.join(dataDir, "cloud-config.json"),
@@ -99,11 +127,86 @@ test("uploads and downloads a versioned backup only for the signed-in Supabase u
     const uploaded = await service.uploadBackup(backup);
     assert.equal(uploaded.revision, 1);
     assert.equal(state.queriedUser.column, "user_id");
-    assert.equal(state.rpcCall.name, "jrs_save_desktop_backup");
+    assert.equal(state.rpcCall.name, "jrs_save_desktop_backup_snapshot");
     assert.equal(state.rpcCall.args.p_expected_revision, 0);
     const downloaded = await service.downloadBackup();
     assert.deepEqual(downloaded.backup, backup);
     assert.equal(downloaded.revision, 1);
+    assert.equal((await service.listBackups())[0].revision, 1);
+    const second = await service.uploadBackup({ ...backup, marker: "second" });
+    assert.equal(second.revision, 2);
+    assert.deepEqual((await service.downloadBackup(1)).backup, backup);
+    assert.equal((await service.downloadBackup()).revision, 2);
+  });
+});
+
+test("signs in with a user-scoped access and refresh token pair only", async () => {
+  await withTempDir(async dataDir => {
+    const state = { session: null, remote: null, snapshots: [] };
+    const service = createCloudService({
+      dataDir,
+      configPath: path.join(dataDir, "cloud-config.json"),
+      safeStorage: null,
+      clientFactory: createFakeClientFactory(state)
+    });
+    service.saveConfig(VALID_CONFIG);
+    const accessToken = [
+      Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url"),
+      Buffer.from(JSON.stringify({ sub: "00000000-0000-4000-8000-000000000001", role: "authenticated" })).toString("base64url"),
+      "signature"
+    ].join(".");
+    const tokens = { accessToken, refreshToken: "user-refresh-token-value" };
+    assert.deepEqual(await service.signInWithToken(tokens), { authenticated: true, email: "reviewer@example.com" });
+    assert.deepEqual(state.providedTokens, { access_token: accessToken, refresh_token: tokens.refreshToken });
+    assert.equal((await service.getStatus()).signedIn, true);
+    await assert.rejects(() => service.signInWithToken({ accessToken: VALID_CONFIG.publishableKey, refreshToken: "anything" }), /Supabase 用户 JWT/);
+    const serviceRoleToken = [
+      Buffer.from(JSON.stringify({ alg: "HS256", typ: "JWT" })).toString("base64url"),
+      Buffer.from(JSON.stringify({ sub: "service", role: "service_role" })).toString("base64url"),
+      "signature"
+    ].join(".");
+    await assert.rejects(() => service.signInWithToken({ accessToken: serviceRoleToken, refreshToken: "anything" }), /authenticated Access Token/);
+    await assert.rejects(() => service.signInWithToken({ accessToken, refreshToken: "" }), /Access Token 和 Refresh Token/);
+  });
+});
+
+test("creates a passwordless anonymous identity and prevents accidental replacement", async () => {
+  await withTempDir(async dataDir => {
+    const state = { session: null, remote: null, snapshots: [] };
+    const service = createCloudService({
+      dataDir,
+      configPath: path.join(dataDir, "cloud-config.json"),
+      safeStorage: null,
+      clientFactory: createFakeClientFactory(state)
+    });
+    service.saveConfig(VALID_CONFIG);
+    assert.deepEqual(await service.signInAnonymously(), {
+      authenticated: true,
+      anonymous: true,
+      email: "本机匿名身份"
+    });
+    assert.deepEqual(await service.getStatus(), {
+      configured: true,
+      signedIn: true,
+      anonymous: true,
+      email: "本机匿名身份",
+      url: VALID_CONFIG.url
+    });
+    await assert.rejects(() => service.signInAnonymously(), /当前已有 Supabase 会话/);
+  });
+});
+
+test("explains how to enable anonymous auth when the Supabase project rejects it", async () => {
+  await withTempDir(async dataDir => {
+    const state = { session: null, remote: null, snapshots: [], anonymousErrorCode: "anonymous_provider_disabled" };
+    const service = createCloudService({
+      dataDir,
+      configPath: path.join(dataDir, "cloud-config.json"),
+      safeStorage: null,
+      clientFactory: createFakeClientFactory(state)
+    });
+    service.saveConfig(VALID_CONFIG);
+    await assert.rejects(() => service.signInAnonymously(), /启用匿名登录/);
   });
 });
 

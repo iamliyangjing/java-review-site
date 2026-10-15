@@ -1,0 +1,90 @@
+name: Manual Windows release
+
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Release channel
+        required: true
+        type: choice
+        options: [beta, stable]
+        default: beta
+      tag:
+        description: Existing git tag to build, such as v1.0.0-beta.1
+        required: true
+        type: string
+      validated_beta_tag:
+        description: For stable releases, the Beta tag verified by maintainers
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Validate channel and tag
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_CHANNEL: ${{ inputs.channel }}
+        run: |
+          $tag = $env:RELEASE_TAG
+          $channel = $env:RELEASE_CHANNEL
+          if ($channel -eq "beta" -and $tag -notmatch '^v\d+\.\d+\.\d+-beta\.\d+$') { throw "Beta releases require a vX.Y.Z-beta.N tag." }
+          if ($channel -eq "stable" -and $tag -notmatch '^v\d+\.\d+\.\d+$') { throw "Stable releases require a vX.Y.Z tag." }
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.tag }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Sync package version to release tag
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: |
+          $version = $env:RELEASE_TAG.TrimStart('v')
+          npm version $version --no-git-tag-version
+
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - run: npx playwright install chromium
+      - run: npm test
+      - run: npm run build
+      - run: npm run smoke:packaged
+
+      - name: Generate SHA-256 manifest
+        shell: pwsh
+        run: |
+          $lines = Get-ChildItem release -Filter '*.exe' | ForEach-Object {
+            $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $_.FullName).Hash.ToLowerInvariant()
+            "$hash  $($_.Name)"
+          }
+          if (-not $lines) { throw "No Windows executable artifacts were produced." }
+          Set-Content -LiteralPath release/SHA256SUMS.txt -Value $lines -Encoding ascii
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+          RELEASE_CHANNEL: ${{ inputs.channel }}
+          VALIDATED_BETA_TAG: ${{ inputs.validated_beta_tag }}
+        run: |
+          if ($env:RELEASE_CHANNEL -eq "stable") {
+            if ($env:VALIDATED_BETA_TAG -notmatch '^v\d+\.\d+\.\d+-beta\.\d+$') { throw "Provide the Beta tag that maintainers verified before stable." }
+            $betaState = gh release view $env:VALIDATED_BETA_TAG --json isPrerelease --jq '.isPrerelease'
+            if ($betaState -ne "true") { throw "The selected validation tag is not a published Beta release." }
+          }
+          $ghArgs = @("release", "create", $env:RELEASE_TAG, "--title", $env:RELEASE_TAG, "--notes-file", "CHANGELOG.md")
+          if ($env:RELEASE_CHANNEL -eq "beta") { $ghArgs += "--prerelease" } else { $ghArgs += "--latest" }
+          $ghArgs += (Get-ChildItem release -Filter '*.exe' | ForEach-Object { $_.FullName })
+          $ghArgs += "release/SHA256SUMS.txt"
+          gh @ghArgs

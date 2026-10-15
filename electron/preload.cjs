@@ -18,7 +18,10 @@ contextBridge.exposeInMainWorld("questionBank", Object.freeze({
   saveCloudConfig: config => ipcRenderer.invoke("cloud:save-config", config),
   cloudSignUp: credentials => ipcRenderer.invoke("cloud:sign-up", credentials),
   cloudSignIn: credentials => ipcRenderer.invoke("cloud:sign-in", credentials),
+  cloudSignInWithToken: tokens => ipcRenderer.invoke("cloud:sign-in-token", tokens),
+  cloudSignInAnonymously: () => ipcRenderer.invoke("cloud:sign-in-anonymous"),
   cloudSignOut: () => ipcRenderer.invoke("cloud:sign-out"),
   uploadCloudBackup: () => ipcRenderer.invoke("cloud:upload"),
-  restoreCloudBackup: () => ipcRenderer.invoke("cloud:restore")
+  listCloudBackups: () => ipcRenderer.invoke("cloud:list"),
+  restoreCloudBackup: revision => ipcRenderer.invoke("cloud:restore", { revision })
 }));

@@ -32,7 +32,7 @@
       <aside class="sidebar">
         <div class="sidebar-heading"><span class="eyebrow">YOUR LIBRARY</span><h2>知识分类</h2></div>
         <button class="module-filter active" type="button" data-category="">
-          <span class="module-dot all-dot"></span><span>全部分类</span><b id="all-count">131</b>
+          <span class="module-dot all-dot"></span><span>全部分类</span><b id="all-count">183</b>
         </button>
         <div id="module-list" class="module-list" aria-label="知识分类"></div>
         <div class="sidebar-bottom">
@@ -49,7 +49,7 @@
           </div>
           <div class="stats-row">
             <article class="stat-card stat-highlight"><span>今日待复习</span><strong id="stat-due">0</strong><small>道题已到期</small></article>
-            <article class="stat-card"><span>题库总量</span><strong id="stat-total">131</strong><small>覆盖全部知识分类</small></article>
+            <article class="stat-card"><span>题库总量</span><strong id="stat-total">183</strong><small>覆盖全部知识分类</small></article>
             <article class="stat-card"><span>今日已完成</span><strong id="stat-reviewed">0</strong><small>次有效回顾</small></article>
             <article class="stat-card"><span>连续复习</span><strong><span id="stat-streak">0</span><em>天</em></strong><small>保持学习节奏</small></article>
           </div>
@@ -72,7 +72,7 @@
           <div class="bank-toolbar">
             <label class="search-field"><span aria-hidden="true">⌕</span><input id="bank-search" type="search" placeholder="搜索题目、答案或标签…" autocomplete="off"></label>
             <label class="select-wrap"><span>分类</span><select id="bank-category"></select></label>
-            <span id="bank-result-count" class="result-count">131 道题</span>
+            <span id="bank-result-count" class="result-count">183 道题</span>
           </div>
           <div id="question-list" class="question-list"></div>
         </section>
@@ -106,6 +106,8 @@
       <textarea id="question-answer" rows="8" maxlength="50000" required placeholder="记录核心结论、关键原理、实践注意点和回答思路"></textarea>
       <label class="field-label" for="question-tags">标签 <small>用逗号分隔</small></label>
       <input id="question-tags" type="text" maxlength="300" placeholder="例如：高频、JDK 21、并发">
+      <label class="field-label" for="question-sources">参考来源 <small>每行一条，格式：标题 | HTTPS 链接</small></label>
+      <textarea id="question-sources" rows="3" maxlength="3000" placeholder="Java Language Specification | https://docs.oracle.com/javase/specs/"></textarea>
       <div id="question-form-error" class="form-error" role="alert"></div>
       <div class="modal-actions"><button type="button" class="button subtle" data-close-dialog>取消</button><button id="save-question" type="submit" class="button primary">保存题目</button></div>
     </form>
@@ -144,15 +146,27 @@
       <div class="cloud-actions">
         <button id="cloud-sign-in" class="button primary" type="button">登录</button>
         <button id="cloud-sign-up" class="button subtle" type="button">创建账号</button>
+        <button id="cloud-anonymous-sign-in" class="button subtle" type="button">免密码创建云端身份</button>
         <button id="cloud-sign-out" class="text-button" type="button" hidden>退出登录</button>
       </div>
+      <p class="cloud-help">免密码身份由 Supabase 自动创建并保存在本机。它绑定当前安装；更换设备、清除应用数据或退出登录后无法找回，重要数据请保留本地备份。</p>
+      <details class="cloud-token-login">
+        <summary>使用自己的 Supabase 用户 Token 登录</summary>
+        <label class="field-label" for="cloud-access-token">Access Token</label>
+        <input id="cloud-access-token" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴用户 JWT（authenticated）">
+        <label class="field-label" for="cloud-refresh-token">Refresh Token</label>
+        <input id="cloud-refresh-token" type="password" autocomplete="off" spellcheck="false" placeholder="粘贴对应的 Refresh Token">
+        <p class="cloud-help">需成对提供 Supabase Auth 用户会话令牌。成功后会话由系统加密保存在本机；不要使用项目 API key、Secret key 或 Personal Access Token。</p>
+        <button id="cloud-token-sign-in" class="button subtle" type="button">验证并登录</button>
+      </details>
     </section>
     <section class="cloud-section cloud-backup-actions">
       <h3>备份操作</h3>
-      <p class="cloud-help">上传会覆盖该账号当前的云端快照；恢复会替换本机题库，并自动生成一份恢复前本地备份。云端操作需要网络，其他功能仍可离线使用。</p>
+      <p class="cloud-help">每次手动上传会新增一个版本，云端保留最近 10 个。恢复会替换本机题库，并自动生成恢复前本地备份。</p>
       <div class="cloud-actions">
         <button id="upload-cloud-backup" class="button subtle" type="button">上传本机题库</button>
-        <button id="restore-cloud-backup" class="button subtle" type="button">恢复云端题库</button>
+        <select id="cloud-backup-version" aria-label="选择云端备份版本"><option value="">最新版本</option></select>
+        <button id="restore-cloud-backup" class="button subtle" type="button">恢复所选版本</button>
       </div>
     </section>
     <div id="cloud-error" class="form-error" role="alert"></div>

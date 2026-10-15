@@ -4,7 +4,7 @@ const path = require("node:path");
 const { createClient } = require("@supabase/supabase-js");
 
 const MAX_BACKUP_BYTES = 20 * 1024 * 1024;
-const BACKUP_TABLE = "jrs_desktop_backups";
+const SNAPSHOT_TABLE = "jrs_desktop_backup_snapshots";
 
 function readConfigObject(filePath) {
   if (!filePath || !fs.existsSync(filePath)) return null;
@@ -52,6 +52,22 @@ function validateConfig(input) {
     }
   }
   return { url: projectUrl.origin, publishableKey };
+}
+
+function validateAuthTokens(input) {
+  const accessToken = String(input?.accessToken || "").trim();
+  const refreshToken = String(input?.refreshToken || "").trim();
+  if (accessToken.length > 16384 || refreshToken.length > 8192) throw new Error("Supabase 登录令牌长度无效");
+  if (!accessToken || !refreshToken) throw new Error("请输入 Supabase Auth 的 Access Token 和 Refresh Token");
+  const parts = accessToken.split(".");
+  if (parts.length !== 3) throw new Error("Access Token 不是有效的 Supabase 用户 JWT");
+  let claims;
+  try { claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8")); }
+  catch { throw new Error("Access Token 不是有效的 Supabase 用户 JWT"); }
+  if (claims.role !== "authenticated" || !claims.sub) {
+    throw new Error("只接受已登录用户的 authenticated Access Token，不能使用项目 API key 或高权限 token");
+  }
+  return { accessToken, refreshToken };
 }
 
 function createEncryptedSessionStorage({ dataDir, safeStorage, storageIdentity }) {
@@ -171,11 +187,41 @@ function createCloudService({ dataDir, safeStorage, configPath, developmentConfi
     return { authenticated: true, email: data.user?.email || email.trim() };
   }
 
+  async function signInWithToken(input) {
+    const tokens = validateAuthTokens(input);
+    const { data, error } = await getClient().auth.setSession({
+      access_token: tokens.accessToken,
+      refresh_token: tokens.refreshToken
+    });
+    if (error) throw error;
+    const user = data.user || data.session?.user;
+    if (!user?.id) throw new Error("令牌未能验证为有效的 Supabase 用户会话");
+    return { authenticated: true, email: user.email || user.id };
+  }
+
+  async function signInAnonymously() {
+    if (await currentUser()) throw new Error("当前已有 Supabase 会话。请先退出登录，再创建新的本机匿名身份。");
+    const { data, error } = await getClient().auth.signInAnonymously();
+    if (error?.code === "anonymous_provider_disabled") {
+      throw new Error("Supabase 项目尚未启用匿名登录。请在 Dashboard 的 Authentication 设置中启用 Allow anonymous sign-ins 后重试。");
+    }
+    if (error) throw error;
+    const user = data.user || data.session?.user;
+    if (!user?.id || !user.is_anonymous) throw new Error("Supabase 未返回有效的匿名用户会话");
+    return { authenticated: true, anonymous: true, email: "本机匿名身份" };
+  }
+
   async function getStatus() {
     if (!config) return { configured: false, signedIn: false, email: "" };
     try {
       const user = await currentUser();
-      return { configured: true, signedIn: Boolean(user), email: user?.email || "", url: config.url };
+      return {
+        configured: true,
+        signedIn: Boolean(user),
+        anonymous: Boolean(user?.is_anonymous),
+        email: user?.email || (user?.is_anonymous ? "本机匿名身份" : ""),
+        url: config.url
+      };
     } catch {
       return { configured: true, signedIn: false, email: "", url: config.url };
     }
@@ -195,6 +241,8 @@ function createCloudService({ dataDir, safeStorage, configPath, developmentConfi
     },
     async signUp(input) { return signUp(input); },
     async signIn(input) { return signIn(input); },
+    async signInWithToken(input) { return signInWithToken(input); },
+    async signInAnonymously() { return signInAnonymously(); },
     async signOut() {
       const { error } = await getClient().auth.signOut();
       if (error) throw error;
@@ -206,32 +254,49 @@ function createCloudService({ dataDir, safeStorage, configPath, developmentConfi
       const serialized = JSON.stringify(backup);
       if (Buffer.byteLength(serialized, "utf8") > MAX_BACKUP_BYTES) throw new Error("题库备份超过 20 MB，无法上传");
       const api = getClient();
-      const { data: current, error: readError } = await api.from(BACKUP_TABLE)
+      const { data: current, error: readError } = await api.from(SNAPSHOT_TABLE)
         .select("revision")
         .eq("user_id", user.id)
+        .order("revision", { ascending: false })
+        .limit(1)
         .maybeSingle();
       if (readError) throw readError;
-      const { data, error } = await api.rpc("jrs_save_desktop_backup", {
+      const { data, error } = await api.rpc("jrs_save_desktop_backup_snapshot", {
         p_user_id: user.id,
         p_payload: backup,
         p_expected_revision: current?.revision || 0
       });
       if (error) throw error;
-      return { revision: Number(data.revision), uploadedAt: new Date().toISOString() };
+      return { revision: Number(data.revision), uploadedAt: data.createdAt || new Date().toISOString() };
     },
-    async downloadBackup() {
+    async listBackups() {
       const user = await requireUser();
-      const { data, error } = await getClient().from(BACKUP_TABLE)
-        .select("payload,revision,updated_at")
+      const { data, error } = await getClient().from(SNAPSHOT_TABLE)
+        .select("revision,created_at")
         .eq("user_id", user.id)
-        .maybeSingle();
+        .order("revision", { ascending: false })
+        .limit(10);
       if (error) throw error;
-      if (!data) throw new Error("云端还没有备份，请先上传本机题库");
+      return (data || []).map(item => ({ revision: Number(item.revision), createdAt: item.created_at }));
+    },
+    async downloadBackup(revision = null) {
+      const user = await requireUser();
+      let query = getClient().from(SNAPSHOT_TABLE)
+        .select("payload,revision,created_at")
+        .eq("user_id", user.id);
+      if (revision !== null && revision !== undefined) {
+        const normalizedRevision = Number(revision);
+        if (!Number.isSafeInteger(normalizedRevision) || normalizedRevision < 1) throw new Error("云端版本号无效");
+        query = query.eq("revision", normalizedRevision);
+      } else query = query.order("revision", { ascending: false }).limit(1);
+      const { data, error } = await query.maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error(revision ? "所选云端历史版本已不存在" : "云端还没有备份，请先上传本机题库");
       const serialized = JSON.stringify(data.payload);
       if (Buffer.byteLength(serialized, "utf8") > MAX_BACKUP_BYTES) throw new Error("云端备份超过 20 MB，无法恢复");
-      return { backup: data.payload, revision: Number(data.revision), updatedAt: data.updated_at };
+      return { backup: data.payload, revision: Number(data.revision), updatedAt: data.created_at };
     }
   };
 }
 
-module.exports = { createCloudService, createEncryptedSessionStorage, validateConfig, MAX_BACKUP_BYTES };
+module.exports = { createCloudService, createEncryptedSessionStorage, validateAuthTokens, validateConfig, MAX_BACKUP_BYTES };

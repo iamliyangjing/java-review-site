@@ -11,6 +11,7 @@
     bankQuery: "",
     trashOpen: false,
     editingId: null,
+    cloudBackups: [],
     confirmCallback: null,
     cloudStatus: { configured: false, signedIn: false },
     toastTimer: null
@@ -172,8 +173,9 @@
     stage.dataset.questionId = question.id;
     stage.dataset.revealed = String(revealed);
     const tags = question.tags.map(tag => '<span class="tag">' + escapeHtml(tag) + "</span>").join("");
+    const sources = (question.sources || []).map(source => '<li>' + escapeHtml(source.title) + ' · ' + escapeHtml(source.url) + '</li>').join("");
     const answer = revealed
-      ? '<div class="answer-area"><div class="answer-label">答案解析</div>' + escapeHtml(question.answer) + '</div><div class="grade-panel"><p class="grade-prompt">你对这道题的掌握程度如何？</p><div class="grade-buttons">' +
+      ? '<div class="answer-area"><div class="answer-label">答案解析</div>' + escapeHtml(question.answer) + (sources ? '<div class="answer-label">参考来源</div><ul class="question-sources">' + sources + '</ul>' : '') + '</div><div class="grade-panel"><p class="grade-prompt">你对这道题的掌握程度如何？</p><div class="grade-buttons">' +
         Object.entries(GRADE_LABELS).map(([grade, label]) => '<button class="grade-button" type="button" data-grade="' + grade + '" title="' + GRADE_HELP[grade] + '">' + label + "</button>").join("") +
         '</div></div>'
       : '<div class="reveal-wrap"><button class="reveal-button" type="button" data-reveal>显示答案解析 <span aria-hidden="true">↓</span></button></div>';
@@ -205,13 +207,14 @@
     $("#open-trash").innerHTML = state.trashOpen ? "返回题库" : '回收站 <span id="trash-count">' + $("#trash-count").textContent + "</span>";
     $("#question-list").innerHTML = filtered.length ? filtered.map(question => {
       const tags = question.tags.slice(0, 3).map(tag => '<span class="tag">' + escapeHtml(tag) + "</span>").join("");
+      const sources = (question.sources || []).map(source => '<li>' + escapeHtml(source.title) + ' · ' + escapeHtml(source.url) + '</li>').join("");
       const action = state.trashOpen
         ? '<button class="icon-action" type="button" data-restore-id="' + escapeHtml(question.id) + '" title="恢复题目">↶</button>'
         : '<button class="icon-action" type="button" data-edit-id="' + escapeHtml(question.id) + '" title="编辑题目">✎</button><button class="icon-action delete" type="button" data-delete-id="' + escapeHtml(question.id) + '" title="移入回收站">×</button>';
       const dueText = question.dueAt ? "下次复习 " + formatDate(question.dueAt, { month: "numeric", day: "numeric" }) : "尚未复习";
       return '<article class="question-row"><div class="question-row-content"><div class="question-row-meta"><span class="topic-pill">' + escapeHtml(question.categoryName) +
         '</span><span>' + escapeHtml(dueText) + '</span><span class="tags">' + tags + '</span></div><h3>' + escapeHtml(question.question) +
-        '</h3><p class="question-row-preview">' + escapeHtml(question.answer.replace(/\s+/g, " ").slice(0, 190)) + '</p></div><div class="row-actions">' + action + "</div></article>";
+        '</h3><p class="question-row-preview">' + escapeHtml(question.answer.replace(/\s+/g, " ").slice(0, 190)) + '</p>' + (sources ? '<ul class="question-sources">' + sources + '</ul>' : '') + '</div><div class="row-actions">' + action + "</div></article>";
     }).join("") : '<div class="empty-list"><strong>' + (state.trashOpen ? "回收站是空的" : "没有找到匹配的题目") + "</strong>" + (state.trashOpen ? "删除的题目会在这里等待恢复。" : "调整筛选条件，或者新增一道自己的题目。") + "</div>";
   }
 
@@ -239,20 +242,26 @@
     $("#question-text").value = question?.question || "";
     $("#question-answer").value = question?.answer || "";
     $("#question-tags").value = question?.tags?.join("，") || "";
+    $("#question-sources").value = (question?.sources || []).map(source => source.title + " | " + source.url).join("\n");
     $("#question-dialog").showModal();
     $("#question-text").focus();
   }
 
   async function saveQuestion(event) {
     event.preventDefault();
-    const input = {
-      id: state.editingId || undefined,
-      categoryId: $("#question-category").value,
-      question: $("#question-text").value,
-      answer: $("#question-answer").value,
-      tags: $("#question-tags").value.split(/[，,]/).map(tag => tag.trim()).filter(Boolean)
-    };
     try {
+      const input = {
+        id: state.editingId || undefined,
+        categoryId: $("#question-category").value,
+        question: $("#question-text").value,
+        answer: $("#question-answer").value,
+        tags: $("#question-tags").value.split(/[，,]/).map(tag => tag.trim()).filter(Boolean),
+        sources: $("#question-sources").value.split("\n").map(line => line.trim()).filter(Boolean).map(line => {
+          const separator = line.indexOf("|");
+          if (separator < 1) throw new Error("参考来源请使用“标题 | HTTPS 链接”格式");
+          return { title: line.slice(0, separator).trim(), url: line.slice(separator + 1).trim() };
+        })
+      };
       await api.saveQuestion(input);
       $("#question-dialog").close();
       await refreshData();
@@ -321,9 +330,24 @@
     const status = state.cloudStatus;
     $("#cloud-sign-in").disabled = !status.configured || status.signedIn;
     $("#cloud-sign-up").disabled = !status.configured || status.signedIn;
+    $("#cloud-anonymous-sign-in").disabled = !status.configured || status.signedIn;
     $("#cloud-sign-out").hidden = !status.signedIn;
     $("#upload-cloud-backup").disabled = !status.signedIn;
     $("#restore-cloud-backup").disabled = !status.signedIn;
+    $("#cloud-backup-version").disabled = !status.signedIn;
+  }
+
+  async function refreshCloudBackups() {
+    const select = $("#cloud-backup-version");
+    if (!state.cloudStatus.signedIn) {
+      state.cloudBackups = [];
+      select.innerHTML = '<option value="">最新版本</option>';
+      return;
+    }
+    state.cloudBackups = await api.listCloudBackups();
+    select.innerHTML = '<option value="">最新版本</option>' + state.cloudBackups.map(item =>
+      '<option value="' + item.revision + '">v' + item.revision + ' · ' + escapeHtml(formatDate(item.createdAt, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })) + '</option>'
+    ).join("");
   }
 
   async function refreshCloudStatus(fillConfig = false) {
@@ -341,6 +365,7 @@
         ? "项目配置已保存，登录后即可上传或恢复云端备份。"
         : "尚未配置 Supabase。填写项目 URL 和 publishable/anon key 后保存即可。");
     updateCloudControls();
+    await refreshCloudBackups();
   }
 
   async function openCloudDialog() {
@@ -385,6 +410,27 @@
     } catch (error) { setCloudMessage(error.message, true); }
   }
 
+  async function signInToCloudWithToken() {
+    try {
+      const result = await api.cloudSignInWithToken({
+        accessToken: $("#cloud-access-token").value,
+        refreshToken: $("#cloud-refresh-token").value
+      });
+      $("#cloud-access-token").value = "";
+      $("#cloud-refresh-token").value = "";
+      await refreshCloudStatus();
+      setCloudMessage("Supabase 用户 Token 已验证并登录：" + result.email + "。会话已加密保存在本机。");
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
+  async function createAnonymousCloudIdentity() {
+    try {
+      await api.cloudSignInAnonymously();
+      await refreshCloudStatus();
+      setCloudMessage("本机匿名云端身份已创建并登录。令牌由 Supabase 自动生成并加密保存在本机；此身份不能自动跨设备迁移。");
+    } catch (error) { setCloudMessage(error.message, true); }
+  }
+
   async function signOutFromCloud() {
     try {
       await api.cloudSignOut();
@@ -394,11 +440,12 @@
   }
 
   function uploadCloudBackup() {
-    openConfirm("覆盖云端备份？", "将上传当前本机题库，并替换该账号已有的云端快照。本机数据不会改变。", "上传并覆盖", async () => {
+    openConfirm("创建云端备份？", "将为当前本机题库创建一个新版本，云端只保留最近 10 个版本。", "上传备份", async () => {
       try {
         setCloudMessage("正在上传本机题库…");
         const result = await api.uploadCloudBackup();
-        setCloudMessage("上传完成。云端版本 " + result.revision + "，时间 " + formatDate(result.uploadedAt, { year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }) + "。");
+        await refreshCloudBackups();
+        setCloudMessage("上传完成。云端版本 " + result.revision + "，保留最近 10 个版本。");
         showToast("本机题库已备份到 Supabase");
       } catch (error) { setCloudMessage(error.message, true); }
     }, false);
@@ -408,7 +455,8 @@
     openConfirm("用云端备份替换本机题库？", "恢复会完整替换本机题目、复习计划和历史记录。应用会先在本机自动保存一份恢复前备份。", "恢复云端备份", async () => {
       try {
         setCloudMessage("正在下载并恢复云端题库…");
-        const result = await api.restoreCloudBackup();
+        const selectedRevision = $("#cloud-backup-version").value;
+        const result = await api.restoreCloudBackup(selectedRevision ? Number(selectedRevision) : null);
         await refreshData();
         setCloudMessage("恢复完成。云端版本 " + result.revision + "；恢复前本机副本已保存到应用数据目录。");
         showToast("云端题库已恢复，本机原数据已备份");
@@ -488,6 +536,8 @@
     $("#save-cloud-config").addEventListener("click", saveCloudConfig);
     $("#cloud-sign-up").addEventListener("click", signUpForCloud);
     $("#cloud-sign-in").addEventListener("click", signInToCloud);
+    $("#cloud-token-sign-in").addEventListener("click", signInToCloudWithToken);
+    $("#cloud-anonymous-sign-in").addEventListener("click", createAnonymousCloudIdentity);
     $("#cloud-sign-out").addEventListener("click", signOutFromCloud);
     $("#upload-cloud-backup").addEventListener("click", uploadCloudBackup);
     $("#restore-cloud-backup").addEventListener("click", restoreCloudBackup);
