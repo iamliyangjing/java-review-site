@@ -32,6 +32,8 @@ test("first launch imports all built-in questions and categories exactly once", 
     assert.equal(store.getCategories().length, 183);
     assert.ok(questions.every(question => question.question && question.answer && question.categoryName && question.sources.length > 0));
     assert.equal(new Set(questions.map(question => question.categoryId)).size, 183);
+    assert.equal(new Set(questions.map(question => question.knowledgeBaseId)).size, 1);
+    assert.equal(store.getKnowledgeBases()[0].name, "Java 面试复习");
     assert.ok(questions.every(question => question.sources.every(source => source.url.startsWith("https://"))));
     assert.equal(questions.every(question => question.dueAt === clock().toISOString()), true);
     const reopened = await reopen();
@@ -85,26 +87,87 @@ test("four SM-2 grades update ease, intervals, due dates, and wrong-question sta
   });
 });
 
-test("v2 backup restores the whole workspace and invalid data cannot replace it", async () => {
+test("v3 backup restores knowledge bases and review data while invalid data cannot replace it", async () => {
   await withStore(async ({ store }) => {
     const custom = store.saveQuestion({ categoryId: "database", question: "How does MVCC work?", answer: "Versioned records provide consistent snapshots.", tags: ["MySQL"] });
     store.recordReview({ questionId: custom.id, grade: "easy" });
+    const personalBase = store.saveKnowledgeBase({ name: "Backup validation" });
+    const personalCategory = store.saveCategory({ knowledgeBaseId: personalBase.id, name: "Personal notes" });
+    store.saveQuestion({ categoryId: personalCategory.id, question: "How is this knowledge base exported?", answer: "It is part of the full snapshot." });
     const backup = store.exportData();
-    assert.equal(backup.version, 2);
+    assert.equal(backup.version, 3);
 
     const questionCount = store.listQuestions().length;
     const invalid = structuredClone(backup);
     invalid.questions[0].category_id = "missing-category";
     assert.throws(() => store.importData(invalid), /题目格式无效/);
     assert.equal(store.listQuestions().length, questionCount);
+    const circular = structuredClone(backup);
+    const root = circular.categories.find(category => category.id === "basic");
+    root.parent_id = "basic-syntax";
+    assert.throws(() => store.importData(circular), /循环/);
+    assert.equal(store.listQuestions().length, questionCount);
 
     backup.questions = backup.questions.filter(question => question.id !== custom.id);
     backup.schedules = backup.schedules.filter(schedule => schedule.question_id !== custom.id);
     backup.reviews = [];
     const restored = store.importData(backup);
-    assert.equal(restored.questions, 183);
+    assert.equal(restored.questions, 184);
     assert.equal(restored.reviews, 0);
+    assert.equal(restored.knowledgeBases, 2);
+    assert.equal(store.listQuestions().length, 184);
+    assert.equal(store.getKnowledgeBases().some(item => item.name === "Backup validation"), true);
+  });
+});
+
+test("v2 backups remain importable and are migrated into the default knowledge base", async () => {
+  await withStore(async ({ store }) => {
+    const current = store.exportData();
+    const legacy = {
+      ...current,
+      version: 2,
+      categories: current.categories.map(({ knowledge_base_id, sort_order, ...category }) => category)
+    };
+    delete legacy.knowledgeBases;
+    const result = store.importData(legacy);
+    assert.equal(result.version, 3);
+    assert.equal(store.getKnowledgeBases().length, 1);
     assert.equal(store.listQuestions().length, 183);
+    assert.ok(store.listQuestions().every(question => question.knowledgeBaseId === store.getKnowledgeBases()[0].id));
+  });
+});
+
+test("knowledge bases isolate questions and category drag moves persist hierarchy and order", async () => {
+  await withStore(async ({ store, reopen }) => {
+    const knowledgeBase = store.saveKnowledgeBase({ name: "Spring 专项", description: "框架笔记" });
+    const first = store.saveCategory({ knowledgeBaseId: knowledgeBase.id, name: "事务" });
+    const second = store.saveCategory({ knowledgeBaseId: knowledgeBase.id, name: "容器" });
+    const child = store.saveCategory({ knowledgeBaseId: knowledgeBase.id, parentId: first.id, name: "传播机制" });
+    const grandchild = store.saveCategory({ knowledgeBaseId: knowledgeBase.id, parentId: child.id, name: "异常回滚" });
+    const question = store.saveQuestion({ categoryId: grandchild.id, question: "事务何时回滚？", answer: "按异常类型与规则决定。" });
+
+    assert.equal(store.listQuestions({ knowledgeBaseId: knowledgeBase.id }).length, 1);
+    assert.equal(store.listQuestions({ knowledgeBaseId: "kb-java-review" }).length, 183);
+    assert.equal(store.getReviewStats({ knowledgeBaseId: knowledgeBase.id }).total, 1);
+    assert.equal(store.getReviewStats({ knowledgeBaseId: knowledgeBase.id }).due, 1);
+    store.recordReview({ questionId: question.id, grade: "good" });
+    assert.equal(store.getReviewStats({ knowledgeBaseId: knowledgeBase.id }).reviewedToday, 1);
+    assert.throws(() => store.moveCategory({ categoryId: first.id, targetId: child.id, position: "inside" }), /子目录/);
+
+    const moved = store.moveCategory({ categoryId: child.id, targetId: second.id, position: "inside" });
+    assert.equal(moved.parentId, second.id);
+    assert.equal(moved.level, 2);
+    assert.equal(store.getCategories().find(item => item.id === grandchild.id).level, 3);
+    assert.equal(store.listQuestions({ knowledgeBaseId: knowledgeBase.id })[0].id, question.id);
+    assert.throws(() => store.deleteCategory(second.id), /子目录/);
+    assert.throws(() => store.deleteCategory(grandchild.id), /题目/);
+
+    store.moveCategory({ categoryId: second.id, targetId: first.id, position: "before" });
+    const reopened = await reopen();
+    const categories = reopened.getCategories().filter(item => item.knowledgeBaseId === knowledgeBase.id);
+    assert.deepEqual(categories.filter(item => item.parentId === null).map(item => item.name), ["容器", "事务"]);
+    assert.equal(reopened.getCategories().find(item => item.id === grandchild.id).parentId, child.id);
+    assert.equal(reopened.getKnowledgeBases().some(item => item.id === knowledgeBase.id), true);
   });
 });
 
@@ -175,6 +238,7 @@ test("upgrades an existing schema in place and keeps personal rows and progress"
   legacy.run("INSERT INTO categories (id, name, parent_id, level, origin) VALUES ('personal', 'My category', NULL, 1, 'custom')");
   legacy.run("INSERT INTO questions (id, category_id, question, answer, tags_json, origin, created_at, updated_at) VALUES ('personal-q', 'personal', 'My saved prompt', 'My answer', '[]', 'custom', '2026-10-01T00:00:00.000Z', '2026-10-01T00:00:00.000Z')");
   legacy.run("INSERT INTO schedules (question_id, due_at) VALUES ('personal-q', '2026-10-20T00:00:00.000Z')");
+  legacy.run("PRAGMA user_version = 2");
   await fs.writeFile(path.join(dataDir, "question-bank.sqlite"), Buffer.from(legacy.export()));
   legacy.close();
 
@@ -185,7 +249,7 @@ test("upgrades an existing schema in place and keeps personal rows and progress"
     assert.deepEqual(question.sources, []);
     assert.equal(question.dueAt, "2026-10-20T00:00:00.000Z");
     const migrated = new SQL.Database(await fs.readFile(path.join(dataDir, "question-bank.sqlite")));
-    assert.equal(migrated.exec("PRAGMA user_version")[0].values[0][0], 2);
+    assert.equal(migrated.exec("PRAGMA user_version")[0].values[0][0], 3);
     migrated.close();
     const snapshots = (await fs.readdir(path.join(dataDir, "backups"))).filter(name => name.endsWith(".sqlite"));
     assert.equal(snapshots.length, 2);

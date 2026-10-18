@@ -117,13 +117,13 @@ test("uploads and downloads a versioned backup only for the signed-in Supabase u
     });
     service.saveConfig(VALID_CONFIG);
     assert.equal((await service.getStatus()).signedIn, false);
-    await assert.rejects(() => service.uploadBackup({ version: 2, questions: [] }), /登录/);
+    await assert.rejects(() => service.uploadBackup({ version: 3, questions: [] }), /登录/);
 
     const login = await service.signIn({ email: "reviewer@example.com", password: "test-password" });
     assert.deepEqual(login, { authenticated: true, email: "reviewer@example.com" });
     assert.equal((await service.getStatus()).email, "reviewer@example.com");
 
-    const backup = { version: 2, categories: [], questions: [], schedules: [], reviews: [] };
+    const backup = { version: 3, knowledgeBases: [], categories: [], questions: [], schedules: [], reviews: [] };
     const uploaded = await service.uploadBackup(backup);
     assert.equal(uploaded.revision, 1);
     assert.equal(state.queriedUser.column, "user_id");

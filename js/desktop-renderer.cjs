@@ -1,6 +1,7 @@
 (() => {
   const api = window.questionBank;
   const state = {
+    knowledgeBases: [],
     categories: [],
     questions: [],
     reviewQueue: [],
@@ -8,9 +9,12 @@
     reviewMode: "due",
     reviewCategory: "",
     bankCategory: "",
+    activeKnowledgeBaseId: localStorage.getItem("activeKnowledgeBaseId") || "",
     bankQuery: "",
     trashOpen: false,
     editingId: null,
+    editingKnowledgeBaseId: null,
+    editingCategoryId: null,
     cloudBackups: [],
     confirmCallback: null,
     cloudStatus: { configured: false, signedIn: false },
@@ -56,15 +60,19 @@
     return allowed ? items.filter(item => allowed.has(item.categoryId)) : items;
   }
 
+  function activeCategories() {
+    return state.categories.filter(category => category.knowledgeBaseId === state.activeKnowledgeBaseId);
+  }
+
   function fillCategorySelect(select, selected = "", includeAll = true) {
     const options = [];
     if (includeAll) options.push('<option value="">全部分类</option>');
-    for (const category of state.categories) {
+    for (const category of activeCategories()) {
       const prefix = category.level > 1 ? "　" + "— ".repeat(Math.min(category.level - 1, 3)) : "";
       options.push('<option value="' + escapeHtml(category.id) + '">' + prefix + escapeHtml(category.name) + "</option>");
     }
     select.innerHTML = options.join("");
-    if (selected && state.categories.some(category => category.id === selected)) select.value = selected;
+    if (selected && activeCategories().some(category => category.id === selected)) select.value = selected;
   }
 
   function setView(viewName) {
@@ -99,34 +107,72 @@
 
   async function refreshData(options = {}) {
     const snapshot = await api.bootstrap();
+    state.knowledgeBases = snapshot.knowledgeBases || [];
     state.categories = snapshot.categories;
     state.questions = snapshot.questions;
+    if (!state.knowledgeBases.length) state.knowledgeBases = [{ id: "kb-java-review", name: "Java 面试复习", description: "" }];
+    if (!state.knowledgeBases.some(item => item.id === state.activeKnowledgeBaseId)) state.activeKnowledgeBaseId = state.knowledgeBases[0].id;
+    localStorage.setItem("activeKnowledgeBaseId", state.activeKnowledgeBaseId);
+    if (!activeCategories().some(item => item.id === state.reviewCategory)) state.reviewCategory = "";
+    if (!activeCategories().some(item => item.id === state.bankCategory)) state.bankCategory = "";
     renderCategoryNavigation();
-    renderStats(snapshot.stats);
+    renderStats(await api.getReviewStats({ knowledgeBaseId: state.activeKnowledgeBaseId }));
+    renderKnowledgeBasePicker();
     fillCategorySelect($("#review-category"), state.reviewCategory);
     fillCategorySelect($("#bank-category"), state.bankCategory);
     fillCategorySelect($("#history-category"));
-    fillCategorySelect($("#question-category"), state.categories[0]?.id || "", false);
+    fillCategorySelect($("#question-category"), state.bankCategory || activeCategories()[0]?.id || "", false);
     if (options.reloadReview !== false && $("#review-view").classList.contains("active")) await loadReviewQueue();
     if ($("#bank-view").classList.contains("active")) await renderBank();
   }
 
   function renderCategoryNavigation() {
-    const rootCategories = state.categories.filter(category => category.parentId === null && !category.deletedAt);
+    const categories = activeCategories().filter(category => !category.deletedAt);
+    const categoryByParent = new Map();
+    for (const category of categories) {
+      const key = category.parentId || "";
+      if (!categoryByParent.has(key)) categoryByParent.set(key, []);
+      categoryByParent.get(key).push(category);
+    }
+    for (const siblings of categoryByParent.values()) siblings.sort((first, second) => first.sortOrder - second.sortOrder || first.name.localeCompare(second.name, "zh-CN"));
+    const ordered = [];
+    const visit = (parentId, depth) => {
+      for (const category of categoryByParent.get(parentId || "") || []) {
+        ordered.push({ ...category, depth });
+        visit(category.id, depth + 1);
+      }
+    };
+    visit(null, 0);
     const moduleList = $("#module-list");
-    moduleList.innerHTML = rootCategories.map(category => {
+    moduleList.innerHTML = ordered.map(category => {
       const categoryIds = descendantsFor(category.id);
-      const count = state.questions.filter(question => categoryIds.has(question.categoryId)).length;
-      return '<button class="module-filter' + (state.bankCategory === category.id ? " active" : "") + '" type="button" data-category="' + escapeHtml(category.id) + '">' +
-        '<span class="module-dot"></span><span>' + escapeHtml(category.name) + '</span><b>' + count + "</b></button>";
+      const count = state.questions.filter(question => question.knowledgeBaseId === state.activeKnowledgeBaseId && categoryIds.has(question.categoryId)).length;
+      return '<div class="category-tree-row depth-' + Math.min(category.depth, 5) + '" draggable="true" data-category-row="' + escapeHtml(category.id) + '">' +
+        '<button class="module-filter category-select' + (state.bankCategory === category.id ? " active" : "") + '" type="button" data-category="' + escapeHtml(category.id) + '" title="拖到其他目录可调整顺序或层级">' +
+        '<span class="module-dot"></span><span>' + escapeHtml(category.name) + '</span><b>' + count + '</b></button>' +
+        '<button class="tree-action" type="button" data-add-child="' + escapeHtml(category.id) + '" title="新建子分类" aria-label="在' + escapeHtml(category.name) + '下新建子分类">＋</button>' +
+        '<button class="tree-action" type="button" data-rename-category="' + escapeHtml(category.id) + '" title="重命名分类" aria-label="重命名' + escapeHtml(category.name) + '">⋯</button>' +
+        '<button class="tree-action tree-danger" type="button" data-delete-category="' + escapeHtml(category.id) + '" title="删除分类" aria-label="删除' + escapeHtml(category.name) + '">×</button></div>';
     }).join("");
-    $("#all-count").textContent = state.questions.length;
+    const activeQuestions = state.questions.filter(question => question.knowledgeBaseId === state.activeKnowledgeBaseId);
+    $("#all-count").textContent = activeQuestions.length;
+    $("#all-category-filter").classList.toggle("active", !state.bankCategory);
     $("#module-list").querySelectorAll("[data-category]").forEach(button => button.addEventListener("click", () => {
       state.bankCategory = button.dataset.category;
       $("#bank-category").value = state.bankCategory;
       setView("bank");
       renderCategoryNavigation();
     }));
+  }
+
+  function renderKnowledgeBasePicker() {
+    const select = $("#knowledge-base-select");
+    select.innerHTML = state.knowledgeBases.map(item => '<option value="' + escapeHtml(item.id) + '">' + escapeHtml(item.name) + '</option>').join("");
+    select.value = state.activeKnowledgeBaseId;
+    $("#edit-knowledge-base").disabled = !state.activeKnowledgeBaseId;
+    $("#delete-knowledge-base").hidden = state.knowledgeBases.length < 2 || state.knowledgeBases.find(item => item.id === state.activeKnowledgeBaseId)?.origin === "builtin";
+    $("#add-question").disabled = activeCategories().length === 0;
+    $("#add-question").title = activeCategories().length ? "新增面试题" : "请先在此知识库中新建分类";
   }
 
   function renderStats(stats) {
@@ -145,15 +191,16 @@
   async function loadReviewQueue() {
     const mode = state.reviewMode;
     state.answerRevealed = null;
+    const knowledgeBaseId = state.activeKnowledgeBaseId;
     let questions = mode === "due"
-      ? await api.getDueQuestions()
-      : await api.listQuestions(mode === "wrong" ? { scope: "wrong" } : {});
+      ? await api.getDueQuestions({ knowledgeBaseId })
+      : await api.listQuestions({ ...(mode === "wrong" ? { scope: "wrong" } : {}), knowledgeBaseId });
     questions = filteredByCategory(questions, state.reviewCategory);
     if (mode === "all") questions = questions.slice().sort(() => Math.random() - 0.5);
     state.reviewQueue = questions;
     state.reviewCursor = 0;
     renderReviewCard();
-    const dueCount = mode === "due" ? questions.length : (await api.getReviewStats()).due;
+    const dueCount = mode === "due" ? questions.length : await api.listQuestions({ scope: "due", knowledgeBaseId }).then(list => list.length);
     $("#stat-due").textContent = dueCount;
     $("#nav-due-count").textContent = dueCount;
   }
@@ -200,10 +247,10 @@
 
   async function renderBank() {
     const scope = state.trashOpen ? "deleted" : "all";
-    const items = await api.listQuestions({ scope, query: state.bankQuery });
-    const filtered = filteredByCategory(items, state.bankCategory);
+    const items = await api.listQuestions({ scope, query: state.bankQuery, knowledgeBaseId: state.activeKnowledgeBaseId });
+    const filtered = state.trashOpen ? items : filteredByCategory(items, state.bankCategory);
     $("#bank-result-count").textContent = filtered.length + " 道题";
-    $("#trash-count").textContent = await api.listQuestions({ scope: "deleted" }).then(list => list.length);
+    $("#trash-count").textContent = await api.listQuestions({ scope: "deleted", knowledgeBaseId: state.activeKnowledgeBaseId }).then(list => list.length);
     $("#open-trash").innerHTML = state.trashOpen ? "返回题库" : '回收站 <span id="trash-count">' + $("#trash-count").textContent + "</span>";
     $("#question-list").innerHTML = filtered.length ? filtered.map(question => {
       const tags = question.tags.slice(0, 3).map(tag => '<span class="tag">' + escapeHtml(tag) + "</span>").join("");
@@ -215,12 +262,13 @@
       return '<article class="question-row"><div class="question-row-content"><div class="question-row-meta"><span class="topic-pill">' + escapeHtml(question.categoryName) +
         '</span><span>' + escapeHtml(dueText) + '</span><span class="tags">' + tags + '</span></div><h3>' + escapeHtml(question.question) +
         '</h3><p class="question-row-preview">' + escapeHtml(question.answer.replace(/\s+/g, " ").slice(0, 190)) + '</p>' + (sources ? '<ul class="question-sources">' + sources + '</ul>' : '') + '</div><div class="row-actions">' + action + "</div></article>";
-    }).join("") : '<div class="empty-list"><strong>' + (state.trashOpen ? "回收站是空的" : "没有找到匹配的题目") + "</strong>" + (state.trashOpen ? "删除的题目会在这里等待恢复。" : "调整筛选条件，或者新增一道自己的题目。") + "</div>";
+    }).join("") : '<div class="empty-list"><strong>' + (state.trashOpen ? "回收站是空的" : activeCategories().length ? "没有找到匹配的题目" : "这个知识库还没有分类") + "</strong>" + (state.trashOpen ? "删除的题目会在这里等待恢复。" : activeCategories().length ? "调整筛选条件，或者新增一道自己的题目。" : "先点击左侧“新建分类”，再添加自己的题目。") + "</div>";
   }
 
   async function renderHistory() {
     const options = {
       categoryId: $("#history-category").value,
+      knowledgeBaseId: state.activeKnowledgeBaseId,
       from: $("#history-from").value,
       to: $("#history-to").value
     };
@@ -234,11 +282,94 @@
     }).join("") : '<div class="empty-list"><strong>还没有复习记录</strong>完成一题并进行自评后，记录会出现在这里。</div>';
   }
 
+  function openKnowledgeBaseEditor(knowledgeBase = null) {
+    state.editingKnowledgeBaseId = knowledgeBase?.id || null;
+    $("#knowledge-base-dialog-title").textContent = knowledgeBase ? "编辑知识库" : "新建知识库";
+    $("#knowledge-base-name").value = knowledgeBase?.name || "";
+    $("#knowledge-base-description").value = knowledgeBase?.description || "";
+    $("#knowledge-base-error").textContent = "";
+    $("#knowledge-base-dialog").showModal();
+    $("#knowledge-base-name").focus();
+  }
+
+  async function saveKnowledgeBase(event) {
+    event.preventDefault();
+    try {
+      const saved = await api.saveKnowledgeBase({
+        id: state.editingKnowledgeBaseId || undefined,
+        name: $("#knowledge-base-name").value,
+        description: $("#knowledge-base-description").value
+      });
+      state.activeKnowledgeBaseId = saved.id;
+      state.bankCategory = "";
+      state.reviewCategory = "";
+      $("#knowledge-base-dialog").close();
+      await refreshData();
+      showToast(state.editingKnowledgeBaseId ? "知识库已更新" : "知识库已创建");
+    } catch (error) { $("#knowledge-base-error").textContent = error.message; }
+  }
+
+  function openCategoryEditor({ category = null, parentId = null } = {}) {
+    state.editingCategoryId = category?.id || null;
+    $("#category-dialog-title").textContent = category ? "重命名分类" : "新建分类";
+    $("#category-name").value = category?.name || "";
+    $("#category-name-error").textContent = "";
+    fillCategorySelect($("#category-parent"), parentId || "", true);
+    $("#category-parent-field").hidden = Boolean(category);
+    $("#category-parent").disabled = Boolean(category);
+    $("#category-parent").hidden = Boolean(category);
+    $("#category-dialog").showModal();
+    $("#category-name").focus();
+  }
+
+  async function saveCategory(event) {
+    event.preventDefault();
+    try {
+      await api.saveCategory({
+        id: state.editingCategoryId || undefined,
+        knowledgeBaseId: state.activeKnowledgeBaseId,
+        parentId: $("#category-parent").value || null,
+        name: $("#category-name").value
+      });
+      $("#category-dialog").close();
+      await refreshData();
+      showToast(state.editingCategoryId ? "分类已重命名" : "分类已创建");
+      state.editingCategoryId = null;
+    } catch (error) { $("#category-name-error").textContent = error.message; }
+  }
+
+  async function deleteCategory(id) {
+    const category = state.categories.find(item => item.id === id);
+    if (!category) return;
+    openConfirm("删除分类？", "「" + category.name + "」仅在没有子目录和题目时可以删除。若其中还有题目，请先编辑题目并移动到其他分类。", "删除分类", async () => {
+      await api.deleteCategory(id);
+      if (state.bankCategory === id) state.bankCategory = "";
+      if (state.reviewCategory === id) state.reviewCategory = "";
+      await refreshData();
+      showToast("分类已删除");
+    });
+  }
+
+  async function moveCategoryFromDrop(event, targetRow) {
+    event.preventDefault();
+    const categoryId = event.dataTransfer.getData("text/category-id");
+    const targetId = targetRow?.dataset.categoryRow;
+    if (!categoryId || !targetId || categoryId === targetId) return;
+    const bounds = targetRow.getBoundingClientRect();
+    const relativeY = (event.clientY - bounds.top) / bounds.height;
+    const position = relativeY < 0.25 ? "before" : relativeY > 0.75 ? "after" : "inside";
+    try {
+      await api.moveCategory({ categoryId, targetId, position });
+      await refreshData();
+      showToast(position === "inside" ? "分类已移入子目录" : "目录顺序已更新");
+    } catch (error) { showToast(error.message, true); }
+  }
+
   function openQuestionEditor(question = null) {
     state.editingId = question?.id || null;
     $("#question-dialog-title").textContent = question ? "编辑面试题" : "新增面试题";
     $("#question-form-error").textContent = "";
-    fillCategorySelect($("#question-category"), question?.categoryId || state.bankCategory || state.reviewCategory || state.categories[0]?.id, false);
+    fillCategorySelect($("#question-category"), question?.categoryId || state.bankCategory || state.reviewCategory || activeCategories()[0]?.id, false);
     $("#question-text").value = question?.question || "";
     $("#question-answer").value = question?.answer || "";
     $("#question-tags").value = question?.tags?.join("，") || "";
@@ -308,13 +439,13 @@
       const legacy = parsed.version === 1;
       const accepted = window.confirm(legacy
         ? "检测到旧版知识图谱备份。将把笔记中的模拟题和旧版打卡记录合并到桌面题库。继续导入？"
-        : "导入 v2 备份会完整替换当前题库、复习计划和历史记录。建议先导出当前备份。继续？");
+        : "导入备份会完整替换当前知识库、分类、题目、复习计划和历史记录。建议先导出当前备份。继续？");
       if (!accepted) return;
       const result = await api.importData(json);
       await refreshData();
       showToast(legacy
         ? "旧版记录已导入：" + result.importedQuestions + " 道题，" + result.importedCheckins + " 条历史打卡"
-        : "题库已从备份恢复：" + result.questions + " 道题、" + result.reviews + " 条复习记录");
+        : "备份已恢复：" + result.knowledgeBases + " 个知识库、" + result.questions + " 道题、" + result.reviews + " 条复习记录");
     } catch (error) {
       showToast(error instanceof SyntaxError ? "文件不是有效的 JSON 备份" : error.message, true);
     } finally { event.target.value = ""; }
@@ -360,10 +491,10 @@
         : "粘贴 publishable 或 anon key";
     }
     setCloudMessage(state.cloudStatus.signedIn
-      ? "已登录 " + state.cloudStatus.email + "。云端操作为手动触发，本地题库仍可离线使用。"
+      ? "已登录 " + state.cloudStatus.email + "。云端仅在你手动上传或恢复时读写；日常复习仍保存在本机。"
       : state.cloudStatus.configured
-        ? "项目配置已保存，登录后即可上传或恢复云端备份。"
-        : "尚未配置 Supabase。填写项目 URL 和 publishable/anon key 后保存即可。");
+        ? "项目配置已保存。登录同一 Supabase 用户后即可上传或恢复个人快照。"
+        : "尚未配置 Supabase。填写 Project URL 和 Publishable key 后保存即可。");
     updateCloudControls();
     await refreshCloudBackups();
   }
@@ -406,7 +537,7 @@
       const result = await api.cloudSignIn({ email: $("#cloud-email").value, password: $("#cloud-password").value });
       $("#cloud-password").value = "";
       await refreshCloudStatus();
-      setCloudMessage("已登录 " + result.email + "。云端操作为手动触发，本地题库仍可离线使用。");
+      setCloudMessage("已登录 " + result.email + "。现在可手动上传或恢复快照。");
     } catch (error) { setCloudMessage(error.message, true); }
   }
 
@@ -468,6 +599,62 @@
     document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => setView(button.dataset.view)));
     $("#add-question").addEventListener("click", () => openQuestionEditor());
     $("#question-form").addEventListener("submit", saveQuestion);
+    $("#knowledge-base-form").addEventListener("submit", saveKnowledgeBase);
+    $("#category-form").addEventListener("submit", saveCategory);
+    $("#add-knowledge-base").addEventListener("click", () => openKnowledgeBaseEditor());
+    $("#edit-knowledge-base").addEventListener("click", () => openKnowledgeBaseEditor(state.knowledgeBases.find(item => item.id === state.activeKnowledgeBaseId)));
+    $("#delete-knowledge-base").addEventListener("click", () => {
+      const knowledgeBase = state.knowledgeBases.find(item => item.id === state.activeKnowledgeBaseId);
+      if (!knowledgeBase) return;
+      openConfirm("删除知识库？", "「" + knowledgeBase.name + "」只有在所有分类删除后才能删除。删除操作可从本地备份中恢复。", "删除知识库", async () => {
+        await api.deleteKnowledgeBase(knowledgeBase.id);
+        state.activeKnowledgeBaseId = state.knowledgeBases.find(item => item.id !== knowledgeBase.id)?.id || "";
+        state.bankCategory = "";
+        state.reviewCategory = "";
+        await refreshData();
+        showToast("知识库已删除");
+      });
+    });
+    $("#knowledge-base-select").addEventListener("change", async event => {
+      state.activeKnowledgeBaseId = event.target.value;
+      state.bankCategory = "";
+      state.reviewCategory = "";
+      state.trashOpen = false;
+      localStorage.setItem("activeKnowledgeBaseId", state.activeKnowledgeBaseId);
+      await refreshData();
+    });
+    $("#add-category").addEventListener("click", () => openCategoryEditor());
+    $("#all-category-filter").addEventListener("click", () => {
+      state.bankCategory = "";
+      $("#bank-category").value = "";
+      setView("bank");
+      renderCategoryNavigation();
+    });
+    $("#module-list").addEventListener("click", event => {
+      const addChild = event.target.closest("[data-add-child]");
+      const rename = event.target.closest("[data-rename-category]");
+      const remove = event.target.closest("[data-delete-category]");
+      if (addChild) openCategoryEditor({ parentId: addChild.dataset.addChild });
+      else if (rename) openCategoryEditor({ category: state.categories.find(item => item.id === rename.dataset.renameCategory) });
+      else if (remove) deleteCategory(remove.dataset.deleteCategory);
+    });
+    $("#module-list").addEventListener("dragstart", event => {
+      const row = event.target.closest("[data-category-row]");
+      if (!row) return;
+      event.dataTransfer.setData("text/category-id", row.dataset.categoryRow);
+      event.dataTransfer.effectAllowed = "move";
+      row.classList.add("dragging");
+    });
+    $("#module-list").addEventListener("dragover", event => {
+      const row = event.target.closest("[data-category-row]");
+      if (!row) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      row.classList.add("drop-target");
+    });
+    $("#module-list").addEventListener("dragleave", event => event.target.closest("[data-category-row]")?.classList.remove("drop-target"));
+    $("#module-list").addEventListener("drop", event => moveCategoryFromDrop(event, event.target.closest("[data-category-row]")));
+    $("#module-list").addEventListener("dragend", () => document.querySelectorAll(".category-tree-row").forEach(row => row.classList.remove("dragging", "drop-target")));
     document.querySelectorAll("[data-close-dialog]").forEach(button => button.addEventListener("click", () => button.closest("dialog").close()));
     $("#confirm-action").addEventListener("click", async () => {
       const callback = state.confirmCallback;

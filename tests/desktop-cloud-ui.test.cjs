@@ -19,12 +19,36 @@ test("desktop cloud controls configure, sign in, upload, and restore without tou
   const cloudUrl = "https://java-review-test.supabase.co";
   await page.addInitScript(() => {
     const calls = [];
+    const libraryCalls = [];
     let cloudStatus = { configured: false, signedIn: false, url: "" };
+    let knowledgeBases = [{ id: "kb-java-review", name: "Java 面试复习", description: "", origin: "builtin" }];
+    let categories = [];
     window.__cloudCalls = calls;
+    window.__libraryCalls = libraryCalls;
     window.questionBank = {
-      bootstrap: async () => ({ categories: [], questions: [], stats: { total: 0, due: 0, reviewedToday: 0, streak: 0 } }),
+      bootstrap: async () => ({ knowledgeBases, categories, questions: [], stats: { total: 0, due: 0, reviewedToday: 0, streak: 0 } }),
       listQuestions: async () => [],
       getCategories: async () => [],
+      getKnowledgeBases: async () => knowledgeBases,
+      saveKnowledgeBase: async input => {
+        libraryCalls.push({ method: "saveKnowledgeBase", input });
+        const saved = { id: "kb-custom", name: input.name, description: input.description, origin: "custom" };
+        knowledgeBases = [...knowledgeBases.filter(item => item.id !== saved.id), saved];
+        return saved;
+      },
+      deleteKnowledgeBase: async id => ({ id, deleted: true }),
+      saveCategory: async input => {
+        libraryCalls.push({ method: "saveCategory", input });
+        const saved = { id: "category-" + (categories.length + 1), name: input.name, parentId: input.parentId, knowledgeBaseId: input.knowledgeBaseId, level: input.parentId ? 2 : 1, sortOrder: categories.length, core: false };
+        categories = [...categories, saved];
+        return saved;
+      },
+      deleteCategory: async id => ({ id, deletedCount: 1 }),
+      moveCategory: async input => {
+        libraryCalls.push({ method: "moveCategory", input });
+        categories = categories.map(item => item.id === input.categoryId ? { ...item, parentId: input.targetId, level: 2 } : item);
+        return categories.find(item => item.id === input.categoryId);
+      },
       getDueQuestions: async () => [],
       getReviewStats: async () => ({ due: 0 }),
       getReviewHistory: async () => [],
@@ -74,6 +98,19 @@ test("desktop cloud controls configure, sign in, upload, and restore without tou
   });
   try {
     await page.goto("file:///" + desktopPath);
+    await page.locator("#add-knowledge-base").click();
+    await page.locator("#knowledge-base-name").fill("Spring 专项");
+    await page.locator("#knowledge-base-form button[type=submit]").click();
+    await page.locator("#knowledge-base-select").selectOption("kb-custom");
+    await page.locator("#add-category").click();
+    await page.locator("#category-name").fill("事务");
+    await page.locator("#category-form button[type=submit]").click();
+    await page.locator("#add-category").click();
+    await page.locator("#category-name").fill("容器");
+    await page.locator("#category-form button[type=submit]").click();
+    await page.locator('[data-category-row="category-1"]').dragTo(page.locator('[data-category-row="category-2"]'));
+    assert.equal(await page.evaluate(() => window.__libraryCalls.some(call => call.method === "moveCategory" && call.input.position === "inside")), true);
+
     await page.locator("#cloud-sync").click();
     await page.locator("#cloud-url").fill(cloudUrl);
     await page.locator("#cloud-key").fill("sb_publishable_ui_test_key_1234567890");

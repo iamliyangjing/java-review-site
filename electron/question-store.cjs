@@ -4,8 +4,9 @@ const crypto = require("node:crypto");
 
 const GRADE_QUALITY = Object.freeze({ again: 1, hard: 2, good: 4, easy: 5 });
 const MAX_QUESTIONS = 100000;
-const SCHEMA_VERSION = 2;
+const SCHEMA_VERSION = 3;
 const BACKUP_RETENTION = 10;
+const DEFAULT_KNOWLEDGE_BASE_ID = "kb-java-review";
 
 async function createQuestionStore({ dataDir, seedPath, clock = () => new Date() }) {
   const initSqlJs = require("sql.js");
@@ -70,11 +71,23 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
 
   function initializeSchema() {
     db.run(`
+      CREATE TABLE IF NOT EXISTS knowledge_bases (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT NOT NULL DEFAULT '',
+        sort_order INTEGER NOT NULL DEFAULT 0,
+        origin TEXT NOT NULL DEFAULT 'custom',
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        deleted_at TEXT
+      );
       CREATE TABLE IF NOT EXISTS categories (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         parent_id TEXT,
+        knowledge_base_id TEXT REFERENCES knowledge_bases(id),
         level INTEGER NOT NULL,
+        sort_order INTEGER NOT NULL DEFAULT 0,
         core INTEGER NOT NULL DEFAULT 0,
         origin TEXT NOT NULL DEFAULT 'builtin',
         deleted_at TEXT
@@ -133,9 +146,28 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   }
 
   function migrateSchema() {
+    const version = Number(row("PRAGMA user_version")?.user_version || 0);
     const columns = new Set(rows("PRAGMA table_info(questions)").map(column => column.name));
     if (!columns.has("sources_json")) run("ALTER TABLE questions ADD COLUMN sources_json TEXT NOT NULL DEFAULT '[]'");
-    const version = Number(row("PRAGMA user_version")?.user_version || 0);
+    const categoryColumns = new Set(rows("PRAGMA table_info(categories)").map(column => column.name));
+    if (!categoryColumns.has("knowledge_base_id")) run("ALTER TABLE categories ADD COLUMN knowledge_base_id TEXT REFERENCES knowledge_bases(id)");
+    if (!categoryColumns.has("sort_order")) run("ALTER TABLE categories ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0");
+    const timestamp = nowIso();
+    run(`INSERT OR IGNORE INTO knowledge_bases
+      (id, name, description, sort_order, origin, created_at, updated_at)
+      VALUES (?, ?, ?, 0, 'builtin', ?, ?)`, [DEFAULT_KNOWLEDGE_BASE_ID, "Java 面试复习", "Java 面试题与复习计划", timestamp, timestamp]);
+    run("UPDATE categories SET knowledge_base_id = ? WHERE knowledge_base_id IS NULL", [DEFAULT_KNOWLEDGE_BASE_ID]);
+    if (version < 3) {
+      const seed = JSON.parse(fs.readFileSync(seedPath, "utf8"));
+      seed.categories.forEach((category, index) => {
+        run("UPDATE categories SET sort_order = ? WHERE id = ? AND knowledge_base_id = ?", [index, category.id, DEFAULT_KNOWLEDGE_BASE_ID]);
+      });
+      const customCategories = rows("SELECT id FROM categories WHERE knowledge_base_id = ? AND origin <> 'builtin' ORDER BY name, id", [DEFAULT_KNOWLEDGE_BASE_ID]);
+      customCategories.forEach((category, index) => {
+        run("UPDATE categories SET sort_order = ? WHERE id = ?", [seed.categories.length + index, category.id]);
+      });
+    }
+    run("CREATE INDEX IF NOT EXISTS idx_categories_knowledge_base ON categories(knowledge_base_id, parent_id, sort_order)");
     if (version > SCHEMA_VERSION) throw new Error("题库由较新版本创建，请升级应用后再打开");
     run("PRAGMA user_version = " + SCHEMA_VERSION);
   }
@@ -208,9 +240,9 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       throw new Error("内置题库文件格式无效");
     }
     const timestamp = nowIso();
-    for (const category of seed.categories) {
-      run(`INSERT OR IGNORE INTO categories (id, name, parent_id, level, core, origin)
-        VALUES (?, ?, ?, ?, ?, 'builtin')`, [category.id, category.name, category.parentId, category.level, category.core ? 1 : 0]);
+    for (const [index, category] of seed.categories.entries()) {
+      run(`INSERT OR IGNORE INTO categories (id, name, parent_id, knowledge_base_id, level, sort_order, core, origin)
+        VALUES (?, ?, ?, ?, ?, ?, ?, 'builtin')`, [category.id, category.name, category.parentId, DEFAULT_KNOWLEDGE_BASE_ID, category.level, index, category.core ? 1 : 0]);
     }
     for (const question of seed.questions) {
       run(`INSERT OR IGNORE INTO questions
@@ -264,6 +296,8 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       id: record.id,
       categoryId: record.category_id,
       categoryName: record.category_name,
+      knowledgeBaseId: record.knowledge_base_id,
+      knowledgeBaseName: record.knowledge_base_name,
       sourceNodeId: record.source_node_id,
       question: record.question,
       answer: record.answer,
@@ -284,24 +318,29 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
 
   function getQuestion(id) {
     return row(`SELECT q.*, s.repetitions, s.ease_factor, s.interval_days, s.due_at,
-      s.last_reviewed_at, s.lapses, c.name AS category_name
+      s.last_reviewed_at, s.lapses, c.name AS category_name,
+      c.knowledge_base_id, kb.name AS knowledge_base_name
       FROM questions q JOIN schedules s ON s.question_id = q.id
-      JOIN categories c ON c.id = q.category_id WHERE q.id = ?`, [id]);
+      JOIN categories c ON c.id = q.category_id
+      JOIN knowledge_bases kb ON kb.id = c.knowledge_base_id WHERE q.id = ?`, [id]);
   }
 
   function listQuestions(options = {}) {
     const includeDeleted = options.scope === "deleted";
     const allRows = rows(`SELECT q.*, s.repetitions, s.ease_factor, s.interval_days, s.due_at,
-      s.last_reviewed_at, s.lapses, c.name AS category_name
+      s.last_reviewed_at, s.lapses, c.name AS category_name,
+      c.knowledge_base_id, kb.name AS knowledge_base_name
       FROM questions q JOIN schedules s ON s.question_id = q.id
       JOIN categories c ON c.id = q.category_id
+      JOIN knowledge_bases kb ON kb.id = c.knowledge_base_id
       WHERE ${includeDeleted ? "q.deleted_at IS NOT NULL" : "q.deleted_at IS NULL AND c.deleted_at IS NULL"}
-      ORDER BY c.level, c.name, q.updated_at DESC, q.question COLLATE NOCASE`);
+      ORDER BY kb.sort_order, c.level, c.sort_order, q.updated_at DESC, q.question COLLATE NOCASE`);
     const query = typeof options.query === "string" ? options.query.trim().toLocaleLowerCase() : "";
     const categoryId = typeof options.categoryId === "string" ? options.categoryId : "";
     const now = nowIso();
     return allRows.map(toQuestion).filter(item => {
       if (categoryId && item.categoryId !== categoryId) return false;
+      if (options.knowledgeBaseId && item.knowledgeBaseId !== options.knowledgeBaseId) return false;
       if (options.scope === "due" && item.dueAt > now) return false;
       if (options.scope === "wrong" && item.lapses === 0) return false;
       if (query && ![item.question, item.answer, item.categoryName, ...item.tags].join(" ").toLocaleLowerCase().includes(query)) return false;
@@ -310,8 +349,127 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   }
 
   function getCategories() {
-    return rows(`SELECT id, name, parent_id AS parentId, level, core, origin, deleted_at AS deletedAt
-      FROM categories WHERE deleted_at IS NULL ORDER BY level, name`).map(item => ({ ...item, core: item.core === 1 }));
+    return rows(`SELECT c.id, c.name, c.parent_id AS parentId, c.knowledge_base_id AS knowledgeBaseId,
+      c.level, c.sort_order AS sortOrder, c.core, c.origin, c.deleted_at AS deletedAt
+      FROM categories c JOIN knowledge_bases kb ON kb.id = c.knowledge_base_id
+      WHERE c.deleted_at IS NULL AND kb.deleted_at IS NULL
+      ORDER BY kb.sort_order, c.knowledge_base_id, c.parent_id, c.sort_order, c.name`)
+      .map(item => ({ ...item, core: item.core === 1 }));
+  }
+
+  function getKnowledgeBases() {
+    return rows(`SELECT id, name, description, sort_order AS sortOrder, origin,
+      created_at AS createdAt, updated_at AS updatedAt
+      FROM knowledge_bases WHERE deleted_at IS NULL ORDER BY sort_order, name`);
+  }
+
+  function saveKnowledgeBase(input) {
+    if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("知识库格式无效");
+    const name = typeof input.name === "string" ? input.name.trim() : "";
+    const description = typeof input.description === "string" ? input.description.trim() : "";
+    if (!name || name.length > 80) throw new Error("知识库名称需为 1–80 个字符");
+    if (description.length > 500) throw new Error("知识库说明不能超过 500 个字符");
+    return transaction(() => {
+      const timestamp = nowIso();
+      if (input.id) {
+        const existing = row("SELECT id FROM knowledge_bases WHERE id = ? AND deleted_at IS NULL", [input.id]);
+        if (!existing) throw new Error("知识库不存在");
+        run("UPDATE knowledge_bases SET name = ?, description = ?, updated_at = ? WHERE id = ?", [name, description, timestamp, input.id]);
+        return getKnowledgeBases().find(item => item.id === input.id);
+      }
+      const id = crypto.randomUUID();
+      const sortOrder = Number(row("SELECT COALESCE(MAX(sort_order), -1) + 1 AS next FROM knowledge_bases WHERE deleted_at IS NULL").next);
+      run(`INSERT INTO knowledge_bases (id, name, description, sort_order, origin, created_at, updated_at)
+        VALUES (?, ?, ?, ?, 'custom', ?, ?)`, [id, name, description, sortOrder, timestamp, timestamp]);
+      return getKnowledgeBases().find(item => item.id === id);
+    });
+  }
+
+  function deleteKnowledgeBase(id) {
+    if (id === DEFAULT_KNOWLEDGE_BASE_ID) throw new Error("内置 Java 知识库不能删除");
+    return transaction(() => {
+      if (!row("SELECT id FROM knowledge_bases WHERE id = ? AND deleted_at IS NULL", [id])) throw new Error("知识库不存在");
+      if (row("SELECT id FROM categories WHERE knowledge_base_id = ? AND deleted_at IS NULL LIMIT 1", [id])) throw new Error("请先删除此知识库中的所有分类，再删除知识库");
+      run("UPDATE knowledge_bases SET deleted_at = ?, updated_at = ? WHERE id = ?", [nowIso(), nowIso(), id]);
+      return { id, deleted: true };
+    });
+  }
+
+  function saveCategory(input) {
+    if (!input || typeof input !== "object" || Array.isArray(input)) throw new Error("分类格式无效");
+    const name = typeof input.name === "string" ? input.name.trim() : "";
+    if (!name || name.length > 100) throw new Error("分类名称需为 1–100 个字符");
+    const knowledgeBaseId = typeof input.knowledgeBaseId === "string" ? input.knowledgeBaseId : "";
+    const parentId = typeof input.parentId === "string" && input.parentId ? input.parentId : null;
+    return transaction(() => {
+      if (!row("SELECT id FROM knowledge_bases WHERE id = ? AND deleted_at IS NULL", [knowledgeBaseId])) throw new Error("请选择有效的知识库");
+      const existing = input.id ? row("SELECT * FROM categories WHERE id = ? AND deleted_at IS NULL", [input.id]) : null;
+      if (input.id && !existing) throw new Error("分类不存在");
+      if (existing) {
+        run("UPDATE categories SET name = ? WHERE id = ?", [name, input.id]);
+        return getCategories().find(item => item.id === input.id);
+      }
+      const parent = parentId ? row("SELECT id, level, knowledge_base_id FROM categories WHERE id = ? AND deleted_at IS NULL", [parentId]) : null;
+      if (parentId && (!parent || parent.knowledge_base_id !== knowledgeBaseId)) throw new Error("父级分类必须属于同一知识库");
+      const level = parent ? Number(parent.level) + 1 : 1;
+      if (level > 6) throw new Error("分类最多支持 6 层目录");
+      const id = crypto.randomUUID();
+      const timestamp = nowIso();
+      const sortOrder = Number(row("SELECT COALESCE(MAX(sort_order), -1) + 1 AS next FROM categories WHERE knowledge_base_id = ? AND parent_id IS ? AND deleted_at IS NULL", [knowledgeBaseId, parentId]).next);
+      run(`INSERT INTO categories (id, name, parent_id, knowledge_base_id, level, sort_order, core, origin)
+        VALUES (?, ?, ?, ?, ?, ?, 0, 'custom')`, [id, name, parentId, knowledgeBaseId, level, sortOrder]);
+      return getCategories().find(item => item.id === id);
+    });
+  }
+
+  function deleteCategory(id) {
+    return transaction(() => {
+      const category = row("SELECT id FROM categories WHERE id = ? AND deleted_at IS NULL", [id]);
+      if (!category) throw new Error("分类不存在");
+      if (row("SELECT id FROM categories WHERE parent_id = ? AND deleted_at IS NULL LIMIT 1", [id])) throw new Error("请先移动或删除此分类下的子目录");
+      if (row("SELECT id FROM questions WHERE category_id = ? LIMIT 1", [id])) throw new Error("请先清空此分类及回收站中的题目，再删除分类");
+      run("UPDATE categories SET deleted_at = ? WHERE id = ?", [nowIso(), id]);
+      return { id, deletedCount: 1 };
+    });
+  }
+
+  function moveCategory({ categoryId, targetId, position }) {
+    if (!["before", "after", "inside"].includes(position)) throw new Error("目录拖动位置无效");
+    return transaction(() => {
+      const moved = row("SELECT * FROM categories WHERE id = ? AND deleted_at IS NULL", [categoryId]);
+      const target = row("SELECT * FROM categories WHERE id = ? AND deleted_at IS NULL", [targetId]);
+      if (!moved || !target) throw new Error("拖动的分类已不存在");
+      if (moved.id === target.id) throw new Error("不能将分类移动到自身");
+      if (moved.knowledge_base_id !== target.knowledge_base_id) throw new Error("分类只能在同一知识库内拖动");
+      const allCategories = rows("SELECT id, parent_id, level FROM categories WHERE deleted_at IS NULL");
+      const subtreeIds = new Set([moved.id]);
+      let changed = true;
+      while (changed) {
+        changed = false;
+        for (const item of allCategories) {
+          if (item.parent_id && subtreeIds.has(item.parent_id) && !subtreeIds.has(item.id)) { subtreeIds.add(item.id); changed = true; }
+        }
+      }
+      if (subtreeIds.has(target.id)) throw new Error("不能把分类拖到自己的子目录中");
+      const parentId = position === "inside" ? target.id : target.parent_id;
+      const parent = parentId ? row("SELECT level FROM categories WHERE id = ?", [parentId]) : null;
+      const newLevel = parent ? Number(parent.level) + 1 : 1;
+      const maxDepth = Math.max(...allCategories.filter(item => subtreeIds.has(item.id)).map(item => Number(item.level) - Number(moved.level)));
+      if (newLevel + maxDepth > 6) throw new Error("移动后目录将超过 6 层");
+      const siblings = rows(`SELECT id FROM categories WHERE knowledge_base_id = ? AND parent_id IS ? AND deleted_at IS NULL AND id <> ? ORDER BY sort_order, name`, [moved.knowledge_base_id, parentId, moved.id]);
+      let insertIndex = position === "inside" ? siblings.length : siblings.findIndex(item => item.id === target.id);
+      if (insertIndex < 0) insertIndex = siblings.length;
+      if (position === "after") insertIndex++;
+      const siblingIds = siblings.map(item => item.id);
+      siblingIds.splice(insertIndex, 0, moved.id);
+      const levelDelta = newLevel - Number(moved.level);
+      run("UPDATE categories SET parent_id = ?, level = ?, sort_order = ? WHERE id = ?", [parentId, newLevel, insertIndex, moved.id]);
+      for (const item of allCategories) {
+        if (subtreeIds.has(item.id) && item.id !== moved.id) run("UPDATE categories SET level = ? WHERE id = ?", [Number(item.level) + levelDelta, item.id]);
+      }
+      siblingIds.forEach((id, index) => run("UPDATE categories SET sort_order = ? WHERE id = ?", [index, id]));
+      return getCategories().find(item => item.id === moved.id);
+    });
   }
 
   function saveQuestion(input) {
@@ -388,6 +546,10 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   function getReviewHistory(options = {}) {
     const conditions = [];
     const params = [];
+    if (options.knowledgeBaseId) {
+      conditions.push("r.category_id IN (SELECT id FROM categories WHERE knowledge_base_id = ?)");
+      params.push(options.knowledgeBaseId);
+    }
     if (options.from) { conditions.push("r.reviewed_at >= ?"); params.push(new Date(options.from).toISOString()); }
     if (options.to) { conditions.push("r.reviewed_at < ?"); params.push(addDays(new Date(options.to).toISOString(), 1)); }
     if (options.categoryId) {
@@ -415,14 +577,26 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       ORDER BY r.reviewed_at DESC LIMIT 5000`, params);
   }
 
-  function getReviewStats() {
+  function getReviewStats(options = {}) {
     const today = nowIso().slice(0, 10);
+    const categoryScope = options.knowledgeBaseId
+      ? " AND category_id IN (SELECT id FROM categories WHERE knowledge_base_id = ?)"
+      : "";
+    const scopedParams = [];
+    if (options.knowledgeBaseId) scopedParams.push(options.knowledgeBaseId);
+    scopedParams.push(nowIso());
+    if (options.knowledgeBaseId) scopedParams.push(options.knowledgeBaseId);
+    scopedParams.push(today);
+    if (options.knowledgeBaseId) scopedParams.push(options.knowledgeBaseId);
+    if (options.knowledgeBaseId) scopedParams.push(options.knowledgeBaseId);
     const rowData = row(`SELECT
-      (SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL) AS total,
-      (SELECT COUNT(*) FROM questions q JOIN schedules s ON s.question_id = q.id WHERE q.deleted_at IS NULL AND s.due_at <= ?) AS due,
-      (SELECT COUNT(*) FROM reviews WHERE substr(reviewed_at, 1, 10) = ?) AS reviewedToday,
-      (SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL AND id IN (SELECT question_id FROM schedules WHERE lapses > 0)) AS wrong`, [nowIso(), today]);
-    const days = rows("SELECT DISTINCT substr(reviewed_at, 1, 10) AS day FROM reviews ORDER BY day DESC").map(item => item.day);
+      (SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL${categoryScope}) AS total,
+      (SELECT COUNT(*) FROM questions q JOIN schedules s ON s.question_id = q.id WHERE q.deleted_at IS NULL AND s.due_at <= ?${categoryScope}) AS due,
+      (SELECT COUNT(*) FROM reviews WHERE substr(reviewed_at, 1, 10) = ?${categoryScope}) AS reviewedToday,
+      (SELECT COUNT(*) FROM questions WHERE deleted_at IS NULL${categoryScope} AND id IN (SELECT question_id FROM schedules WHERE lapses > 0)) AS wrong`, scopedParams);
+    const days = rows(`SELECT DISTINCT substr(r.reviewed_at, 1, 10) AS day FROM reviews r
+      ${options.knowledgeBaseId ? "WHERE r.category_id IN (SELECT id FROM categories WHERE knowledge_base_id = ?)" : ""}
+      ORDER BY day DESC`, options.knowledgeBaseId ? [options.knowledgeBaseId] : []).map(item => item.day);
     const daySet = new Set(days);
     let streak = 0;
     const cursor = new Date(today + "T12:00:00");
@@ -436,9 +610,10 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
 
   function exportData() {
     return {
-      version: 2,
+      version: 3,
       exportedAt: nowIso(),
-      categories: rows("SELECT * FROM categories ORDER BY level, id"),
+      knowledgeBases: rows("SELECT * FROM knowledge_bases ORDER BY sort_order, id"),
+      categories: rows("SELECT * FROM categories ORDER BY knowledge_base_id, level, sort_order, id"),
       questions: rows("SELECT * FROM questions ORDER BY id"),
       schedules: rows("SELECT * FROM schedules ORDER BY question_id"),
       reviews: rows("SELECT * FROM reviews ORDER BY id"),
@@ -473,12 +648,72 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
     }
   }
 
+  function toV3Backup(data) {
+    if (data.version === 3) return data;
+    const timestamp = typeof data.exportedAt === "string" ? data.exportedAt : nowIso();
+    return {
+      ...data,
+      version: 3,
+      knowledgeBases: [{
+        id: DEFAULT_KNOWLEDGE_BASE_ID,
+        name: "Java 面试复习",
+        description: "Java 面试题与复习计划",
+        sort_order: 0,
+        origin: "builtin",
+        created_at: timestamp,
+        updated_at: timestamp,
+        deleted_at: null
+      }],
+      categories: data.categories.map((category, index) => ({
+        ...category,
+        knowledge_base_id: DEFAULT_KNOWLEDGE_BASE_ID,
+        sort_order: Number.isInteger(category.sort_order) ? category.sort_order : index
+      }))
+    };
+  }
+
+  function validateV3(data) {
+    validateV2(data);
+    if (!Array.isArray(data.knowledgeBases) || !data.knowledgeBases.length) throw new Error("备份缺少知识库数据");
+    const knowledgeBaseIds = new Set();
+    for (const knowledgeBase of data.knowledgeBases) {
+      if (!knowledgeBase || typeof knowledgeBase.id !== "string" || !knowledgeBase.id || typeof knowledgeBase.name !== "string" || !knowledgeBase.name.trim()) throw new Error("备份中的知识库格式无效");
+      if (knowledgeBaseIds.has(knowledgeBase.id)) throw new Error("备份中存在重复知识库");
+      knowledgeBaseIds.add(knowledgeBase.id);
+    }
+    const categoriesById = new Map(data.categories.map(category => [category.id, category]));
+    for (const category of data.categories) {
+      if (!knowledgeBaseIds.has(category.knowledge_base_id) || !Number.isInteger(Number(category.sort_order))) throw new Error("备份中的分类知识库或排序信息无效");
+      if (category.parent_id) {
+        const parent = categoriesById.get(category.parent_id);
+        if (!parent || parent.knowledge_base_id !== category.knowledge_base_id) throw new Error("备份中的父级分类无效");
+      }
+      const ancestors = new Set([category.id]);
+      let parentId = category.parent_id;
+      while (parentId) {
+        if (ancestors.has(parentId)) throw new Error("备份中的分类目录不能形成循环");
+        ancestors.add(parentId);
+        parentId = categoriesById.get(parentId)?.parent_id || null;
+      }
+    }
+  }
+
   function importV2(data) {
     validateV2(data);
+    return importV3(toV3Backup(data));
+  }
+
+  function importV3(data) {
+    validateV3(data);
     return transaction(() => {
-      for (const table of ["reviews", "schedules", "questions", "categories", "legacy_checkins", "legacy_mastery"]) run("DELETE FROM " + table);
+      for (const table of ["reviews", "schedules", "questions", "categories", "knowledge_bases", "legacy_checkins", "legacy_mastery"]) run("DELETE FROM " + table);
+      for (const knowledgeBase of data.knowledgeBases) {
+        run(`INSERT INTO knowledge_bases (id, name, description, sort_order, origin, created_at, updated_at, deleted_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [knowledgeBase.id, knowledgeBase.name, knowledgeBase.description || "", knowledgeBase.sort_order || 0, knowledgeBase.origin || "custom", knowledgeBase.created_at || nowIso(), knowledgeBase.updated_at || nowIso(), knowledgeBase.deleted_at || null]);
+      }
       for (const category of data.categories) {
-        run("INSERT INTO categories (id, name, parent_id, level, core, origin, deleted_at) VALUES (?, ?, ?, ?, ?, ?, ?)", [category.id, category.name, category.parent_id, category.level, category.core || 0, category.origin || "custom", category.deleted_at || null]);
+        run(`INSERT INTO categories (id, name, parent_id, knowledge_base_id, level, sort_order, core, origin, deleted_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`, [category.id, category.name, category.parent_id || null, category.knowledge_base_id, category.level, category.sort_order || 0, category.core || 0, category.origin || "custom", category.deleted_at || null]);
       }
       for (const question of data.questions) {
         run(`INSERT INTO questions (id, category_id, source_node_id, question, answer, tags_json, sources_json, origin, created_at, updated_at, deleted_at)
@@ -494,7 +729,7 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
       for (const review of data.reviews) run(`INSERT INTO reviews (id, question_id, category_id, reviewed_at, grade, next_due_at) VALUES (?, ?, ?, ?, ?, ?)`, [review.id, review.question_id, review.category_id, review.reviewed_at, review.grade, review.next_due_at]);
       for (const checkin of data.legacyCheckins || []) run("INSERT INTO legacy_checkins (date, node_id, node_name) VALUES (?, ?, ?)", [checkin.date, checkin.node_id, checkin.node_name]);
       for (const item of data.legacyMastery || []) run("INSERT INTO legacy_mastery (node_id, mastery) VALUES (?, ?)", [item.node_id, item.mastery]);
-      return { version: 2, questions: data.questions.length, reviews: data.reviews.length };
+      return { version: 3, questions: data.questions.length, reviews: data.reviews.length, knowledgeBases: data.knowledgeBases.length };
     });
   }
 
@@ -528,7 +763,12 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
     transaction(() => {
       for (const node of Object.values(editNodes)) {
         const exists = row("SELECT id FROM categories WHERE id = ?", [node.id]);
-        if (!exists) run("INSERT INTO categories (id, name, parent_id, level, core, origin) VALUES (?, ?, ?, ?, ?, 'legacy')", [node.id, node.name.trim(), node.parent || null, Number.isInteger(node.level) ? node.level : 1, node.core ? 1 : 0]);
+        if (!exists) {
+          const parentId = node.parent || null;
+          const sortOrder = Number(row("SELECT COALESCE(MAX(sort_order), -1) + 1 AS next FROM categories WHERE knowledge_base_id = ? AND parent_id IS ?", [DEFAULT_KNOWLEDGE_BASE_ID, parentId]).next);
+          run(`INSERT INTO categories (id, name, parent_id, knowledge_base_id, level, sort_order, core, origin)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 'legacy')`, [node.id, node.name.trim(), parentId, DEFAULT_KNOWLEDGE_BASE_ID, Number.isInteger(node.level) ? node.level : 1, sortOrder, node.core ? 1 : 0]);
+        }
       }
       for (const [id, name] of Object.entries(renamed)) {
         if (typeof name === "string" && name.trim()) run("UPDATE categories SET name = ? WHERE id = ?", [name.trim(), id]);
@@ -582,6 +822,7 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
     if (!data || typeof data !== "object" || Array.isArray(data)) throw new Error("备份文件格式无效");
     if (data.version === 1) return importV1(data);
     if (data.version === 2) return importV2(data);
+    if (data.version === 3) return importV3(data);
     throw new Error("不支持的备份版本");
   }
 
@@ -594,6 +835,12 @@ async function createQuestionStore({ dataDir, seedPath, clock = () => new Date()
   return {
     listQuestions,
     getCategories,
+    getKnowledgeBases,
+    saveKnowledgeBase,
+    deleteKnowledgeBase,
+    saveCategory,
+    deleteCategory,
+    moveCategory,
     saveQuestion,
     deleteQuestion,
     restoreQuestion,

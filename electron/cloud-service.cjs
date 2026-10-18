@@ -250,7 +250,7 @@ function createCloudService({ dataDir, safeStorage, configPath, developmentConfi
     },
     async uploadBackup(backup) {
       const user = await requireUser();
-      if (!backup || backup.version !== 2 || !Array.isArray(backup.questions)) throw new Error("本机题库备份格式无效");
+      if (!backup || ![2, 3].includes(backup.version) || !Array.isArray(backup.questions)) throw new Error("本机题库备份格式无效");
       const serialized = JSON.stringify(backup);
       if (Buffer.byteLength(serialized, "utf8") > MAX_BACKUP_BYTES) throw new Error("题库备份超过 20 MB，无法上传");
       const api = getClient();

@@ -45,6 +45,7 @@
       "css/desktop.css",
       "js/desktop-renderer.cjs",
       "data/questions.json",
+      "docs/**/*",
       "electron/**/*",
       "node_modules/@supabase/**/*",
       "node_modules/iceberg-js/**/*",

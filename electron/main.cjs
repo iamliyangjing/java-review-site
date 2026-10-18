@@ -84,6 +84,7 @@ function registerIpcHandlers() {
     });
   };
   handle("question-bank:bootstrap", () => ({
+    knowledgeBases: store.getKnowledgeBases(),
     categories: store.getCategories(),
     questions: store.listQuestions(),
     stats: store.getReviewStats(),
@@ -91,13 +92,19 @@ function registerIpcHandlers() {
   }));
   handle("question-bank:list", options => store.listQuestions(options || {}));
   handle("question-bank:categories", () => store.getCategories());
+  handle("question-bank:knowledge-bases", () => store.getKnowledgeBases());
+  handle("question-bank:knowledge-base:save", payload => store.saveKnowledgeBase(payload));
+  handle("question-bank:knowledge-base:delete", id => store.deleteKnowledgeBase(id));
+  handle("question-bank:category:save", payload => store.saveCategory(payload));
+  handle("question-bank:category:delete", id => store.deleteCategory(id));
+  handle("question-bank:category:move", payload => store.moveCategory(payload));
   handle("question-bank:save", question => store.saveQuestion(question));
   handle("question-bank:delete", id => store.deleteQuestion(id));
   handle("question-bank:restore", id => store.restoreQuestion(id));
   handle("question-bank:due", options => store.listQuestions({ ...(options || {}), scope: "due" }));
   handle("question-bank:review", payload => store.recordReview(payload));
   handle("question-bank:history", options => store.getReviewHistory(options || {}));
-  handle("question-bank:stats", () => store.getReviewStats());
+  handle("question-bank:stats", options => store.getReviewStats(options || {}));
   handle("question-bank:legacy-summary", () => store.getLegacySummary());
   handle("question-bank:export", async () => {
     const result = await dialog.showSaveDialog(mainWindow, {
