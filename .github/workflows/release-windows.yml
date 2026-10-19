@@ -36,7 +36,7 @@ jobs:
           if ($channel -eq "beta" -and $tag -notmatch '^v\d+\.\d+\.\d+-beta\.\d+$') { throw "Beta releases require a vX.Y.Z-beta.N tag." }
           if ($channel -eq "stable" -and $tag -notmatch '^v\d+\.\d+\.\d+$') { throw "Stable releases require a vX.Y.Z tag." }
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.tag }}
 
