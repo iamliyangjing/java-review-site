@@ -24,7 +24,7 @@
     "smoke:packaged": "node scripts/smoke-packaged.cjs"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.3",
+    "@supabase/supabase-js": "^2.118.0",
     "sql.js": "^1.14.2"
   },
   "devDependencies": {
